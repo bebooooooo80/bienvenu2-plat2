@@ -34,80 +34,500 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-24 md:pb-16 flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
-  <!-- ACTIVATION MODAL -->
-  <div id="activationOverlay" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden animate-fade-in">
-      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-blue-600 via-white to-red-600"></div>
-      
-      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">
+  <!-- ============================================================== -->
+  <!-- PHASE 3: SECURE STUDENT ACCESS & LICENSING SYSTEM OVERLAYS     -->
+  <!-- ============================================================== -->
+  <div id="accessModalOverlay" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    
+    <!-- 1. FIRST-ENTRY SCREEN (2 PRIMARY OPTIONS) -->
+    <div id="accessViewWelcome" class="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500"></div>
+
+      <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">
         <i class="fa-solid fa-graduation-cap"></i>
       </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-1">منصة Bienvenu 2 التعليمية</h2>
+      <p class="text-xs font-bold text-indigo-600 mb-2 font-french">2ème Préparatoire • منهج اللغة الفرنسية الكامل 100%</p>
+      <p class="text-xs text-slate-600 mb-6 leading-relaxed">
+        أهلاً بك في المنصة التفاعلية الرسمية. للحصول على المنهج الدراسي والتمارين والامتحانات بالصوت والشرح، يرجى اختيار إحدى البوابتين:
+      </p>
+
+      <!-- THREE PRIMARY OPTIONS IN WELCOME -->
+      <div class="space-y-3 mb-6 text-right">
+        
+        <!-- OPTION 1: 24-HOUR FREE TRIAL -->
+        <button onclick="handleOptionTrialClick()" class="w-full text-right p-3.5 sm:p-4 rounded-2xl border-2 border-emerald-500/80 bg-gradient-to-br from-emerald-50/80 to-emerald-100/40 hover:from-emerald-100 hover:to-emerald-200/50 hover:border-emerald-600 active:scale-[0.99] transition shadow-md shadow-emerald-500/10 group flex items-start gap-3">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-600 text-white flex-shrink-0 flex items-center justify-center text-xl sm:text-2xl shadow-sm group-hover:scale-105 transition">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-sm sm:text-base font-black text-emerald-900 group-hover:text-emerald-950">🎁 جرّب مجانًا لمدة 24 ساعة</span>
+              <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white flex-shrink-0">بدون كود تفعيل</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-emerald-800 font-medium leading-relaxed">
+              فتح تجريبي مجاني شامل لكل الدروس، القواعد، بنوك الأسئلة، والامتحانات فوراً لمرة واحدة لكل طالب.
+            </p>
+          </div>
+        </button>
+
+        <!-- OPTION 2: HAVE ACTIVATION CODE -->
+        <button onclick="handleOptionCodeClick()" class="w-full text-right p-3.5 sm:p-4 rounded-2xl border-2 border-indigo-500/80 bg-gradient-to-br from-indigo-50/80 to-indigo-100/40 hover:from-indigo-100 hover:to-indigo-200/50 hover:border-indigo-600 active:scale-[0.99] transition shadow-md shadow-indigo-500/10 group flex items-start gap-3">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-600 text-white flex-shrink-0 flex items-center justify-center text-xl sm:text-2xl shadow-sm group-hover:scale-105 transition">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-sm sm:text-base font-black text-indigo-950 group-hover:text-indigo-900">🔑 عندي كود تفعيل معتمد</span>
+              <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-600 text-white flex-shrink-0">365 يوماً</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-indigo-800 font-medium leading-relaxed">
+              تفعيل الاشتراك السنوي الكامل لمدة عام دراسي كامل (365 يوماً) باستخدام أحد الأكواد المعتمدة.
+            </p>
+          </div>
+        </button>
+
+        <!-- OPTION 3: DIRECT LOGIN / ADMIN LOGIN -->
+        <button onclick="showAccessView('auth'); switchAuthTab('login');" class="w-full text-right p-3.5 sm:p-4 rounded-2xl border-2 border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100 hover:from-indigo-50 hover:to-blue-50 hover:border-indigo-500 active:scale-[0.99] transition shadow-sm group flex items-start gap-3">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-slate-800 group-hover:bg-indigo-700 text-white flex-shrink-0 flex items-center justify-center text-xl sm:text-2xl shadow-sm transition">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-sm sm:text-base font-black text-slate-900 group-hover:text-indigo-950">🔐 تسجيل الدخول / حساب الأدمن</span>
+              <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-700 group-hover:bg-indigo-600 text-white flex-shrink-0">دخول مباشر</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-slate-600 group-hover:text-indigo-900 font-medium leading-relaxed">
+              إذا كان لديك حساب مسجل بالفعل أو ترغب بالدخول كمعلم / مدير المنصة.
+            </p>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- Auth prompt footer -->
+      <div id="welcomeUserStatusBox" class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500">
+        <span id="welcomeUserStateText">غير مسجل الدخول</span>
+        <div id="welcomeUserActionBtns" class="flex items-center gap-2">
+          <button onclick="promptAdminLogin()" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs flex items-center gap-1 transition">
+            <i class="fa-solid fa-shield-halved text-amber-600"></i>
+            <span>دخول الأدمن</span>
+          </button>
+          <button onclick="showAccessView('auth')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1 transition">
+            <i class="fa-solid fa-user-circle text-indigo-600"></i>
+            <span>دخول / إنشاء حساب</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. AUTHENTICATION VIEW (REGISTER & LOGIN) -->
+    <div id="accessViewAuth" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-indigo-500 to-blue-600"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="showAccessView('welcome')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <span class="text-xs font-bold text-slate-400">بوابة الحسابات الآمنة</span>
+      </div>
+
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl shadow-inner border border-indigo-100">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+
+      <h3 id="authTitle" class="text-xl font-black text-slate-800 mb-1">تسجيل حساب طالب جديد</h3>
+      <p id="authSubtitle" class="text-xs text-slate-500 mb-5">يتطلب النظام إنشاء حساب لحفظ تقدمك الدراسي وربط فترتك التجريبية أو اشتراكك السنوي.</p>
+
+      <!-- Auth Toggle Tabs -->
+      <div class="flex rounded-xl bg-slate-100 p-1 mb-5">
+        <button id="tabBtnRegister" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm">
+          حساب طالب جديد
+        </button>
+        <button id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900">
+          تسجيل الدخول
+        </button>
+      </div>
+
+      <!-- Auth Form -->
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-3.5 text-right">
+        <div id="authNameFieldGroup">
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-id-card text-indigo-500 ml-1"></i> اسم الطالب / الطالبة الكامل
+          </label>
+          <input type="text" id="authNameInput" placeholder="أدخل اسمك الثلاثي..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-envelope text-indigo-500 ml-1"></i> رقم الهاتف أو البريد الإلكتروني
+          </label>
+          <input type="text" id="authIdentifierInput" placeholder="مثال: 01012345678 أو email@test.com" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition" dir="ltr" required>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-lock text-indigo-500 ml-1"></i> كلمة المرور
+          </label>
+          <input type="password" id="authPasswordInput" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition" dir="ltr" required minlength="6">
+        </div>
+
+        <div id="authErrorMsg" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold text-center"></div>
+
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2 mt-4">
+          <span id="authSubmitBtnText">إنشاء الحساب والمتابعة</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 3. ACTIVATION CODE ENTRY VIEW -->
+    <div id="accessViewCode" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-500 to-indigo-600"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="showAccessView('welcome')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <span class="text-xs font-bold text-amber-600"><i class="fa-solid fa-star ml-1"></i> تفعيل 365 يوماً</span>
+      </div>
+
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl shadow-inner border border-amber-100">
+        <i class="fa-solid fa-key"></i>
+      </div>
+
+      <h3 class="text-xl font-black text-slate-800 mb-1">إدخال كود التفعيل السنوي</h3>
+      <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+        أدخل كود التفعيل المكون من 16 حرفاً لتفعيل اشتراكك السنوي الكامل لمدة 365 يوماً. يتم ربط الكود بحسابك الحالي نهائياً.
+      </p>
+
+      <form onsubmit="handleCodeActivationSubmit(event)" class="space-y-4 text-right">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">
+            <i class="fa-solid fa-shield-halved text-indigo-500 ml-1"></i> كود التفعيل المعتمد
+          </label>
+          <input type="text" id="paidActivationCodeInput" placeholder="FR2-XXXX-XXXX-XXXX" maxlength="20" class="w-full px-4 py-3 rounded-xl border-2 border-indigo-200 focus:outline-none focus:border-indigo-600 text-center font-mono font-black text-base uppercase tracking-widest text-indigo-900 bg-indigo-50/30 transition" autocomplete="off" required>
+          <p class="text-[11px] text-slate-400 mt-1">تأكد من إدخال الشرطات والأحرف بدقة كما استلمتها من المعلم.</p>
+        </div>
+
+        <div id="codeActivationErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center leading-relaxed"></div>
+
+        <button type="submit" id="codeSubmitBtn" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+          <span>تفعيل الاشتراك السنوي الآن (365 يوماً)</span>
+          <i class="fa-solid fa-check-circle"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 4. TRIAL EXPIRED SCREEN -->
+    <div id="accessViewTrialExpired" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-500 via-rose-500 to-red-500"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-3xl shadow-inner border border-amber-100">
+        <i class="fa-solid fa-hourglass-end"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-2">انتهت الفترة التجريبية المجانية</h2>
+      <p class="text-sm font-semibold text-slate-700 mb-4 leading-relaxed">
+        يمكنك الاستمرار في استخدام المنصة عن طريق إدخال كود التفعيل.
+      </p>
+
+      <div class="bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100 text-xs text-indigo-900 mb-6 text-right space-y-1">
+        <div class="font-bold flex items-center gap-1.5 text-indigo-700">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i>
+          <span>بياناتك وتقدمك الدراسي محفوظان بالكامل:</span>
+        </div>
+        <p class="text-slate-600">لن تفقد درجات امتحاناتك أو سجل إجاباتك عند التفعيل، وسيتم ترقية هذا الحساب نفسه إلى الاشتراك السنوي لمدة 365 يوماً.</p>
+      </div>
+
+      <button onclick="showAccessView('code')" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-key"></i>
+        <span>إدخال كود التفعيل</span>
+      </button>
+
+      <button onclick="logout()" class="w-full mt-2.5 py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-bold transition">
+        تسجيل الخروج
+      </button>
+    </div>
+
+    <!-- 5. ANNUAL EXPIRED SCREEN -->
+    <div id="accessViewAnnualExpired" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-rose-500 to-red-600"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-3xl shadow-inner border border-rose-100">
+        <i class="fa-solid fa-calendar-xmark"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-2">انتهت صلاحية اشتراكك.</h2>
+      <p class="text-sm font-semibold text-slate-600 mb-6 leading-relaxed">
+        انتهت مدة الـ 365 يوماً الخاصة باشتراكك السنوي. جميع نتائجك وسجلاتك محفوظة، ويمكنك تجديد الوصول بإدخال كود تفعيل سنوي جديد.
+      </p>
+
+      <button onclick="showAccessView('code')" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-key"></i>
+        <span>إدخال كود تفعيل جديد</span>
+      </button>
+
+      <button onclick="logout()" class="w-full mt-2.5 py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-bold transition">
+        تسجيل الخروج
+      </button>
+    </div>
+
+    <!-- 6. ACCOUNT SUSPENDED SCREEN -->
+    <div id="accessViewSuspended" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-red-600 to-rose-700"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-3xl shadow-inner border border-red-100">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-2">تم إيقاف الحساب مؤقتاً</h2>
+      <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+        تم إيقاف صلاحية الوصول لهذا الحساب من قبل إدارة المنصة. يرجى التواصل مع المعلم أو إدارة المنصة للاستفسار وإعادة التفعيل.
+      </p>
+
+      <button onclick="logout()" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
+        تسجيل الخروج
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- PROTECTED ADMIN DASHBOARD MODAL                                -->
+  <!-- ============================================================== -->
+  <div id="adminDashboardModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white max-w-4xl w-full rounded-3xl shadow-2xl border border-slate-200 text-right overflow-hidden flex flex-col max-h-[92vh] animate-fade-in my-auto">
       
-      <h2 class="text-2xl font-black text-slate-800 mb-1">منصة Bienvenu 2 الشاملة</h2>
-      <p class="text-xs font-semibold text-indigo-600 mb-4 font-french">2ème Préparatoire - المحتوى الأصلي الكامل 100%</p>
-      <p class="text-sm text-slate-600 mb-6 leading-relaxed">أهلاً بك! تم تحويل وتضمين 100% من محتوى تطبيق الأندرويد الدراسي بالكامل بدون أي اختصار أو حذف.</p>
-
-      <div class="space-y-4 mb-6 text-right">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5"><i class="fa-solid fa-user text-indigo-500 ml-1"></i> اسم الطالب / الطالبة</label>
-          <input type="text" id="studentNameInput" placeholder="أدخل اسمك هنا..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition" value="طالب متفوق">
+      <!-- Admin Header -->
+      <div class="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-sm shadow-md">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-black">لوحة إدارة تراخيص المنصة</h3>
+            <p class="text-[11px] text-slate-400">إدارة الأكواد الـ 500 • حسابات الطلاب • مراقبة الاشتراكات</p>
+          </div>
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5"><i class="fa-solid fa-key text-indigo-500 ml-1"></i> كود التفعيل الدراسي</label>
-          <input type="text" id="activationCodeInput" placeholder="اكتب كود التفعيل (مثال: BIENVENU2025)..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-french font-bold uppercase transition tracking-wider" value="BIENVENU2025">
-          <p id="activationError" class="text-xs text-rose-500 mt-1.5 hidden font-bold"></p>
-        </div>
+        <button onclick="closeAdminDashboard()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
 
-      <!-- Quick Codes -->
-      <div class="mb-5 bg-slate-50 p-3 rounded-2xl border border-slate-200/70 text-right">
-        <span class="text-xs font-bold text-slate-500 block mb-1.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500 ml-1"></i> انقر على أي كود تجريبي للملء التلقائي:</span>
-        <div class="flex flex-wrap gap-1.5">
-          <button onclick="fillCode('BIENVENU2025')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition">BIENVENU2025</button>
-          <button onclick="fillCode('PREPA2')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition">PREPA2</button>
-          <button onclick="fillCode('FRANCAIS2')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 transition">FRANCAIS2</button>
-          <button onclick="fillCode('EXCELLENCE')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 transition">EXCELLENCE</button>
+      <!-- Admin Content Body -->
+      <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-6 flex-1">
+        
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100">
+            <div class="flex items-center justify-between text-indigo-700 text-xs font-bold mb-1">
+              <span>إجمالي الأكواد</span>
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div id="adminStatTotalCodes" class="text-2xl font-black text-indigo-950 font-mono">500</div>
+            <span class="text-[10px] text-indigo-600">أكواد سنوية 365 يوماً</span>
+          </div>
+
+          <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-100">
+            <div class="flex items-center justify-between text-emerald-700 text-xs font-bold mb-1">
+              <span>أكواد غير مستخدمة</span>
+              <i class="fa-solid fa-ticket"></i>
+            </div>
+            <div id="adminStatUnusedCodes" class="text-2xl font-black text-emerald-950 font-mono">...</div>
+            <span class="text-[10px] text-emerald-600">متاحة للتوزيع</span>
+          </div>
+
+          <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100">
+            <div class="flex items-center justify-between text-blue-700 text-xs font-bold mb-1">
+              <span>تجارب مجانية نشطة</span>
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div id="adminStatActiveTrials" class="text-2xl font-black text-blue-950 font-mono">...</div>
+            <span class="text-[10px] text-blue-600">خلال 24 ساعة</span>
+          </div>
+
+          <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-100">
+            <div class="flex items-center justify-between text-amber-700 text-xs font-bold mb-1">
+              <span>اشتراكات سنوية نشطة</span>
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <div id="adminStatActiveAnnual" class="text-2xl font-black text-amber-950 font-mono">...</div>
+            <span class="text-[10px] text-amber-600">طالب مفعّل</span>
+          </div>
         </div>
+
+        <!-- Export CSV Section -->
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-right">
+            <h4 class="text-sm font-bold text-slate-800">تصدير ملف الأكواد الـ 500 (CSV)</h4>
+            <p class="text-xs text-slate-500">تنزيل جدول الأكواد الرسمية الـ 500 بالكامل بصيغة CSV لتوزيعها على الطلاب.</p>
+          </div>
+          <button onclick="downloadCodesCsv()" class="py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-download"></i>
+            <span>تحميل ملف 500 كود (CSV)</span>
+          </button>
+        </div>
+
+        <!-- Students List Section -->
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-users text-indigo-600"></i>
+              <span>سجل الطلاب والاشتراكات</span>
+            </h4>
+            <div class="w-full sm:w-64">
+              <input type="text" id="adminStudentSearchInput" oninput="handleStudentSearch(this.value)" placeholder="بحث بالاسم أو الهاتف/البريد..." class="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-2xl overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-100/80 text-slate-600 border-b border-slate-200">
+                <tr>
+                  <th class="p-3">اسم الطالب</th>
+                  <th class="p-3">معرف الدخول</th>
+                  <th class="p-3">نوع الاشتراك</th>
+                  <th class="p-3">الحالة</th>
+                  <th class="p-3">تاريخ الانتهاء</th>
+                  <th class="p-3 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="adminStudentsTableBody" class="divide-y divide-slate-100">
+                <tr>
+                  <td colspan="6" class="p-4 text-center text-slate-400">جاري تحميل بيانات الطلاب...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
-      <button onclick="activateAccount()" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
-        <span>دخول وتفعيل المنهج الكامل</span>
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      <!-- Admin Footer -->
+      <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeAdminDashboard()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition">
+          إغلاق اللوحة
+        </button>
+      </div>
 
-      <button onclick="instantDemoLogin()" class="w-full mt-2.5 py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-bolt text-emerald-600"></i>
-        <span>⚡ دخول فوري بنقرة واحدة</span>
-      </button>
     </div>
   </div>
 
-  <!-- TOP APP BAR -->
-  <header class="sticky top-0 z-40 bg-indigo-700 text-white shadow-md transition">
-    <div class="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <button id="topBackButton" onclick="goBack()" class="w-9 h-9 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 active:scale-95 flex items-center justify-center text-sm transition hidden">
-          <i class="fa-solid fa-arrow-right"></i>
+  <!-- ============================================================== -->
+  <!-- USER ACCOUNT & LOGOUT MODAL                                    -->
+  <!-- ============================================================== -->
+  <div id="userAccountModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto hidden">
+    <div class="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-100 text-center relative overflow-hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-rose-500 via-indigo-500 to-emerald-500"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="closeAccountModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-xmark"></i>
         </button>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="font-french font-black tracking-wide text-lg text-white">Bienvenu 2</span>
-            <span class="inline-flex rounded-full overflow-hidden w-4 h-3 border border-white/30">
-              <span class="w-1/3 bg-blue-500"></span><span class="w-1/3 bg-white"></span><span class="w-1/3 bg-red-500"></span>
-            </span>
-          </div>
-          <p id="topSubtitle" class="text-xs text-indigo-200 font-semibold leading-tight">الصف الثاني الإعدادي • المحتوى الكامل 100%</p>
+        <span class="text-xs font-bold text-slate-500">إدارة الحساب والجلسة</span>
+      </div>
+
+      <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">
+        <i class="fa-solid fa-circle-user"></i>
+      </div>
+
+      <h3 id="accountModalUserName" class="text-xl font-black text-slate-800 mb-1">طالب متفوق</h3>
+      <p id="accountModalIdentifier" class="text-xs text-slate-500 mb-4 font-mono">user@example.com</p>
+
+      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 mb-5 space-y-2 text-right">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-500">نوع الحساب / الدور:</span>
+          <span id="accountModalRole" class="font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[11px]">طالب</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-500">حالة الاشتراك:</span>
+          <span id="accountModalStatus" class="font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px]">نشط</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-500">صلاحية الوصول:</span>
+          <span id="accountModalExpires" class="font-bold text-slate-800 text-[11px]">-</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button id="soundToggleBtn" onclick="toggleSound()" title="تشغيل / كتم الصوت" class="w-9 h-9 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 active:scale-95 flex items-center justify-center text-sm text-white transition">
+      <div class="space-y-2.5">
+        <!-- LOGOUT BUTTON (PRIMARY RED) -->
+        <button onclick="closeAccountModal(); logout();" class="w-full py-3.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-bold text-sm shadow-md shadow-rose-600/30 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>تسجيل الخروج من الحساب (Logout)</span>
+        </button>
+
+        <!-- SWITCH ACCOUNT / LOGIN SCREEN -->
+        <button onclick="closeAccountModal(); showAccessView('auth'); switchAuthTab('login');" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>تسجيل الدخول بحساب آخر / الأدمن</span>
+        </button>
+
+        <!-- ACTIVATE NEW CODE BUTTON -->
+        <button onclick="closeAccountModal(); showAccessView('code');" class="w-full py-2.5 px-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-key"></i>
+          <span>تفعيل كود سنوي جديد</span>
+        </button>
+
+        <!-- ADMIN DASHBOARD (IF ADMIN) -->
+        <button id="accountModalAdminBtn" onclick="closeAccountModal(); openAdminDashboard();" class="hidden w-full py-2.5 px-4 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-shield-halved text-amber-600"></i>
+          <span>فتح لوحة إدارة التراخيص</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- TOP APP BAR -->
+  <header class="sticky top-0 z-40 bg-indigo-700 text-white shadow-md transition">
+    <div class="max-w-5xl mx-auto px-2.5 sm:px-4 py-2 flex items-center justify-between gap-1 sm:gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+        <button id="topBackButton" onclick="goBack()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 active:scale-95 flex items-center justify-center text-xs sm:text-sm transition shrink-0 hidden">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span class="font-french font-black tracking-wide text-base sm:text-lg text-white whitespace-nowrap">Bienvenu 2</span>
+            <span class="inline-flex rounded-full overflow-hidden w-3.5 h-2.5 sm:w-4 sm:h-3 border border-white/30 shrink-0">
+              <span class="w-1/3 bg-blue-500"></span><span class="w-1/3 bg-white"></span><span class="w-1/3 bg-red-500"></span>
+            </span>
+          </div>
+          <p id="topSubtitle" class="text-[10px] sm:text-xs text-indigo-200 font-semibold leading-tight hidden sm:block truncate">الصف الثاني الإعدادي • المحتوى الكامل 100%</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <button id="soundToggleBtn" onclick="toggleSound()" title="تشغيل / كتم الصوت" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 active:scale-95 flex items-center justify-center text-xs sm:text-sm text-white transition shrink-0">
           <i class="fa-solid fa-volume-high"></i>
         </button>
-        <div id="userBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-800/80 border border-indigo-500/30 text-xs font-bold text-indigo-100">
-          <i class="fa-solid fa-circle-user text-emerald-400"></i>
-          <span id="userNameDisplay">طالب متفوق</span>
+
+        <!-- ADMIN DASHBOARD BUTTON (Visible for role=admin) -->
+        <button id="topAdminBtn" onclick="openAdminDashboard()" title="لوحة إدارة التراخيص" class="hidden h-8 sm:h-9 px-2 sm:px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs flex items-center gap-1 shadow transition shrink-0">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span class="hidden md:inline">لوحة الإدارة</span>
+        </button>
+
+        <!-- UPGRADE / CODE BUTTON (Visible during trial or inactive) -->
+        <button id="topUpgradeBtn" onclick="showAccessView('code')" title="تفعيل كود سنوي" class="hidden h-8 sm:h-9 px-2 sm:px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow transition shrink-0">
+          <i class="fa-solid fa-key"></i>
+          <span class="hidden md:inline">تفعيل كود</span>
+        </button>
+
+        <!-- USER BADGE & SUBSCRIPTION STATUS (CLICKABLE TO MANAGE ACCOUNT) -->
+        <div id="userBadge" onclick="openAccountModal()" title="إدارة الحساب وتسجيل الخروج" class="cursor-pointer hover:bg-indigo-800 active:scale-95 flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-indigo-800/90 border border-indigo-500/40 text-xs text-white shrink-0 transition">
+          <i class="fa-solid fa-circle-user text-emerald-400 text-xs"></i>
+          <span id="userNameDisplay" class="font-bold max-w-[65px] sm:max-w-[100px] truncate text-[11px] sm:text-xs">طالب</span>
+          <span id="userSubscriptionBadge" class="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black bg-indigo-600 text-indigo-100 shrink-0">جاري التحقق...</span>
         </div>
+
+        <!-- ALWAYS-VISIBLE PROMINENT LOGOUT BUTTON -->
+        <button id="topLogoutBtn" onclick="logout()" title="تسجيل الخروج من الحساب" class="h-8 sm:h-9 px-2.5 sm:px-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-black text-xs flex items-center gap-1.5 shadow-md shadow-rose-900/30 transition shrink-0 border border-rose-400/40">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span class="inline font-bold">خروج</span>
+        </button>
       </div>
     </div>
 
@@ -172,33 +592,38 @@
 
   <!-- BOTTOM NAVIGATION BAR -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-lg px-2 py-1.5 flex items-center justify-around max-w-5xl mx-auto">
-    <button onclick="navigateTo('portal')" id="bot-btn-portal" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-indigo-600 font-bold">
+    <button onclick="navigateTo('portal')" id="bot-btn-portal" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition text-indigo-600 font-bold">
       <i class="fa-solid fa-house text-base"></i>
       <span class="text-[10px]">الرئيسية</span>
     </button>
-    <button onclick="navigateTo('revision')" id="bot-btn-revision" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
+    <button onclick="navigateTo('revision')" id="bot-btn-revision" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
       <i class="fa-solid fa-book-open text-base"></i>
       <span class="text-[10px]">المراجعة</span>
     </button>
-    <button onclick="navigateTo('grammar')" id="bot-btn-grammar" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
+    <button onclick="navigateTo('grammar')" id="bot-btn-grammar" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
       <i class="fa-solid fa-ruler-combined text-base"></i>
       <span class="text-[10px]">القواعد</span>
     </button>
-    <button onclick="navigateTo('unit1')" id="bot-btn-unit1" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
+    <button onclick="navigateTo('unit1')" id="bot-btn-unit1" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-1.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
       <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[9px] font-bold">1</span>
       <span class="text-[10px]">الوحدة 1</span>
     </button>
-    <button onclick="navigateTo('unit2')" id="bot-btn-unit2" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
+    <button onclick="navigateTo('unit2')" id="bot-btn-unit2" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-1.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
       <span class="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[9px] font-bold">2</span>
       <span class="text-[10px]">الوحدة 2</span>
     </button>
-    <button onclick="navigateTo('unit3')" id="bot-btn-unit3" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
+    <button onclick="navigateTo('unit3')" id="bot-btn-unit3" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-1.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
       <span class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[9px] font-bold">3</span>
       <span class="text-[10px]">الوحدة 3</span>
     </button>
-    <button onclick="navigateTo('exam')" id="bot-btn-exam" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
+    <button onclick="navigateTo('exam')" id="bot-btn-exam" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition text-slate-500 hover:text-indigo-600 font-semibold">
       <i class="fa-solid fa-file-pen text-rose-500 text-base"></i>
       <span class="text-[10px]">الامتحان</span>
+    </button>
+    <!-- ALWAYS-ACCESSIBLE ACCOUNT & LOGOUT BUTTON IN BOTTOM BAR -->
+    <button onclick="openAccountModal()" id="bot-btn-account" class="bot-nav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-xl transition text-rose-600 hover:text-rose-700 active:scale-95 font-bold">
+      <i class="fa-solid fa-arrow-right-from-bracket text-base text-rose-600"></i>
+      <span class="text-[10px] text-rose-600">خروج</span>
     </button>
   </nav>
 <script>
@@ -2383,49 +2808,1160 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
       window.speechSynthesis.speak(utterance);
     }
 
-    // --- Activation ---
-    const VALID_CODES = ['BIENVENU2025', 'PREPA2', 'FRANCAIS2', 'EXCELLENCE'];
+    // ==============================================================
+    // PHASE 3: SECURE STUDENT ACCESS & LICENSING CLIENT SYSTEM
+    // ==============================================================
+    let currentUser = null;
+    let userToken = localStorage.getItem('bienvenu2_token') || '';
+    let currentAuthMode = 'register'; // 'register' | 'login'
+    let pendingAction = null; // 'trial' | 'code' | null
+    let countdownInterval = null;
+    let searchDebounceTimeout = null;
 
-    function checkActivation() {
-      const isActivated = localStorage.getItem('bienvenu2_activated');
-      const studentName = localStorage.getItem('bienvenu2_student') || 'طالب متفوق';
-      if (isActivated === 'true') {
-        document.getElementById('activationOverlay').classList.add('hidden');
-        document.getElementById('userNameDisplay').innerText = studentName;
+    // ==============================================================
+    // EMBEDDED RESILIENT LOCAL ACCESS ENGINE (OFFLINE & WEBVIEW READY)
+    // ==============================================================
+    const RAW_500_CODES = "FR2-969C-LN3G-9KY5,FR2-W8CB-KJ7T-FSZD,FR2-RRLU-779N-3R6Y,FR2-NMGG-8MS2-22VP,FR2-P6VS-J8LP-E7CE,FR2-K753-MNG5-KGDT,FR2-L4J5-LPJ5-AL53,FR2-VD7G-4HJ3-NUDX,FR2-YZSD-RYEZ-G5PZ,FR2-29T4-77CQ-XCG8,FR2-WPFN-XC6Z-Q2G9,FR2-65FH-QVPW-P5YG,FR2-2DYY-WCHA-NBP9,FR2-KKSR-WHHM-L6D9,FR2-FZVS-N8U6-LRS7,FR2-Y6MY-VLVF-7VH4,FR2-5Q4F-JPTT-663J,FR2-DSWY-FDMX-J9TM,FR2-2Z7U-H5T3-UAW3,FR2-ADME-QLEC-PUVJ,FR2-MV93-M8K7-EV5H,FR2-X7VC-GH5D-A89Z,FR2-58ZV-YWAG-LKC5,FR2-FFDP-G4UJ-PJJN,FR2-79DD-XTR8-YQPC,FR2-3K27-YV3P-EFWB,FR2-BXEZ-JVPG-EUKA,FR2-5USS-4PTB-C47V,FR2-GLKF-5MPW-YKBA,FR2-R5H8-82RA-25GF,FR2-GN6T-P6RJ-FMG6,FR2-ZF6T-DZUM-WL3L,FR2-USKX-MXRH-APWJ,FR2-UYWC-X36P-SB59,FR2-2LN3-XWN7-QH9H,FR2-4G2Z-PBBX-R2U7,FR2-6K37-D8R4-KMFX,FR2-944A-KXEX-VAEE,FR2-KM8K-G8N4-J738,FR2-4BKL-8JZW-BPA7,FR2-SU9D-RKAA-9C3A,FR2-4DVP-8CGC-XQJD,FR2-YDMW-TFWK-4TUX,FR2-NFGU-4D7G-RQQS,FR2-JX8G-5SAR-PUVK,FR2-6KCU-DSJQ-JNAF,FR2-XZWR-MBV2-7ZD9,FR2-3MGK-88Y3-CC3W,FR2-88H3-DQ4S-MPB7,FR2-XVRN-A8M6-PPB7,FR2-ZYBJ-MMNS-F57Q,FR2-VMNH-QZJX-M8Q5,FR2-BWX5-ZXW8-THF6,FR2-675C-T8PH-DCZ9,FR2-XQQ6-49CC-Y326,FR2-KNZ5-3NQ2-6HC2,FR2-YQ45-R5GG-BAUZ,FR2-XXMW-KQJZ-5W45,FR2-PUDP-GA9U-CK9U,FR2-VVMJ-QKM2-XWHP,FR2-C823-DFLQ-9VV3,FR2-HNBQ-K2BV-A9SJ,FR2-WMTZ-GPZG-HZ84,FR2-RZW4-MSKA-XKJK,FR2-4ZPW-8VXP-WPKR,FR2-BC4Y-NND3-25ZC,FR2-QZTP-K8SK-VEEE,FR2-N8W8-KGE6-8KYJ,FR2-BYPG-ZRDY-R62A,FR2-6F8P-8C9E-62H5,FR2-J25L-HF75-BTCD,FR2-MCV3-UEX4-QGVJ,FR2-FRT8-4PCM-UX4C,FR2-PQQ7-S7SV-XRWS,FR2-MFKG-9RVQ-RZ4S,FR2-U95P-MMBX-HZFD,FR2-78Q7-CDMX-LRCP,FR2-NNHB-RQE5-E4KS,FR2-4LXA-KY2R-ENY5,FR2-BSHS-4QNP-WMS8,FR2-DEHB-MN52-X456,FR2-3QXP-MBPQ-ULQK,FR2-GQNZ-EYTQ-NTUD,FR2-4TTH-GUVL-4QAU,FR2-DV8Y-J4JA-E78P,FR2-U69C-G6EC-NKWU,FR2-7EED-5ZJ2-KKKN,FR2-6JLG-8ZEE-SF35,FR2-3DSV-PG7V-ECG4,FR2-QBLY-Z4N5-UX9G,FR2-BKKP-6G97-KJLF,FR2-MQRE-A3GH-34AR,FR2-EQMK-B75H-ZBKY,FR2-XS2S-GK9W-ZACN,FR2-C6AM-AVQR-97SN,FR2-TDSD-FYKG-Q85R,FR2-HTBM-P566-T995,FR2-VYQY-NY4X-FK5Z,FR2-2VDT-VS57-3ENZ,FR2-FSRF-WHG6-DRE5,FR2-WXH6-X4C3-CWG6,FR2-GSRF-A5C7-7MBS,FR2-L3HX-WQDV-P7ZW,FR2-EJ2A-BVDC-MWLK,FR2-7KE9-4RHN-ZXUG,FR2-66ZX-EVYM-U4BT,FR2-EF9A-9JTQ-844K,FR2-JQKK-XWE2-BB8B,FR2-6Z4F-SNVL-Y5TF,FR2-W9MP-P58P-3GKQ,FR2-GE9U-3TXP-CZAN,FR2-G9QF-KYX6-THUV,FR2-MYHZ-H9JC-8PP2,FR2-KX7Z-X226-CHYC,FR2-B2QB-Z9JQ-YV69,FR2-N5CG-KN2E-CESX,FR2-CQNN-FWA2-MYKQ,FR2-GNS2-8SE6-GRF7,FR2-VMU6-2LC3-2DJM,FR2-TWYX-BRU4-X2MN,FR2-WKJ5-WAKD-2BAS,FR2-BV76-DUJ5-XX7X,FR2-3RGR-KP4S-SJMC,FR2-ELSU-9LGU-JTDJ,FR2-MXEF-3BBU-G4CK,FR2-CDBN-R294-LF2N,FR2-T72V-CTCB-WH4Y,FR2-JSWV-EG6H-D4R8,FR2-5M33-K79R-A57W,FR2-SJWS-JVB6-XJV6,FR2-US46-JL6C-RJAL,FR2-VPR3-U2AZ-GULG,FR2-YVPV-PTV4-HMFP,FR2-EWRG-M2U8-PRAA,FR2-2QKD-DFF6-JXZB,FR2-JQCN-5VD2-CM2L,FR2-4HTB-K3JE-UHS3,FR2-55GQ-AK4Q-MRKR,FR2-53SJ-P8ED-DSPR,FR2-DJ63-QTS9-2D5S,FR2-DPT8-RPUV-ZS23,FR2-54JF-GDRV-MSCC,FR2-JHV2-W2J9-4MQT,FR2-VBTM-BAM2-A6FV,FR2-2EQF-C9YJ-FZJS,FR2-FFRY-JX9V-VYC8,FR2-96FY-TKEM-7QNX,FR2-J88N-PXNF-LW24,FR2-SBAE-3WZ4-MPLJ,FR2-EVBZ-FLPX-5L4S,FR2-UKW7-KHC9-YG3Z,FR2-YWLL-73MP-LET6,FR2-3Q3H-QFJV-T8N6,FR2-P979-XUV5-M8ZY,FR2-VL3N-64CL-W9F6,FR2-6SMY-FX8C-PTYY,FR2-DEXM-RR9R-WW7M,FR2-G8J2-CRLR-BWW4,FR2-VZJ5-HJXS-QDQ6,FR2-WG2G-QBZ2-V475,FR2-76YD-W2EW-Q274,FR2-2BLN-WPNX-JACB,FR2-BQZY-KHST-JWGQ,FR2-6Q2P-73RH-V879,FR2-L8WT-FBX9-CZN9,FR2-ZUBD-DL93-4RXD,FR2-MGB7-LJYT-7863,FR2-YXT6-CFZ7-3EJF,FR2-2SFF-53PW-D7TD,FR2-5XAU-26N2-MNEN,FR2-456R-JDFK-2LM5,FR2-XRWK-CENL-JDYN,FR2-RT5G-KM39-9F3R,FR2-A7ST-TZCF-Q88K,FR2-Z9CT-4L89-JMPW,FR2-9UPC-AJK6-L927,FR2-SFBQ-FXQU-CFS4,FR2-A36E-6X98-FCQW,FR2-RVNT-39Q2-Y8S2,FR2-E4PT-ZYHN-KQMH,FR2-44BJ-SVHY-DZYK,FR2-J7DW-37UV-NYBX,FR2-8QRA-NCTG-UPZ5,FR2-VVEJ-WP2B-WJV7,FR2-PU28-4LXV-BVGM,FR2-PRF7-A25E-M8FB,FR2-CDQ6-Z3MA-74RN,FR2-RDNU-G2HT-N2C5,FR2-CZ2S-GYXP-MQPK,FR2-ZKMV-4ZRC-59ZS,FR2-S93T-5FRN-7C2P,FR2-8244-5KZV-Y6X7,FR2-KWNH-TQLC-VHD8,FR2-L3LL-7HMY-TYKY,FR2-QXEV-63DR-6PKA,FR2-U3QY-P338-PPPM,FR2-98U8-ZJCD-6476,FR2-NX7Q-TW3P-CAJM,FR2-H77M-V3B6-NXN6,FR2-57NP-5EC4-PF6J,FR2-XEFK-JYUU-7ND2,FR2-7BUP-Z528-SLZ8,FR2-6GKU-4RL7-TDEU,FR2-GT6R-2SKW-GMGF,FR2-3AWQ-765X-SBCP,FR2-YFKE-NG37-ESQW,FR2-V86C-CLYQ-PMDK,FR2-VMGQ-ZS44-WGNY,FR2-8E4A-ZV4E-WKTY,FR2-Q3XU-2678-ARBS,FR2-UWXZ-9HYK-4H9N,FR2-5VHQ-T8FS-UMF4,FR2-ELWV-BFMK-JFUN,FR2-P8AR-HABT-ZB8X,FR2-XVWE-E6A7-J2KY,FR2-KHDN-DMRS-PF8T,FR2-U8WW-NDBG-B8T6,FR2-BX7Q-DMPK-CEAK,FR2-C38C-DMRE-ETPT,FR2-34LV-Y68U-8FGQ,FR2-WLPH-FB3W-TM5F,FR2-GS2E-EEF4-UAB8,FR2-T29H-VH9A-62SN,FR2-PFPZ-QMCH-F9MU,FR2-YFP2-3M94-K4FJ,FR2-EDGU-WQA6-6T2H,FR2-TETQ-PVKV-AD9M,FR2-PF46-U8ZE-SXHB,FR2-6S7S-2KGB-SNXR,FR2-UMSA-M3V8-YY3W,FR2-U82H-W8TY-57CN,FR2-MJWS-YUYU-7QWL,FR2-GU96-8EPD-S8T8,FR2-T7SJ-FGGQ-BRB6,FR2-3MTY-553Y-VX78,FR2-KYD2-FESL-CLGS,FR2-NUCY-42TJ-TZ26,FR2-88FX-766U-E373,FR2-V3HD-EA6A-ZXPW,FR2-MXMC-CWG4-N26W,FR2-LLMX-484C-GTFR,FR2-UEDH-CKMQ-XU6H,FR2-KDFY-KSXE-CRHJ,FR2-P9EQ-8UMA-EZM3,FR2-TZZ3-QTHA-6WL6,FR2-CQQX-YP9U-P2R7,FR2-VU6B-GV4W-794J,FR2-JGKD-B2F6-ML5A,FR2-QL7G-3PYH-6RUE,FR2-PSZ2-L3ZU-9KW2,FR2-YCNS-RS36-Y6NE,FR2-NP92-45TF-QXUS,FR2-C5AK-2Y34-W2MQ,FR2-QAQ7-YZD3-JBQK,FR2-AQDY-F2EY-NCWC,FR2-26SJ-HWWH-Q73N,FR2-4ZUH-HAAN-FPW5,FR2-KB65-BFCR-CASA,FR2-5KTF-6732-GW97,FR2-SND9-W6TN-XSNV,FR2-8VLJ-QMSG-9MBZ,FR2-88YQ-PC9P-GGED,FR2-FCZ4-N6A9-9YPA,FR2-FU23-DUTS-XYPQ,FR2-ZD3H-JCHV-HZUS,FR2-S4WJ-D3BS-H59M,FR2-8M9G-9LBP-PAWN,FR2-TMAG-ZPY9-D6UA,FR2-M83Q-LKX6-Q2JR,FR2-ZUQT-VLC9-NKRC,FR2-47EY-KNHB-BJ9V,FR2-6DXK-QL8K-VTMV,FR2-QPT6-M48C-3PSY,FR2-9HJV-F55G-LYJ3,FR2-KGLH-864Z-FX75,FR2-NXPR-2FZX-MGG5,FR2-VT2S-M7YC-9N57,FR2-B6RJ-S2AS-9MCP,FR2-J4H4-RHM7-99EV,FR2-U6X2-K767-ZVCA,FR2-CKCG-QKEP-2HK5,FR2-RGUT-B7NK-M56W,FR2-K554-874L-25A8,FR2-HJKH-V5GJ-RJRJ,FR2-KF9B-B3G6-QA6W,FR2-LFNA-P6M6-R95F,FR2-P7LG-2PML-CP4W,FR2-G96P-75Y5-JUVM,FR2-SCWA-TZ9S-XQE6,FR2-N4TG-6HHD-QDLN,FR2-4359-MNEP-M3WS,FR2-66VS-H55A-7GDA,FR2-XTQC-SEWS-SYUF,FR2-VP92-PYJC-XRME,FR2-GM27-J42W-BDWB,FR2-GZTK-C4D4-Q4EZ,FR2-KQXH-LMWK-A24K,FR2-39BG-CBFA-XKFN,FR2-237X-G9C3-6VVD,FR2-77FX-97FY-5CL2,FR2-MVN7-42MF-Y4RX,FR2-TVNT-3RT6-LUK3,FR2-JA2H-TFYG-NVAD,FR2-TYRB-ZFDY-D6VV,FR2-67BF-YQRK-BYLQ,FR2-LBTB-G5GD-TWWG,FR2-JUE2-G95T-9HWY,FR2-3Q5Z-BQNS-3MFV,FR2-BX8E-YDP8-YHHF,FR2-XBWV-JLW2-CQPJ,FR2-J9JV-BVKZ-FP3L,FR2-J6PZ-SAFA-4R4C,FR2-DRXT-AR2Z-A38S,FR2-DBQL-PVVR-RP5Z,FR2-SQ6D-YPFH-HVBW,FR2-GGW5-ABN3-WRZX,FR2-LGY4-2EWP-KC7P,FR2-V9L7-5SRM-VWTD,FR2-52WP-M9NA-VWUM,FR2-H6S8-QS6M-WLWA,FR2-7MZT-47US-AYAU,FR2-N5SL-RZVC-J3G8,FR2-NJBK-ZV6L-RDM4,FR2-5F26-LZHD-GCLD,FR2-G6ZV-H9M5-LWV7,FR2-LGZN-UKJK-6RUP,FR2-H8MY-XARQ-XULT,FR2-Z7WS-LLR4-3A2N,FR2-2FF7-GHGR-JCLQ,FR2-LJUT-VEN7-HCYY,FR2-MDW5-7KSR-9QKC,FR2-PCPU-EXVM-LWKB,FR2-G36H-ZAHK-SWAX,FR2-G2G6-YAR7-3SAD,FR2-4NT5-PJM6-KEZF,FR2-V3V6-7RER-3QR7,FR2-3UCN-85K6-FGJ9,FR2-4MU3-HS6F-FKGC,FR2-Q9R4-QLFN-XRDG,FR2-ALKM-QP6E-H2ZY,FR2-PPK2-5HMG-8MH9,FR2-82SB-GSTN-HCBZ,FR2-HA46-KGZ4-TL5N,FR2-M9BH-F6AW-2U2H,FR2-S6AS-AYH3-DUF8,FR2-UCXA-RX9Q-EPW2,FR2-GSWC-C8ZN-5BKN,FR2-SK3N-38TK-UGMU,FR2-MEXH-UT7T-Y8WY,FR2-YJ64-PWSV-PKAZ,FR2-TQEA-R3U8-RKHV,FR2-8JKT-ZLBE-KW5K,FR2-TDCU-XTWK-R9SL,FR2-22FW-T5GG-TPUL,FR2-F98A-GXKJ-QGQF,FR2-6YF9-TUX4-FQNR,FR2-GGPT-KBEP-DRBC,FR2-YMGL-MZ73-QS3Z,FR2-VMGM-9FQY-KZDD,FR2-98LD-QRGT-ZYYA,FR2-RBJK-YSV8-6JAC,FR2-YKR8-BYFZ-9CBR,FR2-NB39-SJRH-PK8W,FR2-5MCK-UY6G-A266,FR2-MGHP-2QUR-2NPF,FR2-BHLP-XGPK-7QQE,FR2-S5C2-9SWP-ZUUT,FR2-QKJ8-DETW-ZF8C,FR2-ZBCC-QB2U-MEWX,FR2-7FGA-FREM-TDSH,FR2-V7G8-KQMP-DMVU,FR2-CZYK-6XRM-WZQ7,FR2-N6TU-5HBN-EJSJ,FR2-R6MY-QWUZ-UC9S,FR2-KQ3X-S5LJ-ZLQ7,FR2-W3PY-DCWU-NE9G,FR2-8QPU-895W-LRR2,FR2-N9UT-8LBE-SUNT,FR2-8UKU-3JPX-WVGH,FR2-XLE6-WG88-JZBS,FR2-VFA6-KQDX-W83B,FR2-VK7D-CGHE-YXEL,FR2-ZA23-E3ET-XTYK,FR2-JUR2-T6JM-SS94,FR2-ZEEF-5AX5-4PFV,FR2-RT6F-Y4VX-C8RE,FR2-7XT5-4X76-2MBX,FR2-8BZX-G3B2-JTUT,FR2-NS4A-G7FN-KQY2,FR2-5FY3-7DBG-LFG8,FR2-YYAL-RFWV-A4P8,FR2-SLBR-C3BA-UNSR,FR2-ZV2S-7BBQ-6MJU,FR2-YM82-PCCA-TJPP,FR2-W8YD-G76X-T5U5,FR2-8A2F-V8P2-3CEB,FR2-XXHV-NJ5R-NKHP,FR2-6738-D9EN-QGT5,FR2-5K23-D2X2-778V,FR2-BZ52-97A5-7F4P,FR2-C9GA-8NBG-YCD8,FR2-CNET-TS6B-JMRA,FR2-TAD6-L7FY-N7JM,FR2-8KN5-ZEBQ-LV2N,FR2-344K-3NRR-GU7E,FR2-22UP-HGUY-CHLY,FR2-7LWJ-3TJ4-G4CZ,FR2-3USE-7R4B-R6BV,FR2-9CYH-Z2S5-BKSA,FR2-8H82-M4ZG-SFZS,FR2-84E6-6BW4-2AEB,FR2-HLPL-SPLQ-JGMA,FR2-PRXD-ML4X-HKDV,FR2-QB89-LUK3-R46Z,FR2-BXZW-TCF5-XP94,FR2-F63V-LZ3Q-S4FZ,FR2-MWZH-W2TZ-YR65,FR2-2BHD-FF45-M9GZ,FR2-2GSN-42R7-L2UJ,FR2-G6F3-QWSN-6Z52,FR2-3AGN-7PTM-GLWM,FR2-Y6PX-93EV-RU88,FR2-FJM8-JAPK-YVT6,FR2-8XH2-35FQ-TMCQ,FR2-9NZR-QHT6-PCQ5,FR2-S4HG-PTCV-78CR,FR2-3DPX-GCNM-EKTK,FR2-UNF6-EYHK-X3PY,FR2-446K-K2CR-9KC6,FR2-54TM-GZLX-T4E6,FR2-WYR8-C8DL-WTJ2,FR2-EC7T-8HS2-KDNE,FR2-AUSR-CD9S-R5T8,FR2-A7U8-CDRH-QFX8,FR2-J42L-39DE-E9AW,FR2-C37Q-3FDU-APE6,FR2-RCN8-AQNU-XT5Q,FR2-4QGC-KUPW-NQ2L,FR2-RT6R-4MZ9-WLPL,FR2-996C-ZRWJ-N9EN,FR2-D3TE-CYDK-99JT,FR2-NVCF-392W-3TXC,FR2-QVFQ-AVBP-72WX,FR2-5VPT-RR9U-CSBU,FR2-9STT-ANQ5-Q9Y4,FR2-AG5Z-W6VH-53DN,FR2-DZAU-72TQ-KWVR,FR2-QY8B-RJ5U-AG8E,FR2-LUAN-DAZZ-SYRW,FR2-YP8S-ZKLQ-PCJ4,FR2-TMUG-3NXD-WTNP,FR2-ZZR8-64DC-Z9BS,FR2-QYBJ-64HC-PMJS,FR2-77WJ-NX3F-U6KA,FR2-AKQ3-8Z9C-WQ3Q,FR2-KYCP-9CEV-WDK2,FR2-UQ5P-RH7N-TT24,FR2-XJ5U-Y2DH-ZLUL,FR2-F6E8-EL6N-VGEB,FR2-64HS-QWKT-KJQB,FR2-7JM7-2HAH-52KZ,FR2-BAZU-SBF9-M3P7,FR2-Y4GL-3HUE-8ETD,FR2-NJMT-64JS-MRD6,FR2-ZVZL-5QG4-F3UB,FR2-LRLH-ETDT-38RL,FR2-934D-6555-F9YX,FR2-9CP4-C7DQ-3PLA,FR2-YGVR-QHJK-NH6D,FR2-HQTS-N5V9-Y5GG,FR2-GZQ2-NLQX-TGYL,FR2-USB7-9M9G-H8SN,FR2-EBWP-YEFC-MTHG,FR2-XHRF-WREN-7XJW,FR2-NGGL-B95D-63WE,FR2-7B49-ZZVC-GHPV,FR2-QVJK-EXW3-XDFL,FR2-KP4H-CZZU-UQ8V,FR2-GNMS-KRWE-HE8U,FR2-2YBC-62JL-E5W4,FR2-DVDL-BLGW-NQPJ,FR2-YQEK-A8J7-EN56,FR2-HEEB-KRPS-QT7S,FR2-SNEC-VZVK-KEFD,FR2-A5Z6-T3ZZ-RDRV,FR2-VWS9-X3AC-6LNY,FR2-PDL6-8NB9-9V9N,FR2-J7SM-BXPF-AA7V,FR2-ZUVQ-RHRZ-LZZS,FR2-SWYP-HAUX-KGLS,FR2-EJXV-68RS-LE33,FR2-6N6L-E4YV-LU5Z,FR2-VC7U-73BC-PCDS,FR2-BFNC-X2KD-7LGA,FR2-XNV5-NBAE-U54T,FR2-2YP3-5VXE-UVAT,FR2-YMD5-Q98X-FNVU,FR2-9QGE-HWSU-MWG2,FR2-F393-4BCK-PY78,FR2-N2BH-Z7R4-X66Q";
+
+    const LocalAccessEngine = {
+      init() {
+        if (!localStorage.getItem("bienvenu2_local_codes_v1")) {
+          const list = RAW_500_CODES.split(",").map((c, idx) => ({
+            id: idx + 1,
+            code: c.trim().toUpperCase(),
+            type: "ANNUAL_365",
+            status: "UNUSED",
+            createdAt: new Date().toISOString(),
+            activatedAt: null,
+            expiresAt: null,
+            assignedUserId: null
+          }));
+          localStorage.setItem("bienvenu2_local_codes_v1", JSON.stringify(list));
+        }
+
+        if (!localStorage.getItem("bienvenu2_local_users_v1")) {
+          const users = [{
+            uid: "admin_owner_main",
+            name: "صاحب التطبيق (Admin)",
+            loginIdentifier: "bebooooooo80@gmail.com",
+            password: "Admin@Bienvenu2026!",
+            role: "admin",
+            createdAt: new Date().toISOString(),
+            trialUsed: false,
+            trialStartedAt: null,
+            trialExpiresAt: null,
+            accessType: "ANNUAL",
+            accessStatus: "ACTIVE",
+            annualActivatedAt: new Date().toISOString(),
+            annualExpiresAt: null
+          }];
+          localStorage.setItem("bienvenu2_local_users_v1", JSON.stringify(users));
+        }
+
+        if (!localStorage.getItem("bienvenu2_local_sessions_v1")) {
+          localStorage.setItem("bienvenu2_local_sessions_v1", JSON.stringify({}));
+        }
+      },
+
+      getUsers() {
+        this.init();
+        try { return JSON.parse(localStorage.getItem("bienvenu2_local_users_v1")) || []; }
+        catch(e) { return []; }
+      },
+
+      saveUsers(users) {
+        localStorage.setItem("bienvenu2_local_users_v1", JSON.stringify(users));
+      },
+
+      getCodes() {
+        this.init();
+        try { return JSON.parse(localStorage.getItem("bienvenu2_local_codes_v1")) || []; }
+        catch(e) { return []; }
+      },
+
+      saveCodes(codes) {
+        localStorage.setItem("bienvenu2_local_codes_v1", JSON.stringify(codes));
+      },
+
+      getSessions() {
+        this.init();
+        try { return JSON.parse(localStorage.getItem("bienvenu2_local_sessions_v1")) || {}; }
+        catch(e) { return {}; }
+      },
+
+      saveSessions(sessions) {
+        localStorage.setItem("bienvenu2_local_sessions_v1", JSON.stringify(sessions));
+      },
+
+      evaluateUserAccess(user) {
+        if (!user) return user;
+        if (user.role === "admin") {
+          user.accessType = "ANNUAL";
+          user.accessStatus = "ACTIVE";
+          user.access_type = "ANNUAL";
+          user.access_status = "ACTIVE";
+          return user;
+        }
+        const now = new Date();
+        if (user.accessType === "ANNUAL" || user.access_type === "ANNUAL") {
+          const exp = user.annualExpiresAt || user.annual_expires_at;
+          if (exp && new Date(exp) < now) {
+            user.accessStatus = "EXPIRED";
+            user.access_status = "EXPIRED";
+          }
+        } else if (user.accessType === "TRIAL" || user.access_type === "TRIAL") {
+          const exp = user.trialExpiresAt || user.trial_expires_at;
+          if (exp && new Date(exp) < now) {
+            user.accessStatus = "TRIAL_EXPIRED";
+            user.access_status = "TRIAL_EXPIRED";
+          }
+        }
+        // Normalize keys for compatibility
+        user.access_type = user.accessType || user.access_type;
+        user.access_status = user.accessStatus || user.access_status;
+        user.trial_started_at = user.trialStartedAt || user.trial_started_at;
+        user.trial_expires_at = user.trialExpiresAt || user.trial_expires_at;
+        user.annual_activated_at = user.annualActivatedAt || user.annual_activated_at;
+        user.annual_expires_at = user.annualExpiresAt || user.annual_expires_at;
+        user.login_identifier = user.loginIdentifier || user.login_identifier;
+        return user;
+      },
+
+      handleRequest(endpoint, method, body, token) {
+        this.init();
+        const users = this.getUsers();
+        const codes = this.getCodes();
+        const sessions = this.getSessions();
+
+        let authUser = null;
+        if (token && sessions[token]) {
+          const uid = sessions[token];
+          authUser = users.find(u => u.uid === uid) || null;
+          if (authUser) authUser = this.evaluateUserAccess(authUser);
+        }
+
+        // 1. REGISTER
+        if (endpoint === "/api/auth/register" && method === "POST") {
+          const { name, loginIdentifier, password } = body || {};
+          if (!name || !loginIdentifier || !password) {
+            return { ok: false, status: 400, data: { success: false, message: "يرجى ملء جميع الحقول المطلوبة." } };
+          }
+          const existing = users.find(u => (u.loginIdentifier || u.login_identifier || "").toLowerCase() === loginIdentifier.trim().toLowerCase());
+          if (existing) {
+            return { ok: false, status: 409, data: { success: false, message: "رقم الهاتف أو البريد الإلكتروني مسجل مسبقاً. يرجى تسجيل الدخول." } };
+          }
+          const newUser = {
+            uid: "usr_" + Math.random().toString(36).substring(2, 11),
+            name: name.trim(),
+            loginIdentifier: loginIdentifier.trim(),
+            login_identifier: loginIdentifier.trim(),
+            password: password,
+            role: "student",
+            createdAt: new Date().toISOString(),
+            trialUsed: false,
+            trialStartedAt: null,
+            trialExpiresAt: null,
+            accessType: "NONE",
+            accessStatus: "INACTIVE",
+            access_type: "NONE",
+            access_status: "INACTIVE",
+            annualActivatedAt: null,
+            annualExpiresAt: null,
+            activationCodeId: null
+          };
+          users.push(newUser);
+          this.saveUsers(users);
+
+          const newToken = "tok_" + Math.random().toString(36).substring(2) + Date.now();
+          sessions[newToken] = newUser.uid;
+          this.saveSessions(sessions);
+
+          return {
+            ok: true,
+            status: 201,
+            data: { success: true, token: newToken, user: newUser, message: "تم إنشاء الحساب بنجاح." }
+          };
+        }
+
+        // 2. LOGIN
+        if (endpoint === "/api/auth/login" && method === "POST") {
+          const { loginIdentifier, password } = body || {};
+          if (!loginIdentifier || !password) {
+            return { ok: false, status: 400, data: { success: false, message: "يرجى إدخال بيانات تسجيل الدخول." } };
+          }
+          let user = users.find(u => (u.loginIdentifier || u.login_identifier || "").toLowerCase() === loginIdentifier.trim().toLowerCase());
+          
+          // If this is the owner email and not yet registered locally, create it
+          if (!user && loginIdentifier.trim().toLowerCase() === "bebooooooo80@gmail.com" && password === "Admin@Bienvenu2026!") {
+            user = {
+              uid: "admin_owner_main",
+              name: "صاحب التطبيق (Admin)",
+              loginIdentifier: "bebooooooo80@gmail.com",
+              login_identifier: "bebooooooo80@gmail.com",
+              password: "Admin@Bienvenu2026!",
+              role: "admin",
+              createdAt: new Date().toISOString(),
+              trialUsed: false,
+              accessType: "ANNUAL",
+              accessStatus: "ACTIVE",
+              access_type: "ANNUAL",
+              access_status: "ACTIVE"
+            };
+            users.push(user);
+            this.saveUsers(users);
+          }
+
+          if (!user || user.password !== password) {
+            return { ok: false, status: 401, data: { success: false, message: "بيانات الدخول غير صحيحة. يرجى التأكد من كلمة المرور." } };
+          }
+          const evaluated = this.evaluateUserAccess(user);
+          const newToken = "tok_" + Math.random().toString(36).substring(2) + Date.now();
+          sessions[newToken] = evaluated.uid;
+          this.saveSessions(sessions);
+
+          return {
+            ok: true,
+            status: 200,
+            data: { success: true, token: newToken, user: evaluated, message: "تم تسجيل الدخول بنجاح." }
+          };
+        }
+
+        // 3. ADMIN CODE LOGIN
+        if (endpoint === "/api/auth/admin-code-login" && method === "POST") {
+          const rawCode = (body && body.adminCode || "").trim().toUpperCase();
+          const validAdminCodes = ["ADMIN-BIENVENU-2026", "ADMIN2026", "FR2-ADMIN-2026"];
+          if (!validAdminCodes.includes(rawCode)) {
+            return { ok: false, status: 400, data: { success: false, message: "كود الأدمن غير صحيح." } };
+          }
+          let admin = users.find(u => u.role === "admin");
+          if (!admin) {
+            admin = {
+              uid: "admin_owner_main",
+              name: "صاحب التطبيق (Admin)",
+              loginIdentifier: "bebooooooo80@gmail.com",
+              login_identifier: "bebooooooo80@gmail.com",
+              password: "Admin@Bienvenu2026!",
+              role: "admin",
+              createdAt: new Date().toISOString(),
+              trialUsed: false,
+              accessType: "ANNUAL",
+              accessStatus: "ACTIVE",
+              access_type: "ANNUAL",
+              access_status: "ACTIVE"
+            };
+            users.push(admin);
+            this.saveUsers(users);
+          }
+          const newToken = "tok_admin_" + Math.random().toString(36).substring(2) + Date.now();
+          sessions[newToken] = admin.uid;
+          this.saveSessions(sessions);
+
+          return {
+            ok: true,
+            status: 200,
+            data: { success: true, token: newToken, user: admin, message: "تم تسجيل دخول صاحب التطبيق والمدير بنجاح 🛡️" }
+          };
+        }
+
+        // 4. GET AUTH ME
+        if (endpoint === "/api/auth/me" && method === "GET") {
+          if (!authUser) {
+            return { ok: false, status: 401, data: { success: false, message: "الجلسة غير صالحة أو منتهية." } };
+          }
+          return { ok: true, status: 200, data: { success: true, user: authUser } };
+        }
+
+        // 5. START TRIAL
+        if (endpoint === "/api/access/start-trial" && method === "POST") {
+          if (!authUser) {
+            return { ok: false, status: 401, data: { success: false, message: "يرجى تسجيل الدخول أولاً." } };
+          }
+          if (authUser.trialUsed) {
+            return { ok: false, status: 400, data: { success: false, message: "لقد تم استخدام الفترة التجريبية المجانية لهذا الحساب مسبقاً." } };
+          }
+          const now = new Date();
+          const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+          authUser.trialUsed = true;
+          authUser.trialStartedAt = now.toISOString();
+          authUser.trialExpiresAt = expiresAt.toISOString();
+          authUser.trial_started_at = now.toISOString();
+          authUser.trial_expires_at = expiresAt.toISOString();
+          authUser.accessType = "TRIAL";
+          authUser.accessStatus = "ACTIVE";
+          authUser.access_type = "TRIAL";
+          authUser.access_status = "ACTIVE";
+
+          const idx = users.findIndex(u => u.uid === authUser.uid);
+          if (idx !== -1) users[idx] = authUser;
+          this.saveUsers(users);
+
+          return {
+            ok: true,
+            status: 200,
+            data: {
+              success: true,
+              trialStartedAt: authUser.trialStartedAt,
+              trialExpiresAt: authUser.trialExpiresAt,
+              message: "تم تفعيل الفترة التجريبية المجانية بنجاح لمدة 24 ساعة 🎁"
+            }
+          };
+        }
+
+        // 6. ACTIVATE CODE
+        if (endpoint === "/api/access/activate-code" && method === "POST") {
+          if (!authUser) {
+            return { ok: false, status: 401, data: { success: false, message: "يرجى تسجيل الدخول أولاً." } };
+          }
+          const rawCode = (body && body.code || "").trim().toUpperCase();
+          if (!rawCode) {
+            return { ok: false, status: 400, data: { success: false, message: "يرجى إدخال كود التفعيل." } };
+          }
+
+          const validAdminCodes = ["ADMIN-BIENVENU-2026", "ADMIN2026", "FR2-ADMIN-2026"];
+          if (validAdminCodes.includes(rawCode)) {
+            authUser.role = "admin";
+            authUser.accessType = "ANNUAL";
+            authUser.accessStatus = "ACTIVE";
+            authUser.access_type = "ANNUAL";
+            authUser.access_status = "ACTIVE";
+            const idx = users.findIndex(u => u.uid === authUser.uid);
+            if (idx !== -1) users[idx] = authUser;
+            this.saveUsers(users);
+
+            return {
+              ok: true,
+              status: 200,
+              data: {
+                success: true,
+                isAdmin: true,
+                role: "admin",
+                accessType: "ANNUAL",
+                accessStatus: "ACTIVE",
+                message: "مرحباً بك يا صاحب التطبيق! تم تسجيلك وتفعيل صلاحيات الإدارة الكاملة بنجاح 🛡️"
+              }
+            };
+          }
+
+          const codeObj = codes.find(c => c.code === rawCode);
+          if (!codeObj) {
+            return { ok: false, status: 400, data: { success: false, message: "كود التفعيل غير صحيح. تأكد من كتابته بدقة." } };
+          }
+          if (codeObj.status === "REVOKED") {
+            return { ok: false, status: 400, data: { success: false, message: "هذا الكود تم إلغاؤه من قبل الإدارة." } };
+          }
+          if (codeObj.status === "ACTIVE" || codeObj.status === "USED") {
+            return { ok: false, status: 400, data: { success: false, message: "هذا الكود تم استخدامه وتفعيله مسبقاً." } };
+          }
+
+          const now = new Date();
+          const expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+
+          codeObj.status = "ACTIVE";
+          codeObj.activatedAt = now.toISOString();
+          codeObj.expiresAt = expiresAt.toISOString();
+          codeObj.assignedUserId = authUser.uid;
+          this.saveCodes(codes);
+
+          authUser.accessType = "ANNUAL";
+          authUser.accessStatus = "ACTIVE";
+          authUser.access_type = "ANNUAL";
+          authUser.access_status = "ACTIVE";
+          authUser.annualActivatedAt = now.toISOString();
+          authUser.annualExpiresAt = expiresAt.toISOString();
+          authUser.annual_activated_at = now.toISOString();
+          authUser.annual_expires_at = expiresAt.toISOString();
+          authUser.activationCodeId = codeObj.id;
+
+          const idx = users.findIndex(u => u.uid === authUser.uid);
+          if (idx !== -1) users[idx] = authUser;
+          this.saveUsers(users);
+
+          return {
+            ok: true,
+            status: 200,
+            data: {
+              success: true,
+              accessType: "ANNUAL",
+              accessStatus: "ACTIVE",
+              annualActivatedAt: authUser.annualActivatedAt,
+              annualExpiresAt: authUser.annualExpiresAt,
+              message: "تم تفعيل الاشتراك السنوي بنجاح لمدة 365 يوماً 🌟"
+            }
+          };
+        }
+
+        // 7. ADMIN OVERVIEW
+        if (endpoint === "/api/admin/overview" && method === "GET") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          const totalCodes = codes.length;
+          const unusedCodes = codes.filter(c => c.status === "UNUSED").length;
+          const activeCodes = codes.filter(c => c.status === "ACTIVE").length;
+          const revokedCodes = codes.filter(c => c.status === "REVOKED").length;
+
+          const totalStudents = users.filter(u => u.role !== "admin").length;
+          const activeAnnual = users.filter(u => u.role !== "admin" && (u.accessType === "ANNUAL" || u.access_type === "ANNUAL") && (u.accessStatus === "ACTIVE" || u.access_status === "ACTIVE")).length;
+          const activeTrial = users.filter(u => u.role !== "admin" && (u.accessType === "TRIAL" || u.access_type === "TRIAL") && (u.accessStatus === "ACTIVE" || u.access_status === "ACTIVE")).length;
+          const expiredUsers = users.filter(u => u.role !== "admin" && (u.accessStatus === "EXPIRED" || u.access_status === "EXPIRED" || u.accessStatus === "TRIAL_EXPIRED" || u.access_status === "TRIAL_EXPIRED")).length;
+
+          return {
+            ok: true,
+            status: 200,
+            data: {
+              success: true,
+              overview: {
+                totalCodes,
+                unusedCodes,
+                activeCodes,
+                revokedCodes,
+                totalStudents,
+                activeAnnual,
+                activeTrial,
+                expiredUsers
+              }
+            }
+          };
+        }
+
+        // 8. ADMIN CODES LIST
+        if (endpoint === "/api/admin/codes" && method === "GET") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          return { ok: true, status: 200, data: { success: true, codes } };
+        }
+
+        // 9. ADMIN STUDENTS LIST
+        if (endpoint === "/api/admin/students" && method === "GET") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          const students = users.filter(u => u.role !== "admin").map(u => ({
+            uid: u.uid,
+            name: u.name,
+            login_identifier: u.loginIdentifier || u.login_identifier,
+            role: u.role,
+            created_at: u.createdAt,
+            access_type: u.accessType || u.access_type,
+            access_status: u.accessStatus || u.access_status,
+            trial_started_at: u.trialStartedAt || u.trial_started_at,
+            trial_expires_at: u.trialExpiresAt || u.trial_expires_at,
+            annual_activated_at: u.annualActivatedAt || u.annual_activated_at,
+            annual_expires_at: u.annualExpiresAt || u.annual_expires_at
+          }));
+          return { ok: true, status: 200, data: { success: true, students } };
+        }
+
+        // 10. ADMIN TOGGLE STATUS
+        if (endpoint === "/api/admin/toggle-status" && method === "POST") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          const { studentUid, newStatus } = body || {};
+          const st = users.find(u => u.uid === studentUid);
+          if (!st) {
+            return { ok: false, status: 404, data: { success: false, message: "الطالب غير موجود." } };
+          }
+          st.accessStatus = newStatus;
+          st.access_status = newStatus;
+          this.saveUsers(users);
+          return { ok: true, status: 200, data: { success: true, message: `تم تعديل حالة الطالب إلى ${newStatus}` } };
+        }
+
+        // 11. ADMIN REVOKE CODE
+        if (endpoint === "/api/admin/revoke-code" && method === "POST") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          const { codeId, newStatus } = body || {};
+          const c = codes.find(item => item.id === codeId);
+          if (!c) {
+            return { ok: false, status: 404, data: { success: false, message: "الكود غير موجود." } };
+          }
+          c.status = newStatus || "REVOKED";
+          this.saveCodes(codes);
+          return { ok: true, status: 200, data: { success: true, message: "تم تحديث حالة الكود." } };
+        }
+
+        // 12. ADMIN ADD CODE
+        if (endpoint === "/api/admin/add-code" && method === "POST") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          const { customCode } = body || {};
+          const finalCode = (customCode || ("FR2-" + Math.random().toString(36).substring(2, 6) + "-" + Math.random().toString(36).substring(2, 6) + "-" + Math.random().toString(36).substring(2, 6))).toUpperCase();
+          const newCodeObj = {
+            id: codes.length + 1,
+            code: finalCode,
+            type: "ANNUAL_365",
+            status: "UNUSED",
+            createdAt: new Date().toISOString(),
+            activatedAt: null,
+            expiresAt: null,
+            assignedUserId: null
+          };
+          codes.unshift(newCodeObj);
+          this.saveCodes(codes);
+          return { ok: true, status: 201, data: { success: true, code: finalCode, message: `تم إنشاء الكود الجديد بنجاح: ${finalCode}` } };
+        }
+
+        // 13. ADMIN EXPORT CODES
+        if (endpoint === "/api/admin/export-codes" && method === "GET") {
+          if (!authUser || authUser.role !== "admin") {
+            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
+          }
+          const csvLines = ["Number,Activation Code,Status,Activated At,Expires At,Assigned Student"];
+          codes.forEach((c, idx) => {
+            csvLines.push(`${idx + 1},${c.code},${c.status},${c.activatedAt || ""},${c.expiresAt || ""},${c.assignedUserId || ""}`);
+          });
+          return {
+            ok: true,
+            status: 200,
+            data: {
+              success: true,
+              totalCount: codes.length,
+              csvContent: csvLines.join("\n"),
+              filename: "Bienvenu2_Codes_Export_500.csv"
+            }
+          };
+        }
+
+        return { ok: false, status: 404, data: { success: false, message: "نقطة النهاية غير متوفرة." } };
+      }
+    };
+
+    // Client API Request with Auto-Fallback to Local Engine
+    async function apiRequest(endpoint, method = "GET", body = null) {
+      // If running inside file:/// (Android WebView or local file), use Local Engine immediately
+      if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+        return LocalAccessEngine.handleRequest(endpoint, method, body, userToken);
+      }
+
+      const headers = { "Content-Type": "application/json" };
+      if (userToken) {
+        headers["Authorization"] = `Bearer ${userToken}`;
+      }
+      const options = { method, headers };
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch(endpoint, { ...options, signal: controller.signal });
+        clearTimeout(timeoutId);
+        const data = await res.json();
+        return { ok: res.ok, status: res.status, data };
+      } catch (err) {
+        console.warn("Backend server request failed or timed out. Falling back to local offline engine:", endpoint);
+        return LocalAccessEngine.handleRequest(endpoint, method, body, userToken);
       }
     }
 
-    function fillCode(code) {
-      document.getElementById('activationCodeInput').value = code;
-      playClickSound();
+    // View Switcher for Modal
+    function showAccessView(viewName) {
+      const overlay = document.getElementById('accessModalOverlay');
+      const views = {
+        'welcome': document.getElementById('accessViewWelcome'),
+        'auth': document.getElementById('accessViewAuth'),
+        'code': document.getElementById('accessViewCode'),
+        'trial_expired': document.getElementById('accessViewTrialExpired'),
+        'annual_expired': document.getElementById('accessViewAnnualExpired'),
+        'suspended': document.getElementById('accessViewSuspended')
+      };
+
+      if (viewName === 'none') {
+        overlay.classList.add('hidden');
+        return;
+      }
+
+      overlay.classList.remove('hidden');
+      Object.keys(views).forEach(key => {
+        if (views[key]) {
+          if (key === viewName) {
+            views[key].classList.remove('hidden');
+          } else {
+            views[key].classList.add('hidden');
+          }
+        }
+      });
+
+      // Clear any errors when switching
+      const authErr = document.getElementById('authErrorMsg');
+      if (authErr) authErr.classList.add('hidden');
+      const codeErr = document.getElementById('codeActivationErrorMsg');
+      if (codeErr) codeErr.classList.add('hidden');
     }
 
-    function activateAccount() {
-      const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
-      const name = document.getElementById('studentNameInput').value.trim() || 'طالب متفوق';
-      const err = document.getElementById('activationError');
-      if (VALID_CODES.includes(code)) {
-        localStorage.setItem('bienvenu2_activated', 'true');
-        localStorage.setItem('bienvenu2_student', name);
-        document.getElementById('userNameDisplay').innerText = name;
-        document.getElementById('activationOverlay').classList.add('hidden');
+    // Toggle Register / Login in Auth Modal
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      playClickSound();
+      const tabReg = document.getElementById('tabBtnRegister');
+      const tabLog = document.getElementById('tabBtnLogin');
+      const nameGroup = document.getElementById('authNameFieldGroup');
+      const nameInput = document.getElementById('authNameInput');
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitText = document.getElementById('authSubmitBtnText');
+      const err = document.getElementById('authErrorMsg');
+      if (err) err.classList.add('hidden');
+
+      if (mode === 'register') {
+        tabReg.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm';
+        tabLog.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900';
+        nameGroup.classList.remove('hidden');
+        nameInput.required = true;
+        title.innerText = 'تسجيل حساب طالب جديد';
+        subtitle.innerText = 'يتطلب النظام إنشاء حساب لحفظ تقدمك الدراسي وربط فترتك التجريبية أو اشتراكك السنوي.';
+        submitText.innerText = 'إنشاء الحساب والمتابعة';
+      } else {
+        tabLog.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm';
+        tabReg.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900';
+        nameGroup.classList.add('hidden');
+        nameInput.required = false;
+        title.innerText = 'تسجيل الدخول إلى حسابك';
+        subtitle.innerText = 'أدخل بيانات حسابك للمتابعة والوصول إلى اشتراكك ودرجاتك.';
+        submitText.innerText = 'تسجيل الدخول والمتابعة';
+      }
+    }
+
+    // Handle Option 1: 24-Hour Free Trial
+    function handleOptionTrialClick() {
+      playClickSound();
+      if (!currentUser) {
+        pendingAction = 'trial';
+        switchAuthTab('register');
+        showAccessView('auth');
+      } else {
+        executeStartTrial();
+      }
+    }
+
+    // Handle Option 2: Have Activation Code
+    function handleOptionCodeClick() {
+      playClickSound();
+      if (!currentUser) {
+        pendingAction = 'code';
+        switchAuthTab('register');
+        showAccessView('auth');
+      } else {
+        showAccessView('code');
+      }
+    }
+
+    // Execute Start Trial on Backend
+    async function executeStartTrial() {
+      const btn = document.getElementById('authSubmitBtn');
+      const res = await apiRequest('/api/access/start-trial', 'POST');
+      if (res.ok && res.data.success) {
         playSuccessSound();
-        if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70 });
+        if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80 });
+        currentUser.access_type = res.data.accessType;
+        currentUser.access_status = res.data.accessStatus;
+        currentUser.trial_started_at = res.data.trialStartedAt;
+        currentUser.trial_expires_at = res.data.trialExpiresAt;
+        currentUser.trial_used = 1;
+        updateTopBarUserUI();
+        showAccessView('none');
       } else {
         playErrorSound();
-        err.innerText = '❌ كود غير صحيح! يرجى اختيار أحد الأكواد المتاحة في القائمة أعلاه.';
-        err.classList.remove('hidden');
+        const msg = res.data.message || 'حدث خطأ أثناء تفعيل الفترة التجريبية.';
+        alert(msg);
+        if (res.data.code === 'TRIAL_ALREADY_USED') {
+          showAccessView('code');
+        }
       }
     }
 
-    function instantDemoLogin() {
-      localStorage.setItem('bienvenu2_activated', 'true');
-      localStorage.setItem('bienvenu2_student', 'طالب متفوق');
-      document.getElementById('userNameDisplay').innerText = 'طالب متفوق';
-      document.getElementById('activationOverlay').classList.add('hidden');
-      playSuccessSound();
-      if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 70 });
+    // Handle Auth Submit (Register or Login)
+    async function handleAuthSubmit(event) {
+      if (event) event.preventDefault();
+      const identifier = document.getElementById('authIdentifierInput').value.trim();
+      const password = document.getElementById('authPasswordInput').value;
+      const name = document.getElementById('authNameInput').value.trim();
+      const errBox = document.getElementById('authErrorMsg');
+      const submitBtn = document.getElementById('authSubmitBtn');
+
+      errBox.classList.add('hidden');
+      submitBtn.disabled = true;
+
+      try {
+        let res;
+        if (currentAuthMode === 'register') {
+          if (!name) {
+            errBox.innerText = 'يرجى إدخال اسم الطالب / الطالبة.';
+            errBox.classList.remove('hidden');
+            submitBtn.disabled = false;
+            return;
+          }
+          res = await apiRequest('/api/auth/register', 'POST', {
+            name,
+            loginIdentifier: identifier,
+            password
+          });
+        } else {
+          res = await apiRequest('/api/auth/login', 'POST', {
+            loginIdentifier: identifier,
+            password
+          });
+        }
+
+        if (res.ok && res.data.success) {
+          userToken = res.data.token;
+          localStorage.setItem('bienvenu2_token', userToken);
+          currentUser = res.data.user;
+          updateTopBarUserUI();
+
+          // Handle pending action
+          if (pendingAction === 'trial') {
+            pendingAction = null;
+            await executeStartTrial();
+          } else if (pendingAction === 'code') {
+            pendingAction = null;
+            showAccessView('code');
+          } else {
+            await verifyAccessStatus();
+          }
+        } else {
+          playErrorSound();
+          errBox.innerText = res.data.message || 'فشلت العملية، يرجى مراجعة البيانات المدخلة.';
+          errBox.classList.remove('hidden');
+        }
+      } finally {
+        submitBtn.disabled = false;
+      }
     }
+
+    // Handle Code Activation Submit
+    async function handleCodeActivationSubmit(event) {
+      if (event) event.preventDefault();
+      const input = document.getElementById('paidActivationCodeInput');
+      const code = input.value.trim().toUpperCase();
+      const errBox = document.getElementById('codeActivationErrorMsg');
+      const submitBtn = document.getElementById('codeSubmitBtn');
+
+      errBox.classList.add('hidden');
+      if (!code) {
+        errBox.innerText = 'يرجى كتابة كود التفعيل المعتمد.';
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      const ADMIN_CODES = ['ADMIN-BIENVENU-2026', 'FR2-ADMIN-2026', 'ADMIN2026', 'ADMIN-OWNER-2026'];
+      
+      submitBtn.disabled = true;
+      try {
+        // If it is an Admin Code and user is not logged in, authenticate immediately
+        if (ADMIN_CODES.includes(code) && !userToken) {
+          const adminRes = await apiRequest('/api/auth/admin-code-login', 'POST', { adminCode: code });
+          if (adminRes.ok && adminRes.data.success) {
+            userToken = adminRes.data.token;
+            localStorage.setItem('bienvenu2_token', userToken);
+            currentUser = adminRes.data.user;
+            playSuccessSound();
+            if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
+            updateTopBarUserUI();
+            showAccessView('none');
+            input.value = '';
+            alert('مرحباً بك يا صاحب التطبيق! تم تسجيل دخولك كمدير للمنصة 🛡️');
+            return;
+          }
+        }
+
+        const res = await apiRequest('/api/access/activate-code', 'POST', { code });
+        if (res.ok && res.data.success) {
+          playSuccessSound();
+          if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
+          currentUser.access_type = res.data.accessType;
+          currentUser.access_status = res.data.accessStatus;
+          currentUser.annual_activated_at = res.data.annualActivatedAt;
+          currentUser.annual_expires_at = res.data.annualExpiresAt;
+          if (res.data.role === 'admin') currentUser.role = 'admin';
+          updateTopBarUserUI();
+          showAccessView('none');
+          input.value = '';
+          alert('تهانينا! ' + res.data.message);
+        } else {
+          playErrorSound();
+          errBox.innerText = res.data.message || 'كود غير صحيح.';
+          errBox.classList.remove('hidden');
+        }
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Quick Admin Login Prompt
+    async function promptAdminLogin() {
+      playClickSound();
+      const code = prompt('🔑 أدخل كود الأدمن وصاحب التطبيق للمتابعة كمدير:', 'ADMIN-BIENVENU-2026');
+      if (!code) return;
+      const res = await apiRequest('/api/auth/admin-code-login', 'POST', { adminCode: code.trim().toUpperCase() });
+      if (res.ok && res.data.success) {
+        userToken = res.data.token;
+        localStorage.setItem('bienvenu2_token', userToken);
+        currentUser = res.data.user;
+        playSuccessSound();
+        if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
+        updateTopBarUserUI();
+        showAccessView('none');
+        alert('مرحباً بك يا صاحب التطبيق! تم تسجيل دخولك بنجاح 🛡️');
+      } else {
+        playErrorSound();
+        alert(res.data.message || 'كود الأدمن غير صحيح.');
+      }
+    }
+
+    // Verify Access Status with Server
+    async function verifyAccessStatus() {
+      if (!userToken) {
+        currentUser = null;
+        updateTopBarUserUI();
+        showAccessView('welcome');
+        return;
+      }
+
+      const res = await apiRequest('/api/auth/me', 'GET');
+      if (!res.ok || !res.data.success) {
+        // Token invalid or expired
+        userToken = '';
+        currentUser = null;
+        localStorage.removeItem('bienvenu2_token');
+        updateTopBarUserUI();
+        showAccessView('welcome');
+        return;
+      }
+
+      currentUser = res.data.user;
+      updateTopBarUserUI();
+
+      // Check Role
+      if (currentUser.role === 'admin') {
+        showAccessView('none');
+        return;
+      }
+
+      // Check Access Status based on trusted server evaluation
+      if (currentUser.access_status === 'ACTIVE') {
+        showAccessView('none');
+      } else if (currentUser.access_status === 'TRIAL_EXPIRED') {
+        showAccessView('trial_expired');
+      } else if (currentUser.access_status === 'EXPIRED') {
+        showAccessView('annual_expired');
+      } else if (currentUser.access_status === 'SUSPENDED') {
+        showAccessView('suspended');
+      } else {
+        // INACTIVE / NONE
+        showAccessView('welcome');
+      }
+    }
+
+    // Update Top App Bar UI based on User
+    function updateTopBarUserUI() {
+      const nameDisplay = document.getElementById('userNameDisplay');
+      const badge = document.getElementById('userSubscriptionBadge');
+      const adminBtn = document.getElementById('topAdminBtn');
+      const upgradeBtn = document.getElementById('topUpgradeBtn');
+      const welcomeStateText = document.getElementById('welcomeUserStateText');
+      const welcomeActionBtns = document.getElementById('welcomeUserActionBtns');
+
+      if (!currentUser) {
+        nameDisplay.innerText = 'زائر';
+        badge.innerText = 'غير مسجل';
+        badge.className = 'px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black bg-slate-600 text-slate-200 shrink-0';
+        if (adminBtn) adminBtn.classList.add('hidden');
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
+        if (welcomeStateText) welcomeStateText.innerText = 'غير مسجل الدخول';
+        if (welcomeActionBtns) {
+          welcomeActionBtns.innerHTML = `
+            <button onclick="promptAdminLogin()" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs flex items-center gap-1 transition">
+              <i class="fa-solid fa-shield-halved text-amber-600"></i>
+              <span>دخول الأدمن</span>
+            </button>
+            <button onclick="showAccessView('auth')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1 transition">
+              <i class="fa-solid fa-user-circle text-indigo-600"></i>
+              <span>دخول / تسجيل</span>
+            </button>
+          `;
+        }
+        if (countdownInterval) clearInterval(countdownInterval);
+        return;
+      }
+
+      nameDisplay.innerText = currentUser.name || 'طالب متفوق';
+      if (welcomeStateText) {
+        welcomeStateText.innerHTML = `<span class="text-indigo-700 font-bold flex items-center gap-1"><i class="fa-solid fa-user-check text-emerald-500"></i> مسجل باسم: ${currentUser.name}</span>`;
+      }
+      if (welcomeActionBtns) {
+        welcomeActionBtns.innerHTML = `
+          <button onclick="logout()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>تسجيل الخروج</span>
+          </button>
+        `;
+      }
+
+      if (currentUser.role === 'admin') {
+        badge.innerText = 'مدير المنصة 🛡️';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-900 mr-1';
+        if (adminBtn) adminBtn.classList.remove('hidden');
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
+        if (countdownInterval) clearInterval(countdownInterval);
+        return;
+      }
+
+      if (adminBtn) adminBtn.classList.add('hidden');
+
+      if (currentUser.access_type === 'TRIAL' && currentUser.access_status === 'ACTIVE') {
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
+        startTrialCountdown(currentUser.trial_expires_at || currentUser.trialExpiresAt);
+      } else if (currentUser.access_type === 'ANNUAL' && currentUser.access_status === 'ACTIVE') {
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
+        if (countdownInterval) clearInterval(countdownInterval);
+        const expStr = currentUser.annual_expires_at || currentUser.annualExpiresAt;
+        const d = expStr ? new Date(expStr) : null;
+        const dateFormatted = d ? `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}` : '365 يوم';
+        badge.innerText = `سنوي كامل 🌟 (${dateFormatted})`;
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white mr-1';
+      } else if (currentUser.access_status === 'TRIAL_EXPIRED') {
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
+        badge.innerText = 'انتهت التجربة ⏳';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-600 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      } else if (currentUser.access_status === 'EXPIRED') {
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
+        badge.innerText = 'اشتراك منتهي ❌';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      } else if (currentUser.access_status === 'SUSPENDED') {
+        badge.innerText = 'حساب موقوف ⛔';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-red-800 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      } else {
+        badge.innerText = 'بدون اشتراك';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-600 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      }
+    }
+
+    // Trial Live Countdown
+    function startTrialCountdown(expiresAtStr) {
+      if (countdownInterval) clearInterval(countdownInterval);
+      if (!expiresAtStr) return;
+      const targetTime = new Date(expiresAtStr).getTime();
+      const badge = document.getElementById('userSubscriptionBadge');
+
+      function update() {
+        const now = Date.now();
+        const diff = targetTime - now;
+        if (diff <= 0) {
+          clearInterval(countdownInterval);
+          badge.innerText = 'انتهت التجربة ⏳';
+          verifyAccessStatus(); // Server check will set TRIAL_EXPIRED
+          return;
+        }
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        badge.innerText = `تجريبي: ${hours}س ${mins}د ${secs}ث 🎁`;
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white mr-1 font-mono';
+      }
+
+      update();
+      countdownInterval = setInterval(update, 1000);
+    }
+
+    // Logout
+    function logout() {
+      playClickSound();
+      userToken = '';
+      currentUser = null;
+      localStorage.removeItem('bienvenu2_token');
+      closeAccountModal();
+      if (countdownInterval) clearInterval(countdownInterval);
+      updateTopBarUserUI();
+      showAccessView('welcome');
+      alert('تم تسجيل الخروج بنجاح. يمكنك الآن تسجيل الدخول بحساب جديد أو كأدمن 🛡️');
+    }
+
+    // User Account & Session Modal Functions
+    function openAccountModal() {
+      playClickSound();
+      const modal = document.getElementById('userAccountModal');
+      if (!modal) return;
+      if (!currentUser) {
+        showAccessView('auth');
+        switchAuthTab('login');
+        return;
+      }
+
+      document.getElementById('accountModalUserName').innerText = currentUser.name || 'طالب';
+      document.getElementById('accountModalIdentifier').innerText = currentUser.loginIdentifier || currentUser.login_identifier || '-';
+      
+      const roleEl = document.getElementById('accountModalRole');
+      const statusEl = document.getElementById('accountModalStatus');
+      const expiresEl = document.getElementById('accountModalExpires');
+      const adminBtn = document.getElementById('accountModalAdminBtn');
+
+      if (currentUser.role === 'admin') {
+        roleEl.innerText = 'مدير المنصة / الأدمن 🛡️';
+        roleEl.className = 'font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px]';
+        statusEl.innerText = 'صلاحيات كاملة غير محدودة';
+        statusEl.className = 'font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px]';
+        expiresEl.innerText = 'دائم / غير منتهي';
+        if (adminBtn) adminBtn.classList.remove('hidden');
+      } else {
+        roleEl.innerText = 'طالب';
+        roleEl.className = 'font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[11px]';
+        if (adminBtn) adminBtn.classList.add('hidden');
+
+        if (currentUser.access_type === 'ANNUAL' && currentUser.access_status === 'ACTIVE') {
+          statusEl.innerText = 'اشتراك سنوي نشط 🌟';
+          statusEl.className = 'font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px]';
+          const exp = currentUser.annual_expires_at || currentUser.annualExpiresAt;
+          expiresEl.innerText = exp ? new Date(exp).toLocaleDateString('ar-EG') : '365 يوماً';
+        } else if (currentUser.access_type === 'TRIAL' && currentUser.access_status === 'ACTIVE') {
+          statusEl.innerText = 'فترة تجريبية 24 ساعة 🎁';
+          statusEl.className = 'font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[11px]';
+          const exp = currentUser.trial_expires_at || currentUser.trialExpiresAt;
+          expiresEl.innerText = exp ? new Date(exp).toLocaleString('ar-EG') : '24 ساعة';
+        } else {
+          statusEl.innerText = 'منتهي / غير نشط';
+          statusEl.className = 'font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[11px]';
+          expiresEl.innerText = 'يرجى تفعيل كود جديد';
+        }
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeAccountModal() {
+      const modal = document.getElementById('userAccountModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // ==============================================================
+    // ADMIN DASHBOARD CLIENT LOGIC
+    // ==============================================================
+    async function openAdminDashboard() {
+      playClickSound();
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert('غير مصرح لك بالوصول إلى لوحة الإدارة.');
+        return;
+      }
+      document.getElementById('adminDashboardModal').classList.remove('hidden');
+      await refreshAdminDashboard();
+    }
+
+    function closeAdminDashboard() {
+      playClickSound();
+      document.getElementById('adminDashboardModal').classList.add('hidden');
+    }
+
+    async function refreshAdminDashboard() {
+      // 1. Load Overview Metrics
+      const overviewRes = await apiRequest('/api/admin/overview', 'GET');
+      if (overviewRes.ok && overviewRes.data.success) {
+        const { codes, students } = overviewRes.data;
+        document.getElementById('adminStatTotalCodes').innerText = codes.total;
+        document.getElementById('adminStatUnusedCodes').innerText = codes.unused;
+        document.getElementById('adminStatActiveTrials').innerText = students.activeTrial;
+        document.getElementById('adminStatActiveAnnual').innerText = students.activeAnnual;
+      }
+
+      // 2. Load Students List
+      await loadAdminStudentsList();
+    }
+
+    async function loadAdminStudentsList(searchQuery = '') {
+      const url = searchQuery ? `/api/admin/students?q=${encodeURIComponent(searchQuery)}` : '/api/admin/students';
+      const res = await apiRequest(url, 'GET');
+      const tbody = document.getElementById('adminStudentsTableBody');
+      if (!res.ok || !res.data.success || !res.data.students || res.data.students.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا يوجد طلاب مسجلين حالياً.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = res.data.students.map(s => {
+        let typeBadge = '<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold">بدون</span>';
+        if (s.access_type === 'TRIAL') typeBadge = '<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">تجربة 24س</span>';
+        if (s.access_type === 'ANNUAL') typeBadge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-bold">سنوي 365ي</span>';
+
+        let statusBadge = '<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500">غير نشط</span>';
+        if (s.access_status === 'ACTIVE') statusBadge = '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">نشط ✅</span>';
+        if (s.access_status === 'TRIAL_EXPIRED') statusBadge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">انتهت التجربة</span>';
+        if (s.access_status === 'EXPIRED') statusBadge = '<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">منتهي ❌</span>';
+        if (s.access_status === 'SUSPENDED') statusBadge = '<span class="px-2 py-0.5 rounded bg-red-100 text-red-700 font-bold">موقوف ⛔</span>';
+
+        const expDate = s.access_type === 'ANNUAL' ? s.annual_expires_at : s.trial_expires_at;
+        const expStr = expDate ? new Date(expDate).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+
+        const isSuspended = s.access_status === 'SUSPENDED';
+        const actionBtn = isSuspended
+          ? `<button onclick="toggleSuspendStudent('${s.uid}', false)" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition">تفعيل</button>`
+          : `<button onclick="toggleSuspendStudent('${s.uid}', true)" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] transition">إيقاف</button>`;
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="p-3 font-bold text-slate-800">${s.name}</td>
+            <td class="p-3 font-mono text-slate-500 text-[11px]" dir="ltr">${s.login_identifier}</td>
+            <td class="p-3">${typeBadge}</td>
+            <td class="p-3">${statusBadge}</td>
+            <td class="p-3 text-slate-600 font-mono text-[11px]">${expStr}</td>
+            <td class="p-3 text-center">${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleStudentSearch(val) {
+      if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = setTimeout(() => {
+        loadAdminStudentsList(val.trim());
+      }, 300);
+    }
+
+    async function toggleSuspendStudent(uid, shouldSuspend) {
+      const endpoint = shouldSuspend ? '/api/admin/student/suspend' : '/api/admin/student/reactivate';
+      const actionName = shouldSuspend ? 'إيقاف' : 'إعادة تفعيل';
+      if (!confirm(`هل أنت متأكد من ${actionName} حساب هذا الطالب؟`)) return;
+
+      const res = await apiRequest(endpoint, 'POST', { studentUid: uid });
+      if (res.ok && res.data.success) {
+        await refreshAdminDashboard();
+      } else {
+        alert(res.data.message || 'حدث خطأ أثناء تنفيذ الإجراء.');
+      }
+    }
+
+    async function downloadCodesCsv() {
+      playClickSound();
+      try {
+        const res = await fetch('/api/admin/export-codes', {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        if (!res.ok) {
+          alert('تعذر تنزيل الملف، تأكد من صلاحيات الإدارة.');
+          return;
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Bienvenu2_Codes_Export_500.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('Download error:', err);
+        alert('حدث خطأ أثناء تنزيل الملف.');
+      }
+    }
+
 
     // --- Navigation ---
     const SCREENS = ['portal', 'unit1', 'unit2', 'unit3', 'revision', 'grammar', 'exam'];
@@ -2757,7 +4293,14 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
 
     // --- INIT APP ---
     window.addEventListener('DOMContentLoaded', () => {
-      checkActivation();
+      verifyAccessStatus();
+      // Periodic server-side check every 60 seconds to enforce live expiration
+      setInterval(() => {
+        if (currentUser && currentUser.role !== 'admin') {
+          verifyAccessStatus();
+        }
+      }, 60000);
+
       renderPortalScreen();
       renderUnit1Screen();
       renderUnit2Screen();
