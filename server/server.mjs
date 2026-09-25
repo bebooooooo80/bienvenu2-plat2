@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { initDatabase, hashPassword, hashCode } from './init_db.js';
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const db = initDatabase();
 
 // In-memory rate limiter
@@ -43,6 +43,38 @@ function parseJsonBody(req) {
   });
 }
 
+// Helper: set HttpOnly secure session cookie
+function setSessionCookie(req, res, token) {
+  const isSecure = req.headers['x-forwarded-proto'] === 'https' || (req.socket && req.socket.encrypted);
+  const cookieFlags = [
+    `session_token=${token}`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    `Max-Age=${30 * 24 * 60 * 60}` // 30 days
+  ];
+  if (isSecure) {
+    cookieFlags.push('Secure');
+  }
+  res.setHeader('Set-Cookie', cookieFlags.join('; '));
+}
+
+// Helper: clear session cookie
+function clearSessionCookie(req, res) {
+  const isSecure = req.headers['x-forwarded-proto'] === 'https' || (req.socket && req.socket.encrypted);
+  const cookieFlags = [
+    'session_token=',
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    'Max-Age=0'
+  ];
+  if (isSecure) {
+    cookieFlags.push('Secure');
+  }
+  res.setHeader('Set-Cookie', cookieFlags.join('; '));
+}
+
 // Helper: send JSON responses
 function sendJson(res, statusCode, data) {
   res.writeHead(statusCode, {
@@ -52,16 +84,20 @@ function sendJson(res, statusCode, data) {
   res.end(JSON.stringify(data));
 }
 
-// Helper: authenticate request using Bearer header or Cookie
+// Helper: authenticate request using Cookie (primary) or Bearer header (fallback)
 function getAuthUser(req) {
-  const authHeader = req.headers['authorization'] || '';
   let token = '';
-  if (authHeader.startsWith('Bearer ')) {
-    token = authHeader.slice(7).trim();
-  } else {
-    const cookieHeader = req.headers['cookie'] || '';
-    const match = cookieHeader.match(/session_token=([^;]+)/);
-    if (match) token = match[1];
+  const cookieHeader = req.headers['cookie'] || '';
+  const match = cookieHeader.match(/session_token=([^;]+)/);
+  if (match) {
+    token = match[1].trim();
+  }
+
+  if (!token) {
+    const authHeader = req.headers['authorization'] || '';
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.slice(7).trim();
+    }
   }
 
   if (!token) return null;
@@ -115,6 +151,24 @@ function createSession(userId) {
   return token;
 }
 
+// Helper: format safe user object without sensitive secrets
+function formatSafeUser(user) {
+  return {
+    uid: user.uid,
+    name: user.name,
+    username: user.username,
+    role: user.role,
+    createdAt: user.created_at,
+    trialUsed: Boolean(user.trial_used),
+    trialStartedAt: user.trial_started_at,
+    trialExpiresAt: user.trial_expires_at,
+    accessType: user.access_type,
+    accessStatus: user.access_status,
+    annualActivatedAt: user.annual_activated_at,
+    annualExpiresAt: user.annual_expires_at
+  };
+}
+
 process.on('uncaughtException', (err) => {
   console.error('Unhandled Exception in server process:', err);
 });
@@ -129,7 +183,8 @@ const server = http.createServer(async (req, res) => {
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
 
     // CORS & Security Headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -142,224 +197,235 @@ const server = http.createServer(async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // API ROUTES (Backend Authorization Source of Truth)
+    // PHASE 3.1: SIMPLIFIED STUDENT AUTHENTICATION & ACCESS API
     // -------------------------------------------------------------
 
-    // 1. REGISTER
-    if (pathname === '/api/auth/register' && req.method === 'POST') {
-      if (!checkRateLimit(`reg_${clientIp}`, 15, 60000)) {
-        return sendJson(res, 429, { success: false, message: 'طلبات كثيرة جداً، يرجى الانتظار دقيقة.' });
-      }
-
-      try {
-        const { name, loginIdentifier, password } = await parseJsonBody(req);
-        if (!name || !loginIdentifier || !password) {
-          return sendJson(res, 400, { success: false, message: 'يرجى إدخال جميع الحقول المطلوبة.' });
-        }
-        if (password.length < 6) {
-          return sendJson(res, 400, { success: false, message: 'يجب أن لا تقل كلمة المرور عن 6 أحرف.' });
-        }
-
-        const cleanIdentifier = loginIdentifier.trim().toLowerCase();
-        const existing = db.prepare('SELECT uid FROM users WHERE login_identifier = ?').get(cleanIdentifier);
-        if (existing) {
-          return sendJson(res, 409, { success: false, message: 'هذا المعرف / البريد مسجل مسبقاً.' });
-        }
-
-        const uid = 'usr_' + crypto.randomBytes(10).toString('hex');
-        const salt = crypto.randomBytes(16).toString('hex');
-        const passHash = hashPassword(password, salt);
-        const nowIso = new Date().toISOString();
-
-        db.prepare(`
-          INSERT INTO users (uid, name, login_identifier, password_hash, password_salt, role, created_at, access_type, access_status)
-          VALUES (?, ?, ?, ?, ?, 'student', ?, 'NONE', 'INACTIVE')
-        `).run(uid, name.trim(), cleanIdentifier, passHash, salt, nowIso);
-
-        const token = createSession(uid);
-        const user = db.prepare('SELECT uid, name, login_identifier, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at FROM users WHERE uid = ?').get(uid);
-
-        return sendJson(res, 201, {
-          success: true,
-          token,
-          user: {
-            uid: user.uid,
-            name: user.name,
-            loginIdentifier: user.login_identifier,
-            role: user.role,
-            createdAt: user.created_at,
-            trialUsed: Boolean(user.trial_used),
-            trialStartedAt: user.trial_started_at,
-            trialExpiresAt: user.trial_expires_at,
-            accessType: user.access_type,
-            accessStatus: user.access_status,
-            annualActivatedAt: user.annual_activated_at,
-            annualExpiresAt: user.annual_expires_at
-          },
-          message: 'تم إنشاء الحساب بنجاح.'
-        });
-      } catch (err) {
-        console.error('Register error:', err);
-        return sendJson(res, 500, { success: false, message: 'حدث خطأ في الخادم أثناء التسجيل.' });
-      }
-    }
-
-    // 2. LOGIN
-    if (pathname === '/api/auth/login' && req.method === 'POST') {
-      if (!checkRateLimit(`login_${clientIp}`, 20, 60000)) {
+    // 1. STUDENT LOGIN / FIRST ACTIVATION (Username + Activation Code)
+    if ((pathname === '/api/student/login' || pathname === '/api/auth/login') && req.method === 'POST') {
+      if (!checkRateLimit(`stud_login_${clientIp}`, 20, 60000)) {
         return sendJson(res, 429, { success: false, message: 'محاولات دخول كثيرة جداً، يرجى الانتظار قليلاً.' });
       }
 
       try {
-        const { loginIdentifier, password } = await parseJsonBody(req);
-        if (!loginIdentifier || !password) {
-          return sendJson(res, 400, { success: false, message: 'يرجى إدخال اسم المستخدم وكلمة المرور.' });
+        const body = await parseJsonBody(req);
+        const rawUsername = String(body.username || body.loginIdentifier || '').trim();
+        const rawCode = String(body.code || body.activationCode || '').trim();
+
+        if (!rawUsername || !rawCode) {
+          return sendJson(res, 400, {
+            success: false,
+            message: 'يرجى إدخال اسم المستخدم وكود التفعيل.'
+          });
         }
 
-        const cleanIdentifier = loginIdentifier.trim().toLowerCase();
-        const user = db.prepare('SELECT * FROM users WHERE login_identifier = ?').get(cleanIdentifier);
-        if (!user) {
-          return sendJson(res, 401, { success: false, message: 'بيانات الدخول غير صحيحة.' });
+        const normUsername = rawUsername.toLowerCase();
+        const cleanCode = rawCode.toUpperCase();
+        const codeHash = hashCode(cleanCode);
+
+        // Lookup code hash
+        const codeRow = db.prepare('SELECT * FROM activation_codes WHERE code_hash = ?').get(codeHash);
+
+        if (!codeRow) {
+          // Do not reveal if username or code was wrong
+          return sendJson(res, 401, {
+            success: false,
+            message: 'اسم المستخدم أو كود التفعيل غير صحيح.'
+          });
         }
 
-        const testHash = hashPassword(password, user.password_salt);
-        if (testHash !== user.password_hash) {
-          return sendJson(res, 401, { success: false, message: 'بيانات الدخول غير صحيحة.' });
+        // CASE 1: UNUSED CODE -> FIRST PAID ACTIVATION (Creates account & associates code permanently)
+        if (codeRow.status === 'UNUSED') {
+          // Check username availability
+          const existingUser = db.prepare('SELECT uid FROM users WHERE username = ?').get(normUsername);
+          if (existingUser) {
+            return sendJson(res, 409, {
+              success: false,
+              message: 'اسم المستخدم مسجل مسبقاً، يرجى اختيار اسم مستخدم آخر.'
+            });
+          }
+
+          const uid = 'std_' + crypto.randomBytes(8).toString('hex');
+          const now = new Date();
+          const annualExpiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 365 days
+
+          db.exec('BEGIN IMMEDIATE');
+          try {
+            // Re-verify code still UNUSED inside transaction
+            const freshCode = db.prepare('SELECT status FROM activation_codes WHERE id = ?').get(codeRow.id);
+            if (freshCode.status !== 'UNUSED') {
+              db.exec('ROLLBACK');
+              return sendJson(res, 400, {
+                success: false,
+                message: 'تم استخدام هذا الكود للتو بواسطة مستخدم آخر.'
+              });
+            }
+
+            // Create student account
+            db.prepare(`
+              INSERT INTO users (uid, name, username, role, created_at, access_type, access_status, annual_activated_at, annual_expires_at, activation_code_id, password_hash, password_salt)
+              VALUES (?, ?, ?, 'student', ?, 'ANNUAL', 'ACTIVE', ?, ?, ?, '', '')
+            `).run(uid, rawUsername, normUsername, now.toISOString(), now.toISOString(), annualExpiresAt.toISOString(), codeRow.id);
+
+            // Permanently associate code with student account
+            db.prepare(`
+              UPDATE activation_codes
+              SET status = 'ACTIVE',
+                  activated_at = ?,
+                  expires_at = ?,
+                  assigned_user_id = ?
+              WHERE id = ?
+            `).run(now.toISOString(), annualExpiresAt.toISOString(), uid, codeRow.id);
+
+            // Log access audit
+            db.prepare(`
+              INSERT INTO access_audit_logs (user_id, event_type, timestamp, metadata)
+              VALUES (?, 'FIRST_ACTIVATION', ?, ?)
+            `).run(uid, now.toISOString(), JSON.stringify({ codeId: codeRow.id, expiresAt: annualExpiresAt.toISOString() }));
+
+            db.exec('COMMIT');
+
+            const token = createSession(uid);
+            setSessionCookie(req, res, token);
+
+            const newUser = db.prepare('SELECT * FROM users WHERE uid = ?').get(uid);
+            return sendJson(res, 200, {
+              success: true,
+              user: formatSafeUser(newUser),
+              message: 'تم تفعيل الحساب والاشتراك السنوي بنجاح! 🎉'
+            });
+          } catch (txErr) {
+            db.exec('ROLLBACK');
+            throw txErr;
+          }
         }
 
-        evaluateUserAccess(user);
-        const token = createSession(user.uid);
+        // CASE 2: ACTIVE CODE -> FUTURE LOGIN (Verify assigned student account)
+        if (codeRow.status === 'ACTIVE') {
+          const user = db.prepare('SELECT * FROM users WHERE uid = ? AND username = ?').get(codeRow.assigned_user_id, normUsername);
 
-        const safeUser = {
-          uid: user.uid,
-          name: user.name,
-          loginIdentifier: user.login_identifier,
-          role: user.role,
-          createdAt: user.created_at,
-          trialUsed: Boolean(user.trial_used),
-          trialStartedAt: user.trial_started_at,
-          trialExpiresAt: user.trial_expires_at,
-          accessType: user.access_type,
-          accessStatus: user.access_status,
-          annualActivatedAt: user.annual_activated_at,
-          annualExpiresAt: user.annual_expires_at
-        };
+          if (!user) {
+            // Code belongs to another student, or username mismatch -> Reject with generic message
+            return sendJson(res, 401, {
+              success: false,
+              message: 'اسم المستخدم أو كود التفعيل غير صحيح.'
+            });
+          }
 
-        return sendJson(res, 200, {
-          success: true,
-          token,
-          user: safeUser,
-          message: 'تم تسجيل الدخول بنجاح.'
+          evaluateUserAccess(user);
+
+          if (user.access_status === 'SUSPENDED') {
+            return sendJson(res, 403, {
+              success: false,
+              message: 'تم إيقاف هذا الحساب من قبل الإدارة.'
+            });
+          }
+
+          const token = createSession(user.uid);
+          setSessionCookie(req, res, token);
+
+          return sendJson(res, 200, {
+            success: true,
+            user: formatSafeUser(user),
+            message: 'تم تسجيل الدخول بنجاح.'
+          });
+        }
+
+        // CASE 3: EXPIRED OR SUSPENDED CODE
+        if (codeRow.status === 'EXPIRED' || codeRow.status === 'SUSPENDED') {
+          const user = db.prepare('SELECT * FROM users WHERE uid = ? AND username = ?').get(codeRow.assigned_user_id, normUsername);
+          if (!user) {
+            return sendJson(res, 401, {
+              success: false,
+              message: 'اسم المستخدم أو كود التفعيل غير صحيح.'
+            });
+          }
+
+          evaluateUserAccess(user);
+          const token = createSession(user.uid);
+          setSessionCookie(req, res, token);
+
+          return sendJson(res, 200, {
+            success: true,
+            user: formatSafeUser(user),
+            message: codeRow.status === 'EXPIRED' ? 'انتهت صلاحية اشتراكك.' : 'تم إيقاف هذا الحساب.'
+          });
+        }
+
+        return sendJson(res, 401, {
+          success: false,
+          message: 'اسم المستخدم أو كود التفعيل غير صحيح.'
         });
       } catch (err) {
-        console.error('Login error:', err);
+        console.error('Student login error:', err);
         return sendJson(res, 500, { success: false, message: 'حدث خطأ في الخادم أثناء الدخول.' });
       }
     }
 
-    // 3. GET CURRENT USER & ACCESS
-    if (pathname === '/api/auth/me' && req.method === 'GET') {
-      const user = getAuthUser(req);
-      if (!user) {
-        return sendJson(res, 401, { success: false, message: 'غير مسجل الدخول.' });
+    // 2. 24-HOUR FREE TRIAL (Username only)
+    if ((pathname === '/api/student/trial' || pathname === '/api/access/start-trial') && req.method === 'POST') {
+      if (!checkRateLimit(`stud_trial_${clientIp}`, 10, 60000)) {
+        return sendJson(res, 429, { success: false, message: 'محاولات كثيرة، يرجى الانتظار دقيقة.' });
       }
 
-      return sendJson(res, 200, {
-        success: true,
-        user: {
-          uid: user.uid,
-          name: user.name,
-          loginIdentifier: user.login_identifier,
-          role: user.role,
-          createdAt: user.created_at,
-          trialUsed: Boolean(user.trial_used),
-          trialStartedAt: user.trial_started_at,
-          trialExpiresAt: user.trial_expires_at,
-          accessType: user.access_type,
-          accessStatus: user.access_status,
-          annualActivatedAt: user.annual_activated_at,
-          annualExpiresAt: user.annual_expires_at,
-          serverTime: new Date().toISOString()
-        }
-      });
-    }
-
-    // 3.5 LOGOUT
-    if (pathname === '/api/auth/logout' && req.method === 'POST') {
-      const authHeader = req.headers['authorization'] || '';
-      let token = '';
-      if (authHeader.startsWith('Bearer ')) {
-        token = authHeader.slice(7).trim();
-      }
-      if (token) {
-        db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
-      }
-      return sendJson(res, 200, { success: true, message: 'تم تسجيل الخروج بنجاح.' });
-    }
-
-    // 4. START 24-HOUR FREE TRIAL
-    if (pathname === '/api/access/start-trial' && req.method === 'POST') {
-      const user = getAuthUser(req);
-      if (!user) {
-        return sendJson(res, 401, { success: false, message: 'يرجى تسجيل الدخول أو إنشاء حساب أولاً.' });
-      }
-
-      // STRICT SERVER-SIDE CHECK: Trial only once per student account!
-      if (user.trial_used === 1) {
-        return sendJson(res, 403, {
-          success: false,
-          code: 'TRIAL_ALREADY_USED',
-          message: 'لقد استخدمت الفترة التجريبية المجانية من قبل. يمكنك تفعيل المنصة باستخدام كود التفعيل.'
-        });
-      }
-
-      if (user.access_type === 'ANNUAL' && user.access_status === 'ACTIVE') {
-        return sendJson(res, 400, {
-          success: false,
-          message: 'لديك اشتراك سنوي مفعل بالفعل.'
-        });
-      }
-
-      // Atomic update of trial state with trusted server time
-      const now = new Date();
-      const trialExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
-
-      db.exec('BEGIN IMMEDIATE');
       try {
-        db.prepare(`
-          UPDATE users
-          SET trial_used = 1,
-              trial_started_at = ?,
-              trial_expires_at = ?,
-              access_type = 'TRIAL',
-              access_status = 'ACTIVE'
-          WHERE uid = ?
-        `).run(now.toISOString(), trialExpiresAt.toISOString(), user.uid);
+        const body = await parseJsonBody(req);
+        const rawUsername = String(body.username || body.name || '').trim();
 
-        db.prepare(`
-          INSERT INTO access_audit_logs (user_id, event_type, timestamp, metadata)
-          VALUES (?, 'TRIAL_STARTED', ?, ?)
-        `).run(user.uid, now.toISOString(), JSON.stringify({ expiresAt: trialExpiresAt.toISOString() }));
+        if (!rawUsername || rawUsername.length < 2) {
+          return sendJson(res, 400, {
+            success: false,
+            message: 'يرجى إدخال اسم مستخدم صالح (حرفين على الأقل).'
+          });
+        }
 
-        db.exec('COMMIT');
+        const normUsername = rawUsername.toLowerCase();
+        const existing = db.prepare('SELECT uid FROM users WHERE username = ?').get(normUsername);
+        if (existing) {
+          return sendJson(res, 409, {
+            success: false,
+            message: 'اسم المستخدم مسجل مسبقاً. يرجى اختيار اسم مستخدم آخر أو تسجيل الدخول بكود التفعيل.'
+          });
+        }
 
-        return sendJson(res, 200, {
-          success: true,
-          accessType: 'TRIAL',
-          accessStatus: 'ACTIVE',
-          trialStartedAt: now.toISOString(),
-          trialExpiresAt: trialExpiresAt.toISOString(),
-          message: 'تم تفعيل الفترة التجريبية المجانية لمدة 24 ساعة بنجاح!'
-        });
+        const uid = 'std_' + crypto.randomBytes(8).toString('hex');
+        const now = new Date();
+        const trialExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
+
+        db.exec('BEGIN IMMEDIATE');
+        try {
+          db.prepare(`
+            INSERT INTO users (uid, name, username, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, password_hash, password_salt)
+            VALUES (?, ?, ?, 'student', ?, 1, ?, ?, 'TRIAL', 'ACTIVE', '', '')
+          `).run(uid, rawUsername, normUsername, now.toISOString(), now.toISOString(), trialExpiresAt.toISOString());
+
+          db.prepare(`
+            INSERT INTO access_audit_logs (user_id, event_type, timestamp, metadata)
+            VALUES (?, 'TRIAL_STARTED', ?, ?)
+          `).run(uid, now.toISOString(), JSON.stringify({ expiresAt: trialExpiresAt.toISOString() }));
+
+          db.exec('COMMIT');
+
+          const token = createSession(uid);
+          setSessionCookie(req, res, token);
+
+          const user = db.prepare('SELECT * FROM users WHERE uid = ?').get(uid);
+          return sendJson(res, 200, {
+            success: true,
+            user: formatSafeUser(user),
+            message: 'تم تفعيل الفترة التجريبية المجانية لمدة 24 ساعة بنجاح! 🎁'
+          });
+        } catch (txErr) {
+          db.exec('ROLLBACK');
+          throw txErr;
+        }
       } catch (err) {
-        db.exec('ROLLBACK');
-        console.error('Trial start error:', err);
+        console.error('Start trial error:', err);
         return sendJson(res, 500, { success: false, message: 'حدث خطأ في الخادم أثناء بدء التجربة.' });
       }
     }
 
-    // 5. ACTIVATE PAID ANNUAL CODE (365 DAYS)
-    if (pathname === '/api/access/activate-code' && req.method === 'POST') {
+    // 3. UPGRADE TRIAL TO PAID ANNUAL (Preserves Student Account & Progress)
+    if ((pathname === '/api/access/activate-code' || pathname === '/api/access/upgrade-trial') && req.method === 'POST') {
       const user = getAuthUser(req);
       if (!user) {
         return sendJson(res, 401, { success: false, message: 'يرجى تسجيل الدخول أولاً لتفعيل الكود.' });
@@ -370,15 +436,16 @@ const server = http.createServer(async (req, res) => {
       }
 
       try {
-        const { code } = await parseJsonBody(req);
-        if (!code || typeof code !== 'string') {
+        const body = await parseJsonBody(req);
+        const rawCode = String(body.code || '').trim();
+
+        if (!rawCode) {
           return sendJson(res, 400, { success: false, message: 'يرجى كتابة كود التفعيل.' });
         }
 
-        const cleanCode = code.trim().toUpperCase();
+        const cleanCode = rawCode.toUpperCase();
         const codeHash = hashCode(cleanCode);
 
-        // ATOMIC TRANSACTION: Code verification & activation
         db.exec('BEGIN IMMEDIATE');
         try {
           const codeRow = db.prepare('SELECT * FROM activation_codes WHERE code_hash = ?').get(codeHash);
@@ -404,7 +471,7 @@ const server = http.createServer(async (req, res) => {
           const now = new Date();
           const annualExpiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 365 days
 
-          // 1. Update code status to ACTIVE and assign to this user
+          // 1. Update code status to ACTIVE and assign to this student account
           db.prepare(`
             UPDATE activation_codes
             SET status = 'ACTIVE',
@@ -414,7 +481,7 @@ const server = http.createServer(async (req, res) => {
             WHERE id = ?
           `).run(now.toISOString(), annualExpiresAt.toISOString(), user.uid, codeRow.id);
 
-          // 2. Upgrade student account: upgrade to ANNUAL
+          // 2. Upgrade student account: convert to ANNUAL (preserves username, progress, scores)
           db.prepare(`
             UPDATE users
             SET access_type = 'ANNUAL',
@@ -436,8 +503,10 @@ const server = http.createServer(async (req, res) => {
 
           db.exec('COMMIT');
 
+          const updatedUser = db.prepare('SELECT * FROM users WHERE uid = ?').get(user.uid);
           return sendJson(res, 200, {
             success: true,
+            user: formatSafeUser(updatedUser),
             accessType: 'ANNUAL',
             accessStatus: 'ACTIVE',
             annualActivatedAt: now.toISOString(),
@@ -454,7 +523,82 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // 6. ADMIN OVERVIEW
+    // 4. GET CURRENT USER & ACCESS STATUS (Evaluated with Server Time)
+    if (pathname === '/api/auth/me' && req.method === 'GET') {
+      const user = getAuthUser(req);
+      if (!user) {
+        return sendJson(res, 401, { success: false, message: 'غير مسجل الدخول.' });
+      }
+
+      return sendJson(res, 200, {
+        success: true,
+        user: formatSafeUser(user),
+        serverTime: new Date().toISOString()
+      });
+    }
+
+    // 5. LOGOUT (Invalidates Session & Clears Cookie)
+    if (pathname === '/api/auth/logout' && req.method === 'POST') {
+      let token = '';
+      const cookieHeader = req.headers['cookie'] || '';
+      const match = cookieHeader.match(/session_token=([^;]+)/);
+      if (match) {
+        token = match[1].trim();
+      }
+      if (!token) {
+        const authHeader = req.headers['authorization'] || '';
+        if (authHeader.startsWith('Bearer ')) {
+          token = authHeader.slice(7).trim();
+        }
+      }
+
+      if (token) {
+        db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
+      }
+
+      clearSessionCookie(req, res);
+      return sendJson(res, 200, { success: true, message: 'تم تسجيل الخروج بنجاح.' });
+    }
+
+    // 6. ADMIN LOGIN (Separate from Student Login)
+    if (pathname === '/api/admin/login' && req.method === 'POST') {
+      if (!checkRateLimit(`admin_login_${clientIp}`, 10, 60000)) {
+        return sendJson(res, 429, { success: false, message: 'محاولات دخول كثيرة، يرجى الانتظار.' });
+      }
+
+      try {
+        const { username, password } = await parseJsonBody(req);
+        if (!username || !password) {
+          return sendJson(res, 400, { success: false, message: 'يرجى إدخال اسم المستخدم وكلمة المرور للإدارة.' });
+        }
+
+        const normUsername = username.trim().toLowerCase();
+        const adminUser = db.prepare("SELECT * FROM users WHERE role = 'admin' AND username = ?").get(normUsername);
+
+        if (!adminUser || !adminUser.admin_password_hash) {
+          return sendJson(res, 401, { success: false, message: 'بيانات دخول المشرف غير صحيحة.' });
+        }
+
+        const testHash = hashPassword(password, adminUser.admin_password_salt);
+        if (testHash !== adminUser.admin_password_hash) {
+          return sendJson(res, 401, { success: false, message: 'بيانات دخول المشرف غير صحيحة.' });
+        }
+
+        const token = createSession(adminUser.uid);
+        setSessionCookie(req, res, token);
+
+        return sendJson(res, 200, {
+          success: true,
+          user: formatSafeUser(adminUser),
+          message: 'تم تسجيل دخول مدير المنصة بنجاح.'
+        });
+      } catch (err) {
+        console.error('Admin login error:', err);
+        return sendJson(res, 500, { success: false, message: 'حدث خطأ في الخادم أثناء دخول الإدارة.' });
+      }
+    }
+
+    // 7. ADMIN OVERVIEW
     if (pathname === '/api/admin/overview' && req.method === 'GET') {
       const user = getAuthUser(req);
       if (!user || user.role !== 'admin') {
@@ -488,7 +632,7 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // 7. ADMIN STUDENTS LIST
+    // 8. ADMIN STUDENTS LIST
     if (pathname === '/api/admin/students' && req.method === 'GET') {
       const user = getAuthUser(req);
       if (!user || user.role !== 'admin') {
@@ -500,15 +644,15 @@ const server = http.createServer(async (req, res) => {
       if (search.trim()) {
         const q = `%${search.trim().toLowerCase()}%`;
         students = db.prepare(`
-          SELECT uid, name, login_identifier, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at
+          SELECT uid, name, username, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at
           FROM users
-          WHERE role = 'student' AND (LOWER(name) LIKE ? OR LOWER(login_identifier) LIKE ?)
+          WHERE role = 'student' AND (LOWER(name) LIKE ? OR LOWER(username) LIKE ?)
           ORDER BY created_at DESC
           LIMIT 50
         `).all(q, q);
       } else {
         students = db.prepare(`
-          SELECT uid, name, login_identifier, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at
+          SELECT uid, name, username, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at
           FROM users
           WHERE role = 'student'
           ORDER BY created_at DESC
@@ -519,7 +663,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, students });
     }
 
-    // 8. ADMIN SUSPEND STUDENT
+    // 9. ADMIN SUSPEND STUDENT
     if (pathname === '/api/admin/student/suspend' && req.method === 'POST') {
       const user = getAuthUser(req);
       if (!user || user.role !== 'admin') {
@@ -534,7 +678,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, message: 'تم إيقاف حساب الطالب.' });
     }
 
-    // 9. ADMIN REACTIVATE STUDENT
+    // 10. ADMIN REACTIVATE STUDENT
     if (pathname === '/api/admin/student/reactivate' && req.method === 'POST') {
       const user = getAuthUser(req);
       if (!user || user.role !== 'admin') {
@@ -549,7 +693,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, message: 'تمت إعادة تفعيل حساب الطالب.' });
     }
 
-    // 10. ADMIN EXPORT CODES CSV (Protected Server-Side Stream)
+    // 11. ADMIN EXPORT CODES CSV (Protected Server-Side Stream)
     if (pathname === '/api/admin/export-codes' && req.method === 'GET') {
       const user = getAuthUser(req);
       if (!user || user.role !== 'admin') {
@@ -600,7 +744,7 @@ const server = http.createServer(async (req, res) => {
 
     let filePath = path.join(webRoot, normalizedPath === '/' ? 'index.html' : normalizedPath);
 
-    // Verify filePath is inside webRoot
+    // Verify filePath is strictly inside webRoot
     if (!filePath.startsWith(webRoot)) {
       res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Access Forbidden');
@@ -649,10 +793,14 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+export { server };
+
 server.on('error', (err) => {
   console.error('Server encountered error:', err);
 });
 
-server.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
-});
+if (!process.env.NO_AUTO_LISTEN) {
+  server.listen(PORT, () => {
+    console.log(`Backend server running on http://localhost:${PORT}`);
+  });
+}

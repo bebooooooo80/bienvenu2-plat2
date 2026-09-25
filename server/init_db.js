@@ -26,9 +26,7 @@ export function initDatabase() {
     CREATE TABLE IF NOT EXISTS users (
       uid TEXT PRIMARY KEY,
       name TEXT NOT NULL,
-      login_identifier TEXT UNIQUE NOT NULL,
-      password_hash TEXT NOT NULL,
-      password_salt TEXT NOT NULL,
+      username TEXT UNIQUE NOT NULL,
       role TEXT DEFAULT 'student',
       created_at TEXT NOT NULL,
       trial_used INTEGER DEFAULT 0,
@@ -38,7 +36,12 @@ export function initDatabase() {
       access_status TEXT DEFAULT 'INACTIVE',
       annual_activated_at TEXT,
       annual_expires_at TEXT,
-      activation_code_id INTEGER
+      activation_code_id INTEGER,
+      admin_password_hash TEXT,
+      admin_password_salt TEXT,
+      password_hash TEXT DEFAULT '',
+      password_salt TEXT DEFAULT '',
+      FOREIGN KEY (activation_code_id) REFERENCES activation_codes(id)
     );
 
     CREATE TABLE IF NOT EXISTS activation_codes (
@@ -68,10 +71,47 @@ export function initDatabase() {
     );
   `);
 
-  // 3. Populate 500 new activation codes if empty or reset
+  // Migration: Handle schema update if users table had NOT NULL password_hash
+  try {
+    const tableSqlRow = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'").get();
+    const tableSql = (tableSqlRow && tableSqlRow.sql) || '';
+    if (tableSql.includes('password_hash TEXT NOT NULL') || tableSql.includes('login_identifier')) {
+      db.exec('PRAGMA foreign_keys = OFF;');
+      db.exec(`
+        CREATE TABLE users_migrated (
+          uid TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          username TEXT UNIQUE NOT NULL,
+          role TEXT DEFAULT 'student',
+          created_at TEXT NOT NULL,
+          trial_used INTEGER DEFAULT 0,
+          trial_started_at TEXT,
+          trial_expires_at TEXT,
+          access_type TEXT DEFAULT 'NONE',
+          access_status TEXT DEFAULT 'INACTIVE',
+          annual_activated_at TEXT,
+          annual_expires_at TEXT,
+          activation_code_id INTEGER,
+          admin_password_hash TEXT,
+          admin_password_salt TEXT,
+          password_hash TEXT DEFAULT '',
+          password_salt TEXT DEFAULT ''
+        );
+        INSERT INTO users_migrated (uid, name, username, role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at, activation_code_id)
+        SELECT uid, name, COALESCE(username, login_identifier, uid), role, created_at, trial_used, trial_started_at, trial_expires_at, access_type, access_status, annual_activated_at, annual_expires_at, activation_code_id FROM users;
+        DROP TABLE users;
+        ALTER TABLE users_migrated RENAME TO users;
+      `);
+      db.exec('PRAGMA foreign_keys = ON;');
+    }
+  } catch (migErr) {
+    // Migration handled
+  }
+
+  // 3. Populate 500 new activation codes if empty
   const countRow = db.prepare('SELECT COUNT(*) as count FROM activation_codes').get();
   if (countRow.count === 0) {
-    console.log('Seeding 500 new activation codes into database...');
+    console.log('Seeding 500 activation codes hashes into database...');
     if (!fs.existsSync(CSV_PATH)) {
       throw new Error(`CSV file not found at ${CSV_PATH}`);
     }
@@ -95,36 +135,38 @@ export function initDatabase() {
         }
       }
       db.exec('COMMIT');
-      console.log('Successfully seeded 500 new activation code hashes into database.');
+      console.log('Successfully seeded 500 activation code hashes into database.');
     } catch (err) {
       db.exec('ROLLBACK');
       throw err;
     }
   }
 
-  // 4. Initialize administrator account securely without hardcoded credentials
-  const adminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD || '';
+  // 4. Secure Admin Configuration from Environment
+  const adminIdentifier = (process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  const adminPassword = (process.env.ADMIN_PASSWORD || '').trim();
 
-  const adminCount = db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'admin'").get().count;
-  if (adminCount === 0) {
-    const finalEmail = adminEmail || 'admin@bienvenu2.internal';
-    const finalPassword = adminPassword || crypto.randomBytes(16).toString('hex');
-    const adminUid = 'admin_' + crypto.randomBytes(8).toString('hex');
+  if (adminIdentifier && adminPassword) {
+    const existingAdmin = db.prepare("SELECT * FROM users WHERE role = 'admin' AND username = ?").get(adminIdentifier);
     const salt = crypto.randomBytes(16).toString('hex');
-    const passHash = hashPassword(finalPassword, salt);
+    const passHash = hashPassword(adminPassword, salt);
     const nowIso = new Date().toISOString();
     const tenYearsIso = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString();
 
-    db.prepare(`
-      INSERT INTO users (uid, name, login_identifier, password_hash, password_salt, role, created_at, access_type, access_status, annual_activated_at, annual_expires_at)
-      VALUES (?, 'مدير المنصة (Admin)', ?, ?, ?, 'admin', ?, 'ANNUAL', 'ACTIVE', ?, ?)
-    `).run(adminUid, finalEmail, passHash, salt, nowIso, nowIso, tenYearsIso);
-
-    console.log(`[SETUP] Administrator account initialized: ${finalEmail}`);
-    if (!adminPassword) {
-      console.log(`[SETUP] Generated random temporary admin password: ${finalPassword}`);
-      console.log(`[SETUP] Set ADMIN_EMAIL and ADMIN_PASSWORD in environment variables for custom administrator configuration.`);
+    if (existingAdmin) {
+      db.prepare(`
+        UPDATE users
+        SET admin_password_hash = ?, admin_password_salt = ?
+        WHERE uid = ?
+      `).run(passHash, salt, existingAdmin.uid);
+      console.log(`[AUTH] Admin credentials updated securely from environment for ${adminIdentifier}`);
+    } else {
+      const adminUid = 'admin_' + crypto.randomBytes(8).toString('hex');
+      db.prepare(`
+        INSERT INTO users (uid, name, username, role, created_at, access_type, access_status, annual_activated_at, annual_expires_at, admin_password_hash, admin_password_salt)
+        VALUES (?, 'مدير المنصة', ?, 'admin', ?, 'ANNUAL', 'ACTIVE', ?, ?, ?, ?)
+      `).run(adminUid, adminIdentifier, nowIso, nowIso, tenYearsIso, passHash, salt);
+      console.log(`[AUTH] Admin initialized securely from environment configuration for ${adminIdentifier}`);
     }
   }
 
