@@ -257,6 +257,23 @@ def get_unit1_renderer_code():
               </table>
             </div>
 
+            <!-- Golden Vowel Rule Callout -->
+            <div class="p-3.5 bg-amber-50 rounded-xl border-2 border-amber-300 space-y-1.5 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-black font-french">⭐ Note Bien</span>
+                <span class="font-bold text-amber-900">القاعدة الذهبية الأهم في صفات الملكية (ص 17) :</span>
+              </div>
+              <p class="text-slate-800 leading-relaxed">
+                إذا كان الاسم <strong>مفرداً مؤنثاً</strong> مبدوءاً بـ <strong>حرف متحرك</strong> (a, e, i, o, u, y) أو h صامتة، نستخدم صفات المذكر <span class="font-french font-bold text-indigo-700">(mon, ton, son)</span> بدلاً من <span class="font-french font-bold text-rose-700">(ma, ta, sa)</span> منعاً لالتقاء حرفين متحركين!
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1 font-french text-[11px] font-bold text-indigo-900" dir="ltr">
+                <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200">mon amie <span class="text-slate-400 font-sans font-normal" dir="rtl">(صديقتي)</span></span>
+                <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200">ton école <span class="text-slate-400 font-sans font-normal" dir="rtl">(مدرستك)</span></span>
+                <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200">son adresse <span class="text-slate-400 font-sans font-normal" dir="rtl">(عنوانه/عنوانها)</span></span>
+                <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200">son idée <span class="text-slate-400 font-sans font-normal" dir="rtl">(فكرته/فكرتها)</span></span>
+              </div>
+            </div>
+
             <!-- Possessive Exercises -->
             <div class="pt-3">
               <h4 class="text-xs font-bold text-slate-800 mb-2">تدريبات صفات الملكية (${c.unit1PossessiveExercises.length} تمارين) :</h4>
@@ -302,14 +319,66 @@ def get_unit1_renderer_code():
             </div>
           </div>
 
-          <!-- Booklet Pronouns (Official 15 Exercises) -->
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+          <!-- Booklet Pronouns (Official 15 Exercises & Full Explanations) -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h3 class="text-sm sm:text-base font-bold text-slate-900">3. ضمائر المفعول به المباشر وغير المباشر (الكراسة الرسمية - 15 تمريناً)</h3>
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-900">3. ضمائر المفعول به المباشر وغير المباشر (ص 20-23)</h3>
+                <p class="text-xs text-indigo-700 font-semibold">الشرح الشامل لقواعد C.O.D و C.O.I وتمرين الـ 15 جملة المعتمد</p>
+              </div>
               <span class="px-2 py-0.5 rounded bg-teal-100 text-teal-800 text-[11px] font-bold font-french">C.O.D & C.O.I</span>
             </div>
-            
-            <div class="space-y-3">
+
+            <!-- Detailed Grammar Explanation Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <!-- COD Explanation -->
+              <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-indigo-900 font-french">🎯 1. المفعول المباشر (C.O.D) - ص 21</span>
+                  <span class="px-2 py-0.5 rounded bg-indigo-200 text-indigo-800 text-[10px] font-bold">بدون حرف جر</span>
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                  يحل محل مفعول به <u>غير مسبوق بحرف جر</u> (اسم مسبوق بأداة معرفة، نكرة، إشارة، أو صفة ملكية) :
+                </p>
+                <div class="grid grid-cols-2 gap-1.5 font-french text-[11px] font-bold" dir="ltr">
+                  <div class="p-2 bg-white rounded-lg border border-indigo-100 text-indigo-800">le <span class="font-sans font-normal text-[10px] text-slate-500" dir="rtl">(مذكر مفرد)</span></div>
+                  <div class="p-2 bg-white rounded-lg border border-indigo-100 text-purple-800">la <span class="font-sans font-normal text-[10px] text-slate-500" dir="rtl">(مؤنث مفرد)</span></div>
+                  <div class="p-2 bg-white rounded-lg border border-indigo-100 text-emerald-800">l' <span class="font-sans font-normal text-[10px] text-slate-500" dir="rtl">(أمام متحرك)</span></div>
+                  <div class="p-2 bg-white rounded-lg border border-indigo-100 text-amber-800">les <span class="font-sans font-normal text-[10px] text-slate-500" dir="rtl">(جمع بنوعيه)</span></div>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-indigo-100 text-[11px] text-slate-700 space-y-1" dir="ltr">
+                  <p class="font-bold text-indigo-900 font-sans" dir="rtl">📌 مكان الضمير :</p>
+                  <p>• قبل الفعل : Je regarde le match ➔ Je <strong>le</strong> regarde.</p>
+                  <p>• في النفي : Je <strong>ne le</strong> regarde <strong>pas</strong>.</p>
+                  <p>• مع فعلين (مصرف + مصدر) : يوضع قبل المصدر : Je vais <strong>le</strong> regarder.</p>
+                </div>
+              </div>
+
+              <!-- COI Explanation -->
+              <div class="p-4 rounded-2xl bg-teal-50/70 border border-teal-200 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-teal-900 font-french">🤝 2. المفعول غير المباشر (C.O.I) - ص 22</span>
+                  <span class="px-2 py-0.5 rounded bg-teal-200 text-teal-800 text-[10px] font-bold">مسبوق بحرف جر à</span>
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                  يحل محل مفعول به <u>عاقل (إنسان أو حيوان)</u> مسبوق بحرف الجر <span class="font-french font-bold text-teal-800">(à / au / à la / à l' / aux)</span> :
+                </p>
+                <div class="grid grid-cols-2 gap-1.5 font-french text-[11px] font-bold" dir="ltr">
+                  <div class="p-2 bg-white rounded-lg border border-teal-100 text-teal-800">lui <span class="font-sans font-normal text-[10px] text-slate-500" dir="rtl">(مفرد مذكر أو مؤنث)</span></div>
+                  <div class="p-2 bg-white rounded-lg border border-teal-100 text-amber-800">leur <span class="font-sans font-normal text-[10px] text-slate-500" dir="rtl">(جمع مذكر أو مؤنث)</span></div>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-teal-100 text-[11px] text-slate-700 space-y-1" dir="ltr">
+                  <p class="font-bold text-teal-900 font-sans" dir="rtl">📌 أمثلة هامة :</p>
+                  <p>• Je parle <u>à Ali</u> ➔ Je <strong>lui</strong> parle.</p>
+                  <p>• Je téléphone <u>à Mona</u> ➔ Je <strong>lui</strong> téléphone.</p>
+                  <p>• J'écris <u>à mes parents</u> ➔ Je <strong>leur</strong> écris.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 15 Official Exercises -->
+            <div class="space-y-3 pt-2">
+              <h4 class="text-xs font-bold text-slate-800">التدريب الرسمي المعتمد (15 جملة ص 22-23) :</h4>
               ${c.bookletPronounsOfficial15Exercises.map(ex => `
                 <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">

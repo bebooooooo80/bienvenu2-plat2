@@ -178,16 +178,182 @@ def get_unit2_renderer_code():
           </div>
         </div>
 
-        <!-- 4. PARTITIFS & INTERROGATIFS -->
+        <!-- 4. ARTICLES PARTITIFS & MOTS INTERROGATIFS -->
         <div id="u2-pane-partitifs" class="u2-pane hidden space-y-4">
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
-            <h3 class="text-base font-bold text-slate-900">1. تمارين أدوات التجزئة (Les Articles Partitifs : du, de la, de l', des)</h3>
-            <div class="space-y-3">${renderQuizQuestionsList(c.partitiveQuestions)}</div>
+          <!-- Partitives Rules & Explanations (Pages 43-45) -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-base sm:text-lg font-black text-amber-900 font-french">Les Articles Partitifs (أدوات التجزئة - ص 43)</h3>
+                <p class="text-xs text-amber-700 font-bold">تسبق المأكولات والمشروبات والأشياء التي لا تعد للدلالة على جزء من الكل</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-bold font-french">Pages 43-45</span>
+            </div>
+
+            <!-- Articles Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-amber-600 text-white font-bold font-french text-[11px]">du</span>
+                <p class="font-bold text-slate-800">مفرد مذكر مبدوء بساكن</p>
+                <p class="text-[11px] font-french text-amber-900 font-semibold" dir="ltr">du veau, du poulet, du riz, du fromage, du poisson, du pain</p>
+              </div>
+              <div class="p-3 rounded-xl bg-orange-50/70 border border-orange-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-orange-600 text-white font-bold font-french text-[11px]">de la</span>
+                <p class="font-bold text-slate-800">مفرد مؤنث مبدوء بساكن</p>
+                <p class="text-[11px] font-french text-orange-900 font-semibold" dir="ltr">de la viande, de la salade, de la soupe, de la glace</p>
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-bold font-french text-[11px]">de l'</span>
+                <p class="font-bold text-slate-800">مفرد يبدأ بحرف متحرك</p>
+                <p class="text-[11px] font-french text-emerald-900 font-semibold" dir="ltr">de l'eau (ماء), de l'huile (زيت)</p>
+              </div>
+              <div class="p-3 rounded-xl bg-purple-50/70 border border-purple-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-purple-600 text-white font-bold font-french text-[11px]">des</span>
+                <p class="font-bold text-slate-800">جمع بنوعيه (s أو x)</p>
+                <p class="text-[11px] font-french text-purple-900 font-semibold" dir="ltr">des fruits, des légumes, des frites, des crudités</p>
+              </div>
+            </div>
+
+            <!-- Golden Rules of Partitives -->
+            <div class="space-y-2.5 pt-1 text-xs">
+              <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-300 space-y-1">
+                <p class="font-bold text-amber-950">⚠️ 1. أفعال الميول والرغبة (Verbes de préférence) :</p>
+                <p class="text-slate-700 leading-relaxed">
+                  مع أفعال <span class="font-french font-bold text-indigo-700">(aimer, adorer, préférer, détester)</span> نستخدم <strong>أدوات المعرفة</strong> <span class="font-french font-bold text-indigo-700">(le, la, l', les)</span> <u>وليس</u> أدوات التجزئة!
+                </p>
+                <p class="font-french text-[11px] font-bold text-indigo-800" dir="ltr">Ex: J'aime <strong>la</strong> viande, mais je mange <strong>de la</strong> viande.</p>
+              </div>
+
+              <div class="p-3.5 bg-rose-50 rounded-xl border border-rose-300 space-y-1">
+                <p class="font-bold text-rose-950">🚫 2. قاعدة النفي مع التجزئة :</p>
+                <p class="text-slate-700 leading-relaxed">
+                  في النفي تتحول أدوات التجزئة (du, de la, de l', des) إلى <span class="font-french font-bold text-rose-700">« de »</span> أو <span class="font-french font-bold text-rose-700">« d' »</span> (ما عدا مع فعل être).
+                </p>
+                <p class="font-french text-[11px] font-bold text-rose-800" dir="ltr">Ex: Je mange <strong>du</strong> riz ➔ Je ne mange pas <strong>de</strong> riz.</p>
+              </div>
+
+              <div class="p-3.5 bg-indigo-50 rounded-xl border border-indigo-200 space-y-1">
+                <p class="font-bold text-indigo-950">⚖️ 3. بعد ظروف الكمية (Adverbes de quantité) :</p>
+                <p class="text-slate-700 leading-relaxed">
+                  بعد كلمات الكمية مثل <span class="font-french font-bold text-indigo-700">(beaucoup de, un peu de, trop de, assez de, un kilo de)</span> نستخدم دائماً <strong>de أو d'</strong> فقط بدون أداة تجزئة!
+                </p>
+                <p class="font-french text-[11px] font-bold text-indigo-800" dir="ltr">Ex: Je mange beaucoup <strong>de</strong> fruits. (وليس des fruits)</p>
+              </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <div class="pt-2">
+              <h4 class="text-xs font-bold text-slate-800 mb-2">تدريبات أدوات التجزئة المقررة :</h4>
+              <div class="space-y-3">${renderQuizQuestionsList(c.partitiveQuestions)}</div>
+            </div>
           </div>
 
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
-            <h3 class="text-base font-bold text-slate-900">2. تمارين أدوات الاستفهام (Les mots interrogatifs : Où, Quand, Comment...)</h3>
-            <div class="space-y-3">${renderQuizQuestionsList(c.interrogativeQuestions)}</div>
+          <!-- Interrogatives Rules & Explanations (Pages 46-50) -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-base sm:text-lg font-black text-indigo-900 font-french">Les Mots Interrogatifs (أدوات الاستفهام - ص 46-50)</h3>
+                <p class="text-xs text-indigo-700 font-bold">طرق تكوين السؤال والشرح التفصيلي لجميع أدوات الاستفهام وملاحظات Note Bien</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-800 text-xs font-bold font-french">Pages 46-50</span>
+            </div>
+
+            <!-- 3 Ways of Question Formation -->
+            <div class="p-3.5 bg-indigo-50/70 rounded-2xl border border-indigo-200 text-xs space-y-2">
+              <span class="font-bold text-indigo-950 block">طرق تكوين السؤال في اللغة الفرنسية (ص 46) :</span>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 font-french text-[11px]">
+                <div class="p-2.5 bg-white rounded-xl border border-indigo-100">
+                  <p class="font-bold text-indigo-800">1. Intonation (نبرة الصوت)</p>
+                  <p class="text-slate-600">Tu aimes le français ?</p>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-indigo-100">
+                  <p class="font-bold text-indigo-800">2. Est-ce que (هل)</p>
+                  <p class="text-slate-600">Est-ce que tu aimes le français ?</p>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-indigo-100">
+                  <p class="font-bold text-indigo-800">3. Inversion (تقديم الفعل)</p>
+                  <p class="text-slate-600">Aimes-tu le français ?</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comprehensive 11 Interrogative Words Table -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">Où</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">أين (تسأل عن المكان)</p>
+                <p class="text-[11px] text-slate-600">Où vas-tu ? ➔ Je vais au club.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">Quand</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">متى (تسأل عن الزمن غير المحدد)</p>
+                <p class="text-[11px] text-slate-600">Quand vas-tu à Paris ? ➔ En été.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">À quelle heure</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">في أي ساعة (لوقت محدد)</p>
+                <p class="text-[11px] text-slate-600">À quelle heure commence le film ?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">Comment</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">كيف (للحال، الاسم، المواصلات)</p>
+                <p class="text-[11px] text-slate-600">Comment vas-tu ? / Comment tu t'appelles ?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">Pourquoi</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">لماذا (للسبب: car, parce que, pour)</p>
+                <p class="text-[11px] text-slate-600">Pourquoi vas-tu au restaurant ? ➔ Pour manger.</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">Combien de</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">كم عدد / كمية (يليها اسم جمع)</p>
+                <p class="text-[11px] text-slate-600">Combien de repas prends-tu par jour ?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-teal-600 text-white font-bold font-french text-[11px]">Qui</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">من (تسأل عن العاقل إنسان)</p>
+                <p class="text-[11px] text-slate-600">Qui parle ? / Avec qui vas-tu ?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-teal-50 border border-teal-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-teal-700 text-white font-bold font-french text-[11px]">Que / Qu'est-ce que</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">ماذا (لغير العاقل مفعول مباشر)</p>
+                <p class="text-[11px] text-slate-600">Que voulez-vous comme dessert ?</p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-purple-50 border border-purple-200 space-y-1" dir="ltr">
+                <span class="px-2 py-0.5 rounded bg-purple-700 text-white font-bold font-french text-[11px]">Quel(le)(s)</span>
+                <p class="font-bold text-slate-800 font-sans" dir="rtl">ما / أي (تطابق الاسم نوعاً وعدداً)</p>
+                <p class="text-[11px] text-slate-600">Quel âge / Quelle heure / Quels plats</p>
+              </div>
+            </div>
+
+            <!-- Note Bien Cards (Page 48) -->
+            <div class="p-4 rounded-2xl bg-amber-400/15 border-2 border-amber-300 space-y-2 text-xs">
+              <span class="px-2 py-0.5 rounded bg-amber-400 text-amber-950 font-black text-[10px] font-french">⭐ Note Bien (ملاحظات الامتحانات ص 48)</span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-french text-[11px] pt-1" dir="ltr">
+                <div class="p-2.5 bg-white rounded-xl border border-amber-200">
+                  <p class="font-bold text-indigo-900">• C'est + شخص عاقل ➔ <span class="text-rose-700">Qui est-ce ?</span></p>
+                  <p class="text-slate-500 font-sans text-[10px]" dir="rtl">مثال: C'est Ahmed ➔ Qui est-ce ?</p>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-amber-200">
+                  <p class="font-bold text-indigo-900">• C'est + شيء غير عاقل ➔ <span class="text-rose-700">Qu'est-ce que c'est ?</span></p>
+                  <p class="text-slate-500 font-sans text-[10px]" dir="rtl">مثال: C'est un livre ➔ Qu'est-ce que c'est ?</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interrogative Quiz Questions -->
+            <div class="pt-2">
+              <h4 class="text-xs font-bold text-slate-800 mb-2">تدريبات أدوات الاستفهام المقررة :</h4>
+              <div class="space-y-3">${renderQuizQuestionsList(c.interrogativeQuestions)}</div>
+            </div>
           </div>
         </div>
 

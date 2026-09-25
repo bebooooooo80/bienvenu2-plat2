@@ -104,11 +104,77 @@ def get_unit3_renderer_code():
           </div>
         </div>
 
-        <!-- 2. CORPS HUMAIN & DOULEUR -->
+        <!-- 2. CORPS HUMAIN & DOULEUR (Pages 64-66) -->
         <div id="u3-pane-corps" class="u3-pane hidden space-y-4">
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
-            <h3 class="text-base font-bold text-slate-900">تمارين أجزاء الجسم والتعبير عن الألم (Avoir mal à - 5 أسئلة)</h3>
-            <div class="space-y-3">${renderQuizQuestionsList(c.bodyPainQuestions)}</div>
+          <!-- Comprehensive Grammar Explanation Header -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-base sm:text-lg font-black text-emerald-800 font-french">Le Corps & L'expression de la douleur (ص 64-66)</h3>
+                <p class="text-xs text-emerald-700 font-bold">أعضاء جسم الإنسان وقاعدة التعبير عن الألم (Avoir mal à + أداة مدغمة)</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold font-french">Pages 64-66</span>
+            </div>
+
+            <!-- Verb Avoir Conjugation -->
+            <div class="p-3.5 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-emerald-950 font-french">1. تصريف فعل يملك/يشعر (Avoir au présent) :</span>
+                <button onclick="speakText('J ai, tu as, il a, nous avons, vous avez, ils ont')" class="text-emerald-700 hover:text-emerald-900"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1.5 font-french text-[11px] font-bold text-center" dir="ltr">
+                <div class="p-2 bg-white rounded-xl border border-emerald-100">J'ai <span class="font-sans text-[10px] text-slate-400 font-normal block" dir="rtl">أنا أشعر</span></div>
+                <div class="p-2 bg-white rounded-xl border border-emerald-100">Tu as <span class="font-sans text-[10px] text-slate-400 font-normal block" dir="rtl">أنت تشعر</span></div>
+                <div class="p-2 bg-white rounded-xl border border-emerald-100">Il / Elle a <span class="font-sans text-[10px] text-slate-400 font-normal block" dir="rtl">هو/هي يشعر</span></div>
+                <div class="p-2 bg-white rounded-xl border border-emerald-100">Nous avons <span class="font-sans text-[10px] text-slate-400 font-normal block" dir="rtl">نحن نشعر</span></div>
+                <div class="p-2 bg-white rounded-xl border border-emerald-100">Vous avez <span class="font-sans text-[10px] text-slate-400 font-normal block" dir="rtl">أنتم تشعرون</span></div>
+                <div class="p-2 bg-white rounded-xl border border-emerald-100">Ils / Elles ont <span class="font-sans text-[10px] text-slate-400 font-normal block" dir="rtl">هم يشعرون</span></div>
+              </div>
+            </div>
+
+            <!-- Avoir Mal à Rule Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+              <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold font-french text-[11px]">au</span>
+                <p class="font-bold text-slate-800">مفرد مذكر ساكن (à + le = au)</p>
+                <p class="text-[11px] font-french text-indigo-800 font-semibold" dir="ltr">au bras (الذراع), au ventre (البطن), au dos (الظهر), au pied (القدم), au genou (الركبة), au nez (الأنف)</p>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-purple-600 text-white font-bold font-french text-[11px]">à la</span>
+                <p class="font-bold text-slate-800">مفرد مؤنث ساكن</p>
+                <p class="text-[11px] font-french text-purple-800 font-semibold" dir="ltr">à la tête (الرأس), à la jambe (الساق), à la main (اليد), à la bouche (الفم), à la gorge (الحلق)</p>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-bold font-french text-[11px]">à l'</span>
+                <p class="font-bold text-slate-800">مفرد مبدوء بحرف متحرك</p>
+                <p class="text-[11px] font-french text-emerald-800 font-semibold" dir="ltr">à l'estomac (المعدة), à l'oreille (الأذن), à l'œil (العين)</p>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-1">
+                <span class="px-2 py-0.5 rounded bg-amber-600 text-white font-bold font-french text-[11px]">aux</span>
+                <p class="font-bold text-slate-800">جمع ينتهي بـ s أو x</p>
+                <p class="text-[11px] font-french text-amber-900 font-semibold" dir="ltr">aux yeux (العيون), aux dents (الأسنان), aux oreilles (الآذان), aux pieds (الأقدام)</p>
+              </div>
+            </div>
+
+            <!-- Model Example with Audio -->
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 text-xs">
+              <div dir="ltr">
+                <span class="font-bold text-slate-900 font-french text-sm">J'ai mal à la tête et au bras.</span>
+                <p class="text-slate-500 font-sans text-[11px] mt-0.5" dir="rtl">أشعر بألم في الرأس (مؤنث: à la tête) وفي الذراع (مذكر: au bras).</p>
+              </div>
+              <button onclick="speakText('J ai mal à la tête et au bras')" class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-volume-high text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Quiz Questions Section -->
+            <div class="pt-2">
+              <h4 class="text-xs font-bold text-slate-800 mb-2">تدريبات التعبير عن الألم المقررة (ص 65-66) :</h4>
+              <div class="space-y-3">${renderQuizQuestionsList(c.bodyPainQuestions)}</div>
+            </div>
           </div>
         </div>
 
