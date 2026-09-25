@@ -110,13 +110,13 @@
       <div id="welcomeUserStatusBox" class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500">
         <span id="welcomeUserStateText">غير مسجل الدخول</span>
         <div id="welcomeUserActionBtns" class="flex items-center gap-2">
-          <button onclick="promptAdminLogin()" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs flex items-center gap-1 transition">
-            <i class="fa-solid fa-shield-halved text-amber-600"></i>
-            <span>دخول الأدمن</span>
+          <button onclick="showAccessView('auth'); switchAuthTab('login');" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1 transition">
+            <i class="fa-solid fa-arrow-right-to-bracket text-slate-600"></i>
+            <span>تسجيل الدخول</span>
           </button>
-          <button onclick="showAccessView('auth')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1 transition">
+          <button onclick="showAccessView('auth'); switchAuthTab('register')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1 transition">
             <i class="fa-solid fa-user-circle text-indigo-600"></i>
-            <span>دخول / إنشاء حساب</span>
+            <span>إنشاء حساب</span>
           </button>
         </div>
       </div>
@@ -289,6 +289,25 @@
 
       <button onclick="logout()" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
         تسجيل الخروج
+      </button>
+    </div>
+
+    <!-- 7. OFFLINE / CONNECTION ERROR SCREEN (FAIL CLOSED) -->
+    <div id="accessViewOffline" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-500 to-rose-600"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-3xl shadow-inner border border-amber-100">
+        <i class="fa-solid fa-wifi"></i>
+      </div>
+
+      <h2 class="text-xl font-black text-slate-800 mb-2">تعذر الاتصال بالخادم حاليًا</h2>
+      <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+        تعذر الاتصال بالخادم حاليًا. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.
+      </p>
+
+      <button onclick="verifyAccessStatus()" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>إعادة المحاولة</span>
       </button>
     </div>
 
@@ -831,20 +850,24 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
                   <!-- Options -->
                   <div class="space-y-1.5" dir="ltr">
                     ${s.options.map(opt => `
-                      <button onclick="checkQuizOption(this, ${opt.isCorrect}, '${(opt.explanation || '').replace(/['"]/g, ' ')}')" class="quiz-opt-btn w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-french font-semibold text-slate-800 text-left hover:bg-slate-50 transition flex items-center justify-between">
+                      <button onclick="checkQuizOption(this, ${opt.isCorrect}, '${(opt.explanation || '').replace(/['"]/g, ' ')}')" class="quiz-opt-btn w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-french font-semibold text-slate-800 text-left hover:bg-slate-50 transition">
                         <span>${opt.textFr}</span>
-                        <span class="text-[11px] text-slate-500 font-sans" dir="rtl">${opt.textAr}</span>
                       </button>
                     `).join('')}
                   </div>
 
                   <div class="quiz-feedback hidden text-xs font-bold mt-2"></div>
 
-                  <!-- Golden Rule -->
-                  <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900">
-                    <i class="fa-solid fa-lightbulb text-amber-600 ml-1"></i>
-                    <strong>القاعدة الذهبية : </strong> ${s.goldenRule}
-                  </div>
+                  <!-- Golden Rule (Collapsible) -->
+                  <details class="mt-2 text-[11px] text-amber-900 group">
+                    <summary class="cursor-pointer font-bold text-amber-800 hover:text-amber-950 select-none flex items-center gap-1.5 p-2 rounded-xl bg-amber-50 border border-amber-200/80">
+                      <i class="fa-solid fa-lightbulb text-amber-600"></i>
+                      <span>💡 اضغط هنا لعرض القاعدة الذهبية والشرح التوضيحي</span>
+                    </summary>
+                    <div class="p-2.5 mt-1 rounded-xl bg-amber-50/80 border border-amber-200/60 leading-relaxed">
+                      <strong>القاعدة الذهبية : </strong> ${s.goldenRule}
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -906,10 +929,18 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
               <h4 class="text-xs font-bold text-slate-800 mb-2">تدريبات صفات الملكية (${c.unit1PossessiveExercises.length} تمارين) :</h4>
               <div class="space-y-2">
                 ${c.unit1PossessiveExercises.map(ex => `
-                  <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs">
-                    <p class="font-bold text-slate-900 font-french" dir="ltr">${ex.number}. ${ex.fullSentenceFr}</p>
-                    <p class="text-slate-500 mt-0.5">${ex.translationAr}</p>
-                    <p class="text-indigo-600 font-semibold mt-1">💡 الشرح: ${ex.explanationAr}</p>
+                  <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-2">
+                    <p class="font-bold text-slate-900 font-french" dir="ltr">${ex.number}. ${ex.fullSentenceFr.replace(new RegExp(ex.targetBlanks.join('|'), 'g'), '........')}</p>
+                    <p class="text-slate-500">${ex.translationAr}</p>
+                    <details class="group">
+                      <summary class="cursor-pointer text-[11px] font-bold text-indigo-600 hover:text-indigo-800 select-none flex items-center gap-1">
+                        <span>👁️ عرض الحل والشرح النموذجي</span>
+                      </summary>
+                      <div class="mt-1.5 p-2 rounded-lg bg-indigo-50 border border-indigo-100 text-[11px] space-y-1">
+                        <p class="font-bold text-indigo-900 font-french" dir="ltr">✓ الجملة كاملة: ${ex.fullSentenceFr}</p>
+                        <p class="text-indigo-700">💡 الشرح: ${ex.explanationAr}</p>
+                      </div>
+                    </details>
                   </div>
                 `).join('')}
               </div>
@@ -926,10 +957,18 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h4 class="text-xs font-bold text-slate-800 pt-2">تمارين اختر الفعل المناسب مع ON :</h4>
             <div class="space-y-2">
               ${c.unit1PronomOnChoisisExercises.map(ex => `
-                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs">
-                  <p class="font-bold text-slate-900 font-french" dir="ltr">${ex.number}. ${ex.fullSentenceFr}</p>
-                  <p class="text-slate-500 mt-0.5">${ex.translationAr}</p>
-                  <p class="text-emerald-600 font-semibold mt-1">✓ الإجابة: ${ex.correctAnswer} - ${ex.explanationAr}</p>
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-2">
+                  <p class="font-bold text-slate-900 font-french" dir="ltr">${ex.number}. [ On / Nous ] ${ex.predicateFr}</p>
+                  <p class="text-slate-500">${ex.translationAr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض الإجابة والشرح</span>
+                    </summary>
+                    <div class="mt-1.5 p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] space-y-1">
+                      <p class="font-bold text-emerald-900 font-french" dir="ltr">✓ الإجابة: ${ex.correctAnswer} ➔ ${ex.fullSentenceFr}</p>
+                      <p class="text-emerald-800">💡 ${ex.explanationAr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -937,10 +976,17 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h4 class="text-xs font-bold text-slate-800 pt-2">تمارين استبدال Nous بـ On :</h4>
             <div class="space-y-2">
               ${c.unit1PronomOnReplaceExercises.map(ex => `
-                <div class="p-3 rounded-xl border border-slate-200 bg-white text-xs">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white text-xs space-y-2">
                   <p class="font-bold text-slate-700 font-french" dir="ltr">Nous : ${ex.nousSentenceFr}</p>
-                  <p class="font-bold text-indigo-700 font-french mt-0.5" dir="ltr">➔ On : ${ex.onSentenceFr}</p>
-                  <p class="text-slate-500 text-[11px] mt-0.5">${ex.onSentenceAr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-indigo-600 hover:text-indigo-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض التحويل بـ On</span>
+                    </summary>
+                    <div class="mt-1.5 p-2 rounded-lg bg-indigo-50 border border-indigo-100 text-[11px] space-y-0.5">
+                      <p class="font-bold text-indigo-700 font-french" dir="ltr">➔ On : ${ex.onSentenceFr}</p>
+                      <p class="text-slate-500 text-[11px]">${ex.onSentenceAr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1007,17 +1053,22 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <div class="space-y-3 pt-2">
               <h4 class="text-xs font-bold text-slate-800">التدريب الرسمي المعتمد (15 جملة ص 22-23) :</h4>
               ${c.bookletPronounsOfficial15Exercises.map(ex => `
-                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-2">
                   <div class="flex items-center justify-between">
                     <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold font-french">${ex.category} • ${ex.ruleTag}</span>
-                    <span class="text-[11px] font-bold text-emerald-700 font-french">Target: ${ex.targetPronoun}</span>
+                    <span class="text-[11px] font-bold text-indigo-700">استبدل ما تحته خط بضمير مفعول</span>
                   </div>
                   <p class="font-bold text-slate-900 font-french" dir="ltr">${ex.number}. ${ex.fullSentenceFr}</p>
                   <p class="text-slate-500">${ex.sentenceAr}</p>
-                  <p class="font-bold text-teal-800 font-french" dir="ltr">➔ ${ex.transformedSentenceFr}</p>
-                  <div class="p-2 bg-white rounded-lg border border-slate-200 text-[11px] text-slate-600">
-                    💡 ${ex.explanationAr} (${ex.positionRuleAr})
-                  </div>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-teal-700 hover:text-teal-900 select-none flex items-center gap-1">
+                      <span>👁️ عرض الجملة بالضمير والشرح</span>
+                    </summary>
+                    <div class="mt-1.5 p-2.5 bg-white rounded-lg border border-slate-200 text-[11px] space-y-1">
+                      <p class="font-bold text-teal-800 font-french" dir="ltr">➔ ${ex.transformedSentenceFr}</p>
+                      <p class="text-slate-600">💡 ${ex.explanationAr} (${ex.positionRuleAr})</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1051,14 +1102,21 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">تكوين الجمل النموذجية (Fais des phrases avec - p. 24)</h3>
             <div class="space-y-3">
               ${c.unit1FaisDesPhrasesList.map(item => `
-                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-2">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-indigo-700 font-french">${item.number}. [ ${item.promptFr} ]</span>
                     <span class="text-slate-500 font-bold">${item.promptAr}</span>
                   </div>
-                  <p class="font-bold text-slate-900 font-french" dir="ltr">➔ ${item.modelSentenceFr}</p>
-                  <p class="text-slate-500">${item.modelSentenceAr}</p>
-                  <p class="text-indigo-600 text-[11px]">💡 ملحوظة: ${item.grammarTipAr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-indigo-600 hover:text-indigo-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض الجملة النموذجية</span>
+                    </summary>
+                    <div class="mt-1.5 p-2 rounded-lg bg-white border border-slate-200 text-[11px] space-y-1">
+                      <p class="font-bold text-slate-900 font-french" dir="ltr">➔ ${item.modelSentenceFr}</p>
+                      <p class="text-slate-500">${item.modelSentenceAr}</p>
+                      <p class="text-indigo-600">💡 ملحوظة: ${item.grammarTipAr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1072,13 +1130,20 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">1. أين تذهب لكي...؟ (Où vas-tu pour...? - p. 26)</h3>
             <div class="space-y-2">
               ${b.ouVasTuItems.map(item => `
-                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-slate-900 font-french" dir="ltr">${item.number}. Pour ${item.activityFr} :</span>
                     <span class="text-slate-500">${item.activityAr}</span>
                   </div>
-                  <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ ${item.expectedAnswerFr}</p>
-                  <p class="text-slate-500 text-[11px]">${item.answerAr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض المكان المناسب</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] space-y-0.5">
+                      <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ ${item.expectedAnswerFr}</p>
+                      <p class="text-slate-500">${item.answerAr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1089,12 +1154,19 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">2. من المتحدث؟ (Qui parle? - p. 26)</h3>
             <div class="space-y-2">
               ${b.quiParleItems.map(item => `
-                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-indigo-900 font-french" dir="ltr">${item.number}. ${item.quoteFr}</span>
                     <span class="text-slate-500">${item.quoteAr}</span>
                   </div>
-                  <p class="font-bold text-blue-700 font-french" dir="ltr">➔ Qui parle : ${item.speakerFr} (${item.speakerAr})</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-blue-600 hover:text-blue-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض المتحدث</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-blue-50 border border-blue-100 text-[11px]">
+                      <p class="font-bold text-blue-700 font-french" dir="ltr">➔ Qui parle : ${item.speakerFr} (${item.speakerAr})</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1105,12 +1177,19 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">3. من يقوم بهذا العمل؟ (Qui fait ce travail? - p. 26)</h3>
             <div class="space-y-2">
               ${b.quiFaitCeTravailItems.map(item => `
-                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-slate-900 font-french" dir="ltr">${item.number}. ${item.actionFr}</span>
                     <span class="text-slate-500">${item.actionAr}</span>
                   </div>
-                  <p class="font-bold text-purple-700 font-french" dir="ltr">➔ Profession : ${item.professionFr} (${item.professionAr})</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-purple-600 hover:text-purple-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض صاحب المهنة</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-purple-50 border border-purple-100 text-[11px]">
+                      <p class="font-bold text-purple-700 font-french" dir="ltr">➔ Profession : ${item.professionFr} (${item.professionAr})</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1119,13 +1198,25 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
       `;
     }
 
+    // Sanitize question Arabic text to prevent answer leak before answering
+    function sanitizePromptAr(text) {
+      if (!text) return '';
+      let s = String(text);
+      s = s.replace(/➔[\s\S]*/g, '');
+      s = s.replace(/->[\s\S]*/g, '');
+      s = s.replace(/\[\s*(صح|خطأ|Vrai|Faux|V|F)[^\]]*\]/gi, '');
+      return s.trim();
+    }
+
     // Helper: render quiz question list
     function renderQuizQuestionsList(questions) {
       if (!questions || !questions.length) return '';
-      return questions.map(q => `
+      return questions.map(q => {
+        const cleanAr = sanitizePromptAr(q.arabicTranslation || q.questionAr || '');
+        return `
         <div class="quiz-card p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
           <p class="text-xs font-bold text-slate-900 font-french" dir="ltr">${q.question || q.questionFr || ''}</p>
-          ${q.arabicTranslation || q.questionAr ? `<p class="text-[11px] text-slate-500">${q.arabicTranslation || q.questionAr}</p>` : ''}
+          ${cleanAr ? `<p class="text-[11px] text-slate-500 font-sans">${cleanAr}</p>` : ''}
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5" dir="ltr">
             ${(q.options || []).map((opt, oIdx) => `
               <button onclick="checkQuizOption(this, ${oIdx === q.correctIndex}, '${(q.explanation || q.explanationAr || '').replace(/['"]/g, ' ')}')" class="quiz-opt-btn p-2 rounded-lg border border-slate-200 bg-white text-xs font-french font-semibold text-slate-800 text-left hover:border-indigo-300 transition">
@@ -1135,7 +1226,8 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
           </div>
           <div class="quiz-feedback hidden text-xs font-bold mt-1.5"></div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // Helper: render vocab words list
@@ -1552,12 +1644,19 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">1. مواقف المطعم: من المتحدث؟ (Qui parle? - ${c.unit2QuiParleItems.length} مواقف)</h3>
             <div class="space-y-2">
               ${c.unit2QuiParleItems.map(item => `
-                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-indigo-900 font-french" dir="ltr">${item.number}. ${item.quoteFr}</span>
                     <span class="text-slate-500">${item.quoteAr}</span>
                   </div>
-                  <p class="font-bold text-amber-700 font-french" dir="ltr">➔ Qui parle : ${item.speakerFr} (${item.speakerAr})</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-amber-700 hover:text-amber-900 select-none flex items-center gap-1">
+                      <span>👁️ عرض المتحدث</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-amber-50 border border-amber-100 text-[11px]">
+                      <p class="font-bold text-amber-800 font-french" dir="ltr">➔ Qui parle : ${item.speakerFr} (${item.speakerAr})</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1568,13 +1667,20 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">2. أين تذهب لكي...؟ (Où vas-tu pour...? - ${c.unit2OuVasTuItems.length} مواقف)</h3>
             <div class="space-y-2">
               ${c.unit2OuVasTuItems.map(item => `
-                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-slate-900 font-french" dir="ltr">${item.number}. Pour ${item.activityFr} :</span>
                     <span class="text-slate-500">${item.activityAr}</span>
                   </div>
-                  <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ ${item.expectedAnswerFr}</p>
-                  <p class="text-slate-500 text-[11px]">${item.answerAr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض المكان المناسب</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] space-y-0.5">
+                      <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ ${item.expectedAnswerFr}</p>
+                      <p class="text-slate-500 text-[11px]">${item.answerAr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1587,13 +1693,20 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
             <h3 class="text-base font-bold text-slate-900">1. تكوين الجمل (Fais des phrases avec)</h3>
             <div class="space-y-2">
               ${c.unit2FaisDesPhrasesItems.map(item => `
-                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-amber-700 font-french">${item.number}. [ ${item.promptFr} ]</span>
                     <span class="text-slate-500">${item.promptAr}</span>
                   </div>
-                  <p class="font-bold text-slate-900 font-french" dir="ltr">➔ ${item.modelSentenceFr}</p>
-                  <p class="text-slate-500">${item.modelSentenceAr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-indigo-600 hover:text-indigo-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض الجملة النموذجية</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-white border border-slate-200 text-[11px] space-y-0.5">
+                      <p class="font-bold text-slate-900 font-french" dir="ltr">➔ ${item.modelSentenceFr}</p>
+                      <p class="text-slate-500">${item.modelSentenceAr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -1943,11 +2056,18 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
                   <h4 class="text-xs font-bold text-slate-800">C) Complète d'après le document (أكمل من الوثيقة) :</h4>
                   <div class="space-y-2">
                     ${doc.completionQuestions.map(cQ => `
-                      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                      <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                         <p class="font-bold text-slate-900 font-french" dir="ltr">${cQ.promptFr}</p>
                         <p class="text-slate-500">${cQ.promptAr}</p>
-                        <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ Réponse : ${cQ.modelAnswerFr}</p>
-                        <p class="text-slate-500 text-[11px]">${cQ.modelAnswerAr}</p>
+                        <details class="group">
+                          <summary class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-800 select-none flex items-center gap-1">
+                            <span>👁️ عرض الإجابة النموذجية من الوثيقة</span>
+                          </summary>
+                          <div class="mt-1 p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] space-y-0.5">
+                            <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ Réponse : ${cQ.modelAnswerFr}</p>
+                            <p class="text-slate-500">${cQ.modelAnswerAr}</p>
+                          </div>
+                        </details>
                       </div>
                     `).join('')}
                   </div>
@@ -1991,13 +2111,18 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
                         `).join('')}
                       </div>
                       <div class="quiz-feedback hidden text-xs font-bold mt-1"></div>
-                    ` : ''}
-
-                    <div class="pt-1 border-t border-slate-200/60 text-[11px] space-y-0.5">
-                      <p class="font-bold text-teal-800 font-french" dir="ltr">➔ ${item.fullTransformedSentenceFr || item.answerFr}</p>
-                      ${item.fullTransformedSentenceAr ? `<p class="text-slate-500">${item.fullTransformedSentenceAr}</p>` : ''}
-                      <p class="text-indigo-600 font-semibold">💡 ${item.explanationAr}</p>
-                    </div>
+                    ` : `
+                      <details class="group mt-1">
+                        <summary class="cursor-pointer text-[11px] font-bold text-teal-700 hover:text-teal-900 select-none flex items-center gap-1">
+                          <span>👁️ عرض الحل والشرح</span>
+                        </summary>
+                        <div class="mt-1.5 p-2 rounded-lg bg-teal-50 border border-teal-100 text-[11px] space-y-0.5">
+                          <p class="font-bold text-teal-800 font-french" dir="ltr">➔ ${item.fullTransformedSentenceFr || item.answerFr}</p>
+                          ${item.fullTransformedSentenceAr ? `<p class="text-slate-500">${item.fullTransformedSentenceAr}</p>` : ''}
+                          <p class="text-indigo-600 font-semibold">💡 ${item.explanationAr}</p>
+                        </div>
+                      </details>
+                    `}
                   </div>
                 `).join('')}
               </div>
@@ -2532,10 +2657,17 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
               <h4 class="text-xs font-bold text-slate-800">C) Complète les phrases (سؤالان) :</h4>
               <div class="space-y-2">
                 ${ex.docPartCQuestions.map(q => `
-                  <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                  <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                     <p class="font-bold text-slate-900 font-french" dir="ltr">${q.sentenceTemplateFr}</p>
-                    <p class="text-slate-500">${q.sentenceAr}</p>
-                    <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ ${q.fullSentenceFr}</p>
+                    <p class="text-slate-500">${(q.sentenceAr || '').replace(/\([^)]*\)/g, '(.....)')}</p>
+                    <details class="group">
+                      <summary class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-800 select-none flex items-center gap-1">
+                        <span>👁️ عرض الجملة النموذجية الكاملة</span>
+                      </summary>
+                      <div class="mt-1 p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px]">
+                        <p class="font-bold text-emerald-800 font-french" dir="ltr">➔ ${q.fullSentenceFr}</p>
+                      </div>
+                    </details>
                   </div>
                 `).join('')}
               </div>
@@ -2553,7 +2685,7 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
               ${ex.situationsQuestions.map(s => `
                 <div class="quiz-card p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <p class="font-bold text-slate-900 font-french" dir="ltr">${s.situationFr}</p>
-                  <p class="text-slate-500">${s.situationAr}</p>
+                  <p class="text-slate-500">${sanitizePromptAr(s.situationAr)}</p>
                   <div class="space-y-1.5" dir="ltr">
                     ${s.options.map((opt, oIdx) => `
                       <button onclick="checkQuizOption(this, ${oIdx === s.correctIndex}, '${(s.explanationAr || '').replace(/['"]/g, ' ')}')" class="quiz-opt-btn w-full p-2.5 rounded-lg border border-slate-200 bg-white text-xs font-french font-semibold text-slate-800 text-left hover:border-amber-300 transition">
@@ -2579,10 +2711,17 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
               <h4 class="text-xs font-bold text-slate-800">A) Conjugue les verbes entre parenthèses (تصريف الأفعال) :</h4>
               <div class="space-y-2">
                 ${ex.gramPartAQuestions.map(q => `
-                  <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                  <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                     <p class="font-bold text-slate-900 font-french" dir="ltr">${q.promptFr}</p>
-                    <p class="font-bold text-indigo-700 font-french" dir="ltr">➔ Réponse : ${q.correctAnswer}</p>
-                    <p class="text-slate-500 text-[11px]">${q.ruleExplanationAr}</p>
+                    <details class="group">
+                      <summary class="cursor-pointer text-[11px] font-bold text-indigo-600 hover:text-indigo-800 select-none flex items-center gap-1">
+                        <span>👁️ عرض التصريف الصحيح والقاعدة</span>
+                      </summary>
+                      <div class="mt-1 p-2 rounded-lg bg-indigo-50 border border-indigo-100 text-[11px] space-y-0.5">
+                        <p class="font-bold text-indigo-800 font-french" dir="ltr">➔ Réponse : ${q.correctAnswer}</p>
+                        <p class="text-slate-600">${q.ruleExplanationAr}</p>
+                      </div>
+                    </details>
                   </div>
                 `).join('')}
               </div>
@@ -2593,7 +2732,7 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
               <h4 class="text-xs font-bold text-slate-800">B) Fais comme indiqué entre parenthèses (5 أسئلة) :</h4>
               <div class="space-y-2.5">
                 ${ex.gramPartBQuestions.map(item => `
-                  <div class="quiz-card p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
+                  <div class="quiz-card p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                     <p class="font-bold text-slate-900 font-french" dir="ltr">${item.questionFr || item.originalFr}</p>
                     ${item.instructionAr ? `<p class="text-indigo-600 font-semibold">[ ${item.instructionAr} ]</p>` : ''}
                     
@@ -2607,10 +2746,6 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
                       </div>
                       <div class="quiz-feedback hidden text-xs font-bold mt-1"></div>
                     ` : ''}
-
-                    ${item.expectedAnswerFr ? `
-                      <p class="font-bold text-teal-800 font-french pt-1" dir="ltr">➔ ${item.expectedAnswerFr}</p>
-                    ` : ''}
                   </div>
                 `).join('')}
               </div>
@@ -2621,11 +2756,18 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
               <h4 class="text-xs font-bold text-slate-800">C) Remplace par un pronom personnel (سؤالان) :</h4>
               <div class="space-y-2">
                 ${ex.gramPartCQuestions.map(q => `
-                  <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                  <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                     <p class="font-bold text-slate-900 font-french" dir="ltr">${q.originalFr}</p>
                     <p class="text-indigo-600 font-semibold">[ ${q.instructionAr} ]</p>
-                    <p class="font-bold text-teal-800 font-french" dir="ltr">➔ ${q.expectedAnswerFr}</p>
-                    <p class="text-slate-500 text-[11px]">${q.explanationAr}</p>
+                    <details class="group">
+                      <summary class="cursor-pointer text-[11px] font-bold text-teal-700 hover:text-teal-900 select-none flex items-center gap-1">
+                        <span>👁️ عرض الجملة بالضمير والشرح</span>
+                      </summary>
+                      <div class="mt-1 p-2 rounded-lg bg-teal-50 border border-teal-100 text-[11px] space-y-0.5">
+                        <p class="font-bold text-teal-800 font-french" dir="ltr">➔ ${q.expectedAnswerFr}</p>
+                        <p class="text-slate-600">${q.explanationAr}</p>
+                      </div>
+                    </details>
                   </div>
                 `).join('')}
               </div>
@@ -2641,12 +2783,19 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
 
             <div class="space-y-2">
               ${ex.productionQuestions.map(q => `
-                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-slate-900 font-french" dir="ltr">Pour ${q.purposeFr} :</span>
                     <span class="text-slate-500">${q.purposeAr}</span>
                   </div>
-                  <p class="font-bold text-emerald-700 font-french" dir="ltr">➔ ${q.modelSentenceFr}</p>
+                  <details class="group">
+                    <summary class="cursor-pointer text-[11px] font-bold text-emerald-600 hover:text-emerald-800 select-none flex items-center gap-1">
+                      <span>👁️ عرض الجملة النموذجية</span>
+                    </summary>
+                    <div class="mt-1 p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px]">
+                      <p class="font-bold text-emerald-800 font-french" dir="ltr">➔ ${q.modelSentenceFr}</p>
+                    </div>
+                  </details>
                 </div>
               `).join('')}
             </div>
@@ -2818,526 +2967,8 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
     let countdownInterval = null;
     let searchDebounceTimeout = null;
 
-    // ==============================================================
-    // EMBEDDED RESILIENT LOCAL ACCESS ENGINE (OFFLINE & WEBVIEW READY)
-    // ==============================================================
-    const RAW_500_CODES = "FR2-969C-LN3G-9KY5,FR2-W8CB-KJ7T-FSZD,FR2-RRLU-779N-3R6Y,FR2-NMGG-8MS2-22VP,FR2-P6VS-J8LP-E7CE,FR2-K753-MNG5-KGDT,FR2-L4J5-LPJ5-AL53,FR2-VD7G-4HJ3-NUDX,FR2-YZSD-RYEZ-G5PZ,FR2-29T4-77CQ-XCG8,FR2-WPFN-XC6Z-Q2G9,FR2-65FH-QVPW-P5YG,FR2-2DYY-WCHA-NBP9,FR2-KKSR-WHHM-L6D9,FR2-FZVS-N8U6-LRS7,FR2-Y6MY-VLVF-7VH4,FR2-5Q4F-JPTT-663J,FR2-DSWY-FDMX-J9TM,FR2-2Z7U-H5T3-UAW3,FR2-ADME-QLEC-PUVJ,FR2-MV93-M8K7-EV5H,FR2-X7VC-GH5D-A89Z,FR2-58ZV-YWAG-LKC5,FR2-FFDP-G4UJ-PJJN,FR2-79DD-XTR8-YQPC,FR2-3K27-YV3P-EFWB,FR2-BXEZ-JVPG-EUKA,FR2-5USS-4PTB-C47V,FR2-GLKF-5MPW-YKBA,FR2-R5H8-82RA-25GF,FR2-GN6T-P6RJ-FMG6,FR2-ZF6T-DZUM-WL3L,FR2-USKX-MXRH-APWJ,FR2-UYWC-X36P-SB59,FR2-2LN3-XWN7-QH9H,FR2-4G2Z-PBBX-R2U7,FR2-6K37-D8R4-KMFX,FR2-944A-KXEX-VAEE,FR2-KM8K-G8N4-J738,FR2-4BKL-8JZW-BPA7,FR2-SU9D-RKAA-9C3A,FR2-4DVP-8CGC-XQJD,FR2-YDMW-TFWK-4TUX,FR2-NFGU-4D7G-RQQS,FR2-JX8G-5SAR-PUVK,FR2-6KCU-DSJQ-JNAF,FR2-XZWR-MBV2-7ZD9,FR2-3MGK-88Y3-CC3W,FR2-88H3-DQ4S-MPB7,FR2-XVRN-A8M6-PPB7,FR2-ZYBJ-MMNS-F57Q,FR2-VMNH-QZJX-M8Q5,FR2-BWX5-ZXW8-THF6,FR2-675C-T8PH-DCZ9,FR2-XQQ6-49CC-Y326,FR2-KNZ5-3NQ2-6HC2,FR2-YQ45-R5GG-BAUZ,FR2-XXMW-KQJZ-5W45,FR2-PUDP-GA9U-CK9U,FR2-VVMJ-QKM2-XWHP,FR2-C823-DFLQ-9VV3,FR2-HNBQ-K2BV-A9SJ,FR2-WMTZ-GPZG-HZ84,FR2-RZW4-MSKA-XKJK,FR2-4ZPW-8VXP-WPKR,FR2-BC4Y-NND3-25ZC,FR2-QZTP-K8SK-VEEE,FR2-N8W8-KGE6-8KYJ,FR2-BYPG-ZRDY-R62A,FR2-6F8P-8C9E-62H5,FR2-J25L-HF75-BTCD,FR2-MCV3-UEX4-QGVJ,FR2-FRT8-4PCM-UX4C,FR2-PQQ7-S7SV-XRWS,FR2-MFKG-9RVQ-RZ4S,FR2-U95P-MMBX-HZFD,FR2-78Q7-CDMX-LRCP,FR2-NNHB-RQE5-E4KS,FR2-4LXA-KY2R-ENY5,FR2-BSHS-4QNP-WMS8,FR2-DEHB-MN52-X456,FR2-3QXP-MBPQ-ULQK,FR2-GQNZ-EYTQ-NTUD,FR2-4TTH-GUVL-4QAU,FR2-DV8Y-J4JA-E78P,FR2-U69C-G6EC-NKWU,FR2-7EED-5ZJ2-KKKN,FR2-6JLG-8ZEE-SF35,FR2-3DSV-PG7V-ECG4,FR2-QBLY-Z4N5-UX9G,FR2-BKKP-6G97-KJLF,FR2-MQRE-A3GH-34AR,FR2-EQMK-B75H-ZBKY,FR2-XS2S-GK9W-ZACN,FR2-C6AM-AVQR-97SN,FR2-TDSD-FYKG-Q85R,FR2-HTBM-P566-T995,FR2-VYQY-NY4X-FK5Z,FR2-2VDT-VS57-3ENZ,FR2-FSRF-WHG6-DRE5,FR2-WXH6-X4C3-CWG6,FR2-GSRF-A5C7-7MBS,FR2-L3HX-WQDV-P7ZW,FR2-EJ2A-BVDC-MWLK,FR2-7KE9-4RHN-ZXUG,FR2-66ZX-EVYM-U4BT,FR2-EF9A-9JTQ-844K,FR2-JQKK-XWE2-BB8B,FR2-6Z4F-SNVL-Y5TF,FR2-W9MP-P58P-3GKQ,FR2-GE9U-3TXP-CZAN,FR2-G9QF-KYX6-THUV,FR2-MYHZ-H9JC-8PP2,FR2-KX7Z-X226-CHYC,FR2-B2QB-Z9JQ-YV69,FR2-N5CG-KN2E-CESX,FR2-CQNN-FWA2-MYKQ,FR2-GNS2-8SE6-GRF7,FR2-VMU6-2LC3-2DJM,FR2-TWYX-BRU4-X2MN,FR2-WKJ5-WAKD-2BAS,FR2-BV76-DUJ5-XX7X,FR2-3RGR-KP4S-SJMC,FR2-ELSU-9LGU-JTDJ,FR2-MXEF-3BBU-G4CK,FR2-CDBN-R294-LF2N,FR2-T72V-CTCB-WH4Y,FR2-JSWV-EG6H-D4R8,FR2-5M33-K79R-A57W,FR2-SJWS-JVB6-XJV6,FR2-US46-JL6C-RJAL,FR2-VPR3-U2AZ-GULG,FR2-YVPV-PTV4-HMFP,FR2-EWRG-M2U8-PRAA,FR2-2QKD-DFF6-JXZB,FR2-JQCN-5VD2-CM2L,FR2-4HTB-K3JE-UHS3,FR2-55GQ-AK4Q-MRKR,FR2-53SJ-P8ED-DSPR,FR2-DJ63-QTS9-2D5S,FR2-DPT8-RPUV-ZS23,FR2-54JF-GDRV-MSCC,FR2-JHV2-W2J9-4MQT,FR2-VBTM-BAM2-A6FV,FR2-2EQF-C9YJ-FZJS,FR2-FFRY-JX9V-VYC8,FR2-96FY-TKEM-7QNX,FR2-J88N-PXNF-LW24,FR2-SBAE-3WZ4-MPLJ,FR2-EVBZ-FLPX-5L4S,FR2-UKW7-KHC9-YG3Z,FR2-YWLL-73MP-LET6,FR2-3Q3H-QFJV-T8N6,FR2-P979-XUV5-M8ZY,FR2-VL3N-64CL-W9F6,FR2-6SMY-FX8C-PTYY,FR2-DEXM-RR9R-WW7M,FR2-G8J2-CRLR-BWW4,FR2-VZJ5-HJXS-QDQ6,FR2-WG2G-QBZ2-V475,FR2-76YD-W2EW-Q274,FR2-2BLN-WPNX-JACB,FR2-BQZY-KHST-JWGQ,FR2-6Q2P-73RH-V879,FR2-L8WT-FBX9-CZN9,FR2-ZUBD-DL93-4RXD,FR2-MGB7-LJYT-7863,FR2-YXT6-CFZ7-3EJF,FR2-2SFF-53PW-D7TD,FR2-5XAU-26N2-MNEN,FR2-456R-JDFK-2LM5,FR2-XRWK-CENL-JDYN,FR2-RT5G-KM39-9F3R,FR2-A7ST-TZCF-Q88K,FR2-Z9CT-4L89-JMPW,FR2-9UPC-AJK6-L927,FR2-SFBQ-FXQU-CFS4,FR2-A36E-6X98-FCQW,FR2-RVNT-39Q2-Y8S2,FR2-E4PT-ZYHN-KQMH,FR2-44BJ-SVHY-DZYK,FR2-J7DW-37UV-NYBX,FR2-8QRA-NCTG-UPZ5,FR2-VVEJ-WP2B-WJV7,FR2-PU28-4LXV-BVGM,FR2-PRF7-A25E-M8FB,FR2-CDQ6-Z3MA-74RN,FR2-RDNU-G2HT-N2C5,FR2-CZ2S-GYXP-MQPK,FR2-ZKMV-4ZRC-59ZS,FR2-S93T-5FRN-7C2P,FR2-8244-5KZV-Y6X7,FR2-KWNH-TQLC-VHD8,FR2-L3LL-7HMY-TYKY,FR2-QXEV-63DR-6PKA,FR2-U3QY-P338-PPPM,FR2-98U8-ZJCD-6476,FR2-NX7Q-TW3P-CAJM,FR2-H77M-V3B6-NXN6,FR2-57NP-5EC4-PF6J,FR2-XEFK-JYUU-7ND2,FR2-7BUP-Z528-SLZ8,FR2-6GKU-4RL7-TDEU,FR2-GT6R-2SKW-GMGF,FR2-3AWQ-765X-SBCP,FR2-YFKE-NG37-ESQW,FR2-V86C-CLYQ-PMDK,FR2-VMGQ-ZS44-WGNY,FR2-8E4A-ZV4E-WKTY,FR2-Q3XU-2678-ARBS,FR2-UWXZ-9HYK-4H9N,FR2-5VHQ-T8FS-UMF4,FR2-ELWV-BFMK-JFUN,FR2-P8AR-HABT-ZB8X,FR2-XVWE-E6A7-J2KY,FR2-KHDN-DMRS-PF8T,FR2-U8WW-NDBG-B8T6,FR2-BX7Q-DMPK-CEAK,FR2-C38C-DMRE-ETPT,FR2-34LV-Y68U-8FGQ,FR2-WLPH-FB3W-TM5F,FR2-GS2E-EEF4-UAB8,FR2-T29H-VH9A-62SN,FR2-PFPZ-QMCH-F9MU,FR2-YFP2-3M94-K4FJ,FR2-EDGU-WQA6-6T2H,FR2-TETQ-PVKV-AD9M,FR2-PF46-U8ZE-SXHB,FR2-6S7S-2KGB-SNXR,FR2-UMSA-M3V8-YY3W,FR2-U82H-W8TY-57CN,FR2-MJWS-YUYU-7QWL,FR2-GU96-8EPD-S8T8,FR2-T7SJ-FGGQ-BRB6,FR2-3MTY-553Y-VX78,FR2-KYD2-FESL-CLGS,FR2-NUCY-42TJ-TZ26,FR2-88FX-766U-E373,FR2-V3HD-EA6A-ZXPW,FR2-MXMC-CWG4-N26W,FR2-LLMX-484C-GTFR,FR2-UEDH-CKMQ-XU6H,FR2-KDFY-KSXE-CRHJ,FR2-P9EQ-8UMA-EZM3,FR2-TZZ3-QTHA-6WL6,FR2-CQQX-YP9U-P2R7,FR2-VU6B-GV4W-794J,FR2-JGKD-B2F6-ML5A,FR2-QL7G-3PYH-6RUE,FR2-PSZ2-L3ZU-9KW2,FR2-YCNS-RS36-Y6NE,FR2-NP92-45TF-QXUS,FR2-C5AK-2Y34-W2MQ,FR2-QAQ7-YZD3-JBQK,FR2-AQDY-F2EY-NCWC,FR2-26SJ-HWWH-Q73N,FR2-4ZUH-HAAN-FPW5,FR2-KB65-BFCR-CASA,FR2-5KTF-6732-GW97,FR2-SND9-W6TN-XSNV,FR2-8VLJ-QMSG-9MBZ,FR2-88YQ-PC9P-GGED,FR2-FCZ4-N6A9-9YPA,FR2-FU23-DUTS-XYPQ,FR2-ZD3H-JCHV-HZUS,FR2-S4WJ-D3BS-H59M,FR2-8M9G-9LBP-PAWN,FR2-TMAG-ZPY9-D6UA,FR2-M83Q-LKX6-Q2JR,FR2-ZUQT-VLC9-NKRC,FR2-47EY-KNHB-BJ9V,FR2-6DXK-QL8K-VTMV,FR2-QPT6-M48C-3PSY,FR2-9HJV-F55G-LYJ3,FR2-KGLH-864Z-FX75,FR2-NXPR-2FZX-MGG5,FR2-VT2S-M7YC-9N57,FR2-B6RJ-S2AS-9MCP,FR2-J4H4-RHM7-99EV,FR2-U6X2-K767-ZVCA,FR2-CKCG-QKEP-2HK5,FR2-RGUT-B7NK-M56W,FR2-K554-874L-25A8,FR2-HJKH-V5GJ-RJRJ,FR2-KF9B-B3G6-QA6W,FR2-LFNA-P6M6-R95F,FR2-P7LG-2PML-CP4W,FR2-G96P-75Y5-JUVM,FR2-SCWA-TZ9S-XQE6,FR2-N4TG-6HHD-QDLN,FR2-4359-MNEP-M3WS,FR2-66VS-H55A-7GDA,FR2-XTQC-SEWS-SYUF,FR2-VP92-PYJC-XRME,FR2-GM27-J42W-BDWB,FR2-GZTK-C4D4-Q4EZ,FR2-KQXH-LMWK-A24K,FR2-39BG-CBFA-XKFN,FR2-237X-G9C3-6VVD,FR2-77FX-97FY-5CL2,FR2-MVN7-42MF-Y4RX,FR2-TVNT-3RT6-LUK3,FR2-JA2H-TFYG-NVAD,FR2-TYRB-ZFDY-D6VV,FR2-67BF-YQRK-BYLQ,FR2-LBTB-G5GD-TWWG,FR2-JUE2-G95T-9HWY,FR2-3Q5Z-BQNS-3MFV,FR2-BX8E-YDP8-YHHF,FR2-XBWV-JLW2-CQPJ,FR2-J9JV-BVKZ-FP3L,FR2-J6PZ-SAFA-4R4C,FR2-DRXT-AR2Z-A38S,FR2-DBQL-PVVR-RP5Z,FR2-SQ6D-YPFH-HVBW,FR2-GGW5-ABN3-WRZX,FR2-LGY4-2EWP-KC7P,FR2-V9L7-5SRM-VWTD,FR2-52WP-M9NA-VWUM,FR2-H6S8-QS6M-WLWA,FR2-7MZT-47US-AYAU,FR2-N5SL-RZVC-J3G8,FR2-NJBK-ZV6L-RDM4,FR2-5F26-LZHD-GCLD,FR2-G6ZV-H9M5-LWV7,FR2-LGZN-UKJK-6RUP,FR2-H8MY-XARQ-XULT,FR2-Z7WS-LLR4-3A2N,FR2-2FF7-GHGR-JCLQ,FR2-LJUT-VEN7-HCYY,FR2-MDW5-7KSR-9QKC,FR2-PCPU-EXVM-LWKB,FR2-G36H-ZAHK-SWAX,FR2-G2G6-YAR7-3SAD,FR2-4NT5-PJM6-KEZF,FR2-V3V6-7RER-3QR7,FR2-3UCN-85K6-FGJ9,FR2-4MU3-HS6F-FKGC,FR2-Q9R4-QLFN-XRDG,FR2-ALKM-QP6E-H2ZY,FR2-PPK2-5HMG-8MH9,FR2-82SB-GSTN-HCBZ,FR2-HA46-KGZ4-TL5N,FR2-M9BH-F6AW-2U2H,FR2-S6AS-AYH3-DUF8,FR2-UCXA-RX9Q-EPW2,FR2-GSWC-C8ZN-5BKN,FR2-SK3N-38TK-UGMU,FR2-MEXH-UT7T-Y8WY,FR2-YJ64-PWSV-PKAZ,FR2-TQEA-R3U8-RKHV,FR2-8JKT-ZLBE-KW5K,FR2-TDCU-XTWK-R9SL,FR2-22FW-T5GG-TPUL,FR2-F98A-GXKJ-QGQF,FR2-6YF9-TUX4-FQNR,FR2-GGPT-KBEP-DRBC,FR2-YMGL-MZ73-QS3Z,FR2-VMGM-9FQY-KZDD,FR2-98LD-QRGT-ZYYA,FR2-RBJK-YSV8-6JAC,FR2-YKR8-BYFZ-9CBR,FR2-NB39-SJRH-PK8W,FR2-5MCK-UY6G-A266,FR2-MGHP-2QUR-2NPF,FR2-BHLP-XGPK-7QQE,FR2-S5C2-9SWP-ZUUT,FR2-QKJ8-DETW-ZF8C,FR2-ZBCC-QB2U-MEWX,FR2-7FGA-FREM-TDSH,FR2-V7G8-KQMP-DMVU,FR2-CZYK-6XRM-WZQ7,FR2-N6TU-5HBN-EJSJ,FR2-R6MY-QWUZ-UC9S,FR2-KQ3X-S5LJ-ZLQ7,FR2-W3PY-DCWU-NE9G,FR2-8QPU-895W-LRR2,FR2-N9UT-8LBE-SUNT,FR2-8UKU-3JPX-WVGH,FR2-XLE6-WG88-JZBS,FR2-VFA6-KQDX-W83B,FR2-VK7D-CGHE-YXEL,FR2-ZA23-E3ET-XTYK,FR2-JUR2-T6JM-SS94,FR2-ZEEF-5AX5-4PFV,FR2-RT6F-Y4VX-C8RE,FR2-7XT5-4X76-2MBX,FR2-8BZX-G3B2-JTUT,FR2-NS4A-G7FN-KQY2,FR2-5FY3-7DBG-LFG8,FR2-YYAL-RFWV-A4P8,FR2-SLBR-C3BA-UNSR,FR2-ZV2S-7BBQ-6MJU,FR2-YM82-PCCA-TJPP,FR2-W8YD-G76X-T5U5,FR2-8A2F-V8P2-3CEB,FR2-XXHV-NJ5R-NKHP,FR2-6738-D9EN-QGT5,FR2-5K23-D2X2-778V,FR2-BZ52-97A5-7F4P,FR2-C9GA-8NBG-YCD8,FR2-CNET-TS6B-JMRA,FR2-TAD6-L7FY-N7JM,FR2-8KN5-ZEBQ-LV2N,FR2-344K-3NRR-GU7E,FR2-22UP-HGUY-CHLY,FR2-7LWJ-3TJ4-G4CZ,FR2-3USE-7R4B-R6BV,FR2-9CYH-Z2S5-BKSA,FR2-8H82-M4ZG-SFZS,FR2-84E6-6BW4-2AEB,FR2-HLPL-SPLQ-JGMA,FR2-PRXD-ML4X-HKDV,FR2-QB89-LUK3-R46Z,FR2-BXZW-TCF5-XP94,FR2-F63V-LZ3Q-S4FZ,FR2-MWZH-W2TZ-YR65,FR2-2BHD-FF45-M9GZ,FR2-2GSN-42R7-L2UJ,FR2-G6F3-QWSN-6Z52,FR2-3AGN-7PTM-GLWM,FR2-Y6PX-93EV-RU88,FR2-FJM8-JAPK-YVT6,FR2-8XH2-35FQ-TMCQ,FR2-9NZR-QHT6-PCQ5,FR2-S4HG-PTCV-78CR,FR2-3DPX-GCNM-EKTK,FR2-UNF6-EYHK-X3PY,FR2-446K-K2CR-9KC6,FR2-54TM-GZLX-T4E6,FR2-WYR8-C8DL-WTJ2,FR2-EC7T-8HS2-KDNE,FR2-AUSR-CD9S-R5T8,FR2-A7U8-CDRH-QFX8,FR2-J42L-39DE-E9AW,FR2-C37Q-3FDU-APE6,FR2-RCN8-AQNU-XT5Q,FR2-4QGC-KUPW-NQ2L,FR2-RT6R-4MZ9-WLPL,FR2-996C-ZRWJ-N9EN,FR2-D3TE-CYDK-99JT,FR2-NVCF-392W-3TXC,FR2-QVFQ-AVBP-72WX,FR2-5VPT-RR9U-CSBU,FR2-9STT-ANQ5-Q9Y4,FR2-AG5Z-W6VH-53DN,FR2-DZAU-72TQ-KWVR,FR2-QY8B-RJ5U-AG8E,FR2-LUAN-DAZZ-SYRW,FR2-YP8S-ZKLQ-PCJ4,FR2-TMUG-3NXD-WTNP,FR2-ZZR8-64DC-Z9BS,FR2-QYBJ-64HC-PMJS,FR2-77WJ-NX3F-U6KA,FR2-AKQ3-8Z9C-WQ3Q,FR2-KYCP-9CEV-WDK2,FR2-UQ5P-RH7N-TT24,FR2-XJ5U-Y2DH-ZLUL,FR2-F6E8-EL6N-VGEB,FR2-64HS-QWKT-KJQB,FR2-7JM7-2HAH-52KZ,FR2-BAZU-SBF9-M3P7,FR2-Y4GL-3HUE-8ETD,FR2-NJMT-64JS-MRD6,FR2-ZVZL-5QG4-F3UB,FR2-LRLH-ETDT-38RL,FR2-934D-6555-F9YX,FR2-9CP4-C7DQ-3PLA,FR2-YGVR-QHJK-NH6D,FR2-HQTS-N5V9-Y5GG,FR2-GZQ2-NLQX-TGYL,FR2-USB7-9M9G-H8SN,FR2-EBWP-YEFC-MTHG,FR2-XHRF-WREN-7XJW,FR2-NGGL-B95D-63WE,FR2-7B49-ZZVC-GHPV,FR2-QVJK-EXW3-XDFL,FR2-KP4H-CZZU-UQ8V,FR2-GNMS-KRWE-HE8U,FR2-2YBC-62JL-E5W4,FR2-DVDL-BLGW-NQPJ,FR2-YQEK-A8J7-EN56,FR2-HEEB-KRPS-QT7S,FR2-SNEC-VZVK-KEFD,FR2-A5Z6-T3ZZ-RDRV,FR2-VWS9-X3AC-6LNY,FR2-PDL6-8NB9-9V9N,FR2-J7SM-BXPF-AA7V,FR2-ZUVQ-RHRZ-LZZS,FR2-SWYP-HAUX-KGLS,FR2-EJXV-68RS-LE33,FR2-6N6L-E4YV-LU5Z,FR2-VC7U-73BC-PCDS,FR2-BFNC-X2KD-7LGA,FR2-XNV5-NBAE-U54T,FR2-2YP3-5VXE-UVAT,FR2-YMD5-Q98X-FNVU,FR2-9QGE-HWSU-MWG2,FR2-F393-4BCK-PY78,FR2-N2BH-Z7R4-X66Q";
-
-    const LocalAccessEngine = {
-      init() {
-        if (!localStorage.getItem("bienvenu2_local_codes_v1")) {
-          const list = RAW_500_CODES.split(",").map((c, idx) => ({
-            id: idx + 1,
-            code: c.trim().toUpperCase(),
-            type: "ANNUAL_365",
-            status: "UNUSED",
-            createdAt: new Date().toISOString(),
-            activatedAt: null,
-            expiresAt: null,
-            assignedUserId: null
-          }));
-          localStorage.setItem("bienvenu2_local_codes_v1", JSON.stringify(list));
-        }
-
-        if (!localStorage.getItem("bienvenu2_local_users_v1")) {
-          const users = [{
-            uid: "admin_owner_main",
-            name: "صاحب التطبيق (Admin)",
-            loginIdentifier: "bebooooooo80@gmail.com",
-            password: "Admin@Bienvenu2026!",
-            role: "admin",
-            createdAt: new Date().toISOString(),
-            trialUsed: false,
-            trialStartedAt: null,
-            trialExpiresAt: null,
-            accessType: "ANNUAL",
-            accessStatus: "ACTIVE",
-            annualActivatedAt: new Date().toISOString(),
-            annualExpiresAt: null
-          }];
-          localStorage.setItem("bienvenu2_local_users_v1", JSON.stringify(users));
-        }
-
-        if (!localStorage.getItem("bienvenu2_local_sessions_v1")) {
-          localStorage.setItem("bienvenu2_local_sessions_v1", JSON.stringify({}));
-        }
-      },
-
-      getUsers() {
-        this.init();
-        try { return JSON.parse(localStorage.getItem("bienvenu2_local_users_v1")) || []; }
-        catch(e) { return []; }
-      },
-
-      saveUsers(users) {
-        localStorage.setItem("bienvenu2_local_users_v1", JSON.stringify(users));
-      },
-
-      getCodes() {
-        this.init();
-        try { return JSON.parse(localStorage.getItem("bienvenu2_local_codes_v1")) || []; }
-        catch(e) { return []; }
-      },
-
-      saveCodes(codes) {
-        localStorage.setItem("bienvenu2_local_codes_v1", JSON.stringify(codes));
-      },
-
-      getSessions() {
-        this.init();
-        try { return JSON.parse(localStorage.getItem("bienvenu2_local_sessions_v1")) || {}; }
-        catch(e) { return {}; }
-      },
-
-      saveSessions(sessions) {
-        localStorage.setItem("bienvenu2_local_sessions_v1", JSON.stringify(sessions));
-      },
-
-      evaluateUserAccess(user) {
-        if (!user) return user;
-        if (user.role === "admin") {
-          user.accessType = "ANNUAL";
-          user.accessStatus = "ACTIVE";
-          user.access_type = "ANNUAL";
-          user.access_status = "ACTIVE";
-          return user;
-        }
-        const now = new Date();
-        if (user.accessType === "ANNUAL" || user.access_type === "ANNUAL") {
-          const exp = user.annualExpiresAt || user.annual_expires_at;
-          if (exp && new Date(exp) < now) {
-            user.accessStatus = "EXPIRED";
-            user.access_status = "EXPIRED";
-          }
-        } else if (user.accessType === "TRIAL" || user.access_type === "TRIAL") {
-          const exp = user.trialExpiresAt || user.trial_expires_at;
-          if (exp && new Date(exp) < now) {
-            user.accessStatus = "TRIAL_EXPIRED";
-            user.access_status = "TRIAL_EXPIRED";
-          }
-        }
-        // Normalize keys for compatibility
-        user.access_type = user.accessType || user.access_type;
-        user.access_status = user.accessStatus || user.access_status;
-        user.trial_started_at = user.trialStartedAt || user.trial_started_at;
-        user.trial_expires_at = user.trialExpiresAt || user.trial_expires_at;
-        user.annual_activated_at = user.annualActivatedAt || user.annual_activated_at;
-        user.annual_expires_at = user.annualExpiresAt || user.annual_expires_at;
-        user.login_identifier = user.loginIdentifier || user.login_identifier;
-        return user;
-      },
-
-      handleRequest(endpoint, method, body, token) {
-        this.init();
-        const users = this.getUsers();
-        const codes = this.getCodes();
-        const sessions = this.getSessions();
-
-        let authUser = null;
-        if (token && sessions[token]) {
-          const uid = sessions[token];
-          authUser = users.find(u => u.uid === uid) || null;
-          if (authUser) authUser = this.evaluateUserAccess(authUser);
-        }
-
-        // 1. REGISTER
-        if (endpoint === "/api/auth/register" && method === "POST") {
-          const { name, loginIdentifier, password } = body || {};
-          if (!name || !loginIdentifier || !password) {
-            return { ok: false, status: 400, data: { success: false, message: "يرجى ملء جميع الحقول المطلوبة." } };
-          }
-          const existing = users.find(u => (u.loginIdentifier || u.login_identifier || "").toLowerCase() === loginIdentifier.trim().toLowerCase());
-          if (existing) {
-            return { ok: false, status: 409, data: { success: false, message: "رقم الهاتف أو البريد الإلكتروني مسجل مسبقاً. يرجى تسجيل الدخول." } };
-          }
-          const newUser = {
-            uid: "usr_" + Math.random().toString(36).substring(2, 11),
-            name: name.trim(),
-            loginIdentifier: loginIdentifier.trim(),
-            login_identifier: loginIdentifier.trim(),
-            password: password,
-            role: "student",
-            createdAt: new Date().toISOString(),
-            trialUsed: false,
-            trialStartedAt: null,
-            trialExpiresAt: null,
-            accessType: "NONE",
-            accessStatus: "INACTIVE",
-            access_type: "NONE",
-            access_status: "INACTIVE",
-            annualActivatedAt: null,
-            annualExpiresAt: null,
-            activationCodeId: null
-          };
-          users.push(newUser);
-          this.saveUsers(users);
-
-          const newToken = "tok_" + Math.random().toString(36).substring(2) + Date.now();
-          sessions[newToken] = newUser.uid;
-          this.saveSessions(sessions);
-
-          return {
-            ok: true,
-            status: 201,
-            data: { success: true, token: newToken, user: newUser, message: "تم إنشاء الحساب بنجاح." }
-          };
-        }
-
-        // 2. LOGIN
-        if (endpoint === "/api/auth/login" && method === "POST") {
-          const { loginIdentifier, password } = body || {};
-          if (!loginIdentifier || !password) {
-            return { ok: false, status: 400, data: { success: false, message: "يرجى إدخال بيانات تسجيل الدخول." } };
-          }
-          let user = users.find(u => (u.loginIdentifier || u.login_identifier || "").toLowerCase() === loginIdentifier.trim().toLowerCase());
-          
-          // If this is the owner email and not yet registered locally, create it
-          if (!user && loginIdentifier.trim().toLowerCase() === "bebooooooo80@gmail.com" && password === "Admin@Bienvenu2026!") {
-            user = {
-              uid: "admin_owner_main",
-              name: "صاحب التطبيق (Admin)",
-              loginIdentifier: "bebooooooo80@gmail.com",
-              login_identifier: "bebooooooo80@gmail.com",
-              password: "Admin@Bienvenu2026!",
-              role: "admin",
-              createdAt: new Date().toISOString(),
-              trialUsed: false,
-              accessType: "ANNUAL",
-              accessStatus: "ACTIVE",
-              access_type: "ANNUAL",
-              access_status: "ACTIVE"
-            };
-            users.push(user);
-            this.saveUsers(users);
-          }
-
-          if (!user || user.password !== password) {
-            return { ok: false, status: 401, data: { success: false, message: "بيانات الدخول غير صحيحة. يرجى التأكد من كلمة المرور." } };
-          }
-          const evaluated = this.evaluateUserAccess(user);
-          const newToken = "tok_" + Math.random().toString(36).substring(2) + Date.now();
-          sessions[newToken] = evaluated.uid;
-          this.saveSessions(sessions);
-
-          return {
-            ok: true,
-            status: 200,
-            data: { success: true, token: newToken, user: evaluated, message: "تم تسجيل الدخول بنجاح." }
-          };
-        }
-
-        // 3. ADMIN CODE LOGIN
-        if (endpoint === "/api/auth/admin-code-login" && method === "POST") {
-          const rawCode = (body && body.adminCode || "").trim().toUpperCase();
-          const validAdminCodes = ["ADMIN-BIENVENU-2026", "ADMIN2026", "FR2-ADMIN-2026"];
-          if (!validAdminCodes.includes(rawCode)) {
-            return { ok: false, status: 400, data: { success: false, message: "كود الأدمن غير صحيح." } };
-          }
-          let admin = users.find(u => u.role === "admin");
-          if (!admin) {
-            admin = {
-              uid: "admin_owner_main",
-              name: "صاحب التطبيق (Admin)",
-              loginIdentifier: "bebooooooo80@gmail.com",
-              login_identifier: "bebooooooo80@gmail.com",
-              password: "Admin@Bienvenu2026!",
-              role: "admin",
-              createdAt: new Date().toISOString(),
-              trialUsed: false,
-              accessType: "ANNUAL",
-              accessStatus: "ACTIVE",
-              access_type: "ANNUAL",
-              access_status: "ACTIVE"
-            };
-            users.push(admin);
-            this.saveUsers(users);
-          }
-          const newToken = "tok_admin_" + Math.random().toString(36).substring(2) + Date.now();
-          sessions[newToken] = admin.uid;
-          this.saveSessions(sessions);
-
-          return {
-            ok: true,
-            status: 200,
-            data: { success: true, token: newToken, user: admin, message: "تم تسجيل دخول صاحب التطبيق والمدير بنجاح 🛡️" }
-          };
-        }
-
-        // 4. GET AUTH ME
-        if (endpoint === "/api/auth/me" && method === "GET") {
-          if (!authUser) {
-            return { ok: false, status: 401, data: { success: false, message: "الجلسة غير صالحة أو منتهية." } };
-          }
-          return { ok: true, status: 200, data: { success: true, user: authUser } };
-        }
-
-        // 5. START TRIAL
-        if (endpoint === "/api/access/start-trial" && method === "POST") {
-          if (!authUser) {
-            return { ok: false, status: 401, data: { success: false, message: "يرجى تسجيل الدخول أولاً." } };
-          }
-          if (authUser.trialUsed) {
-            return { ok: false, status: 400, data: { success: false, message: "لقد تم استخدام الفترة التجريبية المجانية لهذا الحساب مسبقاً." } };
-          }
-          const now = new Date();
-          const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-          authUser.trialUsed = true;
-          authUser.trialStartedAt = now.toISOString();
-          authUser.trialExpiresAt = expiresAt.toISOString();
-          authUser.trial_started_at = now.toISOString();
-          authUser.trial_expires_at = expiresAt.toISOString();
-          authUser.accessType = "TRIAL";
-          authUser.accessStatus = "ACTIVE";
-          authUser.access_type = "TRIAL";
-          authUser.access_status = "ACTIVE";
-
-          const idx = users.findIndex(u => u.uid === authUser.uid);
-          if (idx !== -1) users[idx] = authUser;
-          this.saveUsers(users);
-
-          return {
-            ok: true,
-            status: 200,
-            data: {
-              success: true,
-              trialStartedAt: authUser.trialStartedAt,
-              trialExpiresAt: authUser.trialExpiresAt,
-              message: "تم تفعيل الفترة التجريبية المجانية بنجاح لمدة 24 ساعة 🎁"
-            }
-          };
-        }
-
-        // 6. ACTIVATE CODE
-        if (endpoint === "/api/access/activate-code" && method === "POST") {
-          if (!authUser) {
-            return { ok: false, status: 401, data: { success: false, message: "يرجى تسجيل الدخول أولاً." } };
-          }
-          const rawCode = (body && body.code || "").trim().toUpperCase();
-          if (!rawCode) {
-            return { ok: false, status: 400, data: { success: false, message: "يرجى إدخال كود التفعيل." } };
-          }
-
-          const validAdminCodes = ["ADMIN-BIENVENU-2026", "ADMIN2026", "FR2-ADMIN-2026"];
-          if (validAdminCodes.includes(rawCode)) {
-            authUser.role = "admin";
-            authUser.accessType = "ANNUAL";
-            authUser.accessStatus = "ACTIVE";
-            authUser.access_type = "ANNUAL";
-            authUser.access_status = "ACTIVE";
-            const idx = users.findIndex(u => u.uid === authUser.uid);
-            if (idx !== -1) users[idx] = authUser;
-            this.saveUsers(users);
-
-            return {
-              ok: true,
-              status: 200,
-              data: {
-                success: true,
-                isAdmin: true,
-                role: "admin",
-                accessType: "ANNUAL",
-                accessStatus: "ACTIVE",
-                message: "مرحباً بك يا صاحب التطبيق! تم تسجيلك وتفعيل صلاحيات الإدارة الكاملة بنجاح 🛡️"
-              }
-            };
-          }
-
-          const codeObj = codes.find(c => c.code === rawCode);
-          if (!codeObj) {
-            return { ok: false, status: 400, data: { success: false, message: "كود التفعيل غير صحيح. تأكد من كتابته بدقة." } };
-          }
-          if (codeObj.status === "REVOKED") {
-            return { ok: false, status: 400, data: { success: false, message: "هذا الكود تم إلغاؤه من قبل الإدارة." } };
-          }
-          if (codeObj.status === "ACTIVE" || codeObj.status === "USED") {
-            return { ok: false, status: 400, data: { success: false, message: "هذا الكود تم استخدامه وتفعيله مسبقاً." } };
-          }
-
-          const now = new Date();
-          const expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-
-          codeObj.status = "ACTIVE";
-          codeObj.activatedAt = now.toISOString();
-          codeObj.expiresAt = expiresAt.toISOString();
-          codeObj.assignedUserId = authUser.uid;
-          this.saveCodes(codes);
-
-          authUser.accessType = "ANNUAL";
-          authUser.accessStatus = "ACTIVE";
-          authUser.access_type = "ANNUAL";
-          authUser.access_status = "ACTIVE";
-          authUser.annualActivatedAt = now.toISOString();
-          authUser.annualExpiresAt = expiresAt.toISOString();
-          authUser.annual_activated_at = now.toISOString();
-          authUser.annual_expires_at = expiresAt.toISOString();
-          authUser.activationCodeId = codeObj.id;
-
-          const idx = users.findIndex(u => u.uid === authUser.uid);
-          if (idx !== -1) users[idx] = authUser;
-          this.saveUsers(users);
-
-          return {
-            ok: true,
-            status: 200,
-            data: {
-              success: true,
-              accessType: "ANNUAL",
-              accessStatus: "ACTIVE",
-              annualActivatedAt: authUser.annualActivatedAt,
-              annualExpiresAt: authUser.annualExpiresAt,
-              message: "تم تفعيل الاشتراك السنوي بنجاح لمدة 365 يوماً 🌟"
-            }
-          };
-        }
-
-        // 7. ADMIN OVERVIEW
-        if (endpoint === "/api/admin/overview" && method === "GET") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          const totalCodes = codes.length;
-          const unusedCodes = codes.filter(c => c.status === "UNUSED").length;
-          const activeCodes = codes.filter(c => c.status === "ACTIVE").length;
-          const revokedCodes = codes.filter(c => c.status === "REVOKED").length;
-
-          const totalStudents = users.filter(u => u.role !== "admin").length;
-          const activeAnnual = users.filter(u => u.role !== "admin" && (u.accessType === "ANNUAL" || u.access_type === "ANNUAL") && (u.accessStatus === "ACTIVE" || u.access_status === "ACTIVE")).length;
-          const activeTrial = users.filter(u => u.role !== "admin" && (u.accessType === "TRIAL" || u.access_type === "TRIAL") && (u.accessStatus === "ACTIVE" || u.access_status === "ACTIVE")).length;
-          const expiredUsers = users.filter(u => u.role !== "admin" && (u.accessStatus === "EXPIRED" || u.access_status === "EXPIRED" || u.accessStatus === "TRIAL_EXPIRED" || u.access_status === "TRIAL_EXPIRED")).length;
-
-          return {
-            ok: true,
-            status: 200,
-            data: {
-              success: true,
-              overview: {
-                totalCodes,
-                unusedCodes,
-                activeCodes,
-                revokedCodes,
-                totalStudents,
-                activeAnnual,
-                activeTrial,
-                expiredUsers
-              }
-            }
-          };
-        }
-
-        // 8. ADMIN CODES LIST
-        if (endpoint === "/api/admin/codes" && method === "GET") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          return { ok: true, status: 200, data: { success: true, codes } };
-        }
-
-        // 9. ADMIN STUDENTS LIST
-        if (endpoint === "/api/admin/students" && method === "GET") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          const students = users.filter(u => u.role !== "admin").map(u => ({
-            uid: u.uid,
-            name: u.name,
-            login_identifier: u.loginIdentifier || u.login_identifier,
-            role: u.role,
-            created_at: u.createdAt,
-            access_type: u.accessType || u.access_type,
-            access_status: u.accessStatus || u.access_status,
-            trial_started_at: u.trialStartedAt || u.trial_started_at,
-            trial_expires_at: u.trialExpiresAt || u.trial_expires_at,
-            annual_activated_at: u.annualActivatedAt || u.annual_activated_at,
-            annual_expires_at: u.annualExpiresAt || u.annual_expires_at
-          }));
-          return { ok: true, status: 200, data: { success: true, students } };
-        }
-
-        // 10. ADMIN TOGGLE STATUS
-        if (endpoint === "/api/admin/toggle-status" && method === "POST") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          const { studentUid, newStatus } = body || {};
-          const st = users.find(u => u.uid === studentUid);
-          if (!st) {
-            return { ok: false, status: 404, data: { success: false, message: "الطالب غير موجود." } };
-          }
-          st.accessStatus = newStatus;
-          st.access_status = newStatus;
-          this.saveUsers(users);
-          return { ok: true, status: 200, data: { success: true, message: `تم تعديل حالة الطالب إلى ${newStatus}` } };
-        }
-
-        // 11. ADMIN REVOKE CODE
-        if (endpoint === "/api/admin/revoke-code" && method === "POST") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          const { codeId, newStatus } = body || {};
-          const c = codes.find(item => item.id === codeId);
-          if (!c) {
-            return { ok: false, status: 404, data: { success: false, message: "الكود غير موجود." } };
-          }
-          c.status = newStatus || "REVOKED";
-          this.saveCodes(codes);
-          return { ok: true, status: 200, data: { success: true, message: "تم تحديث حالة الكود." } };
-        }
-
-        // 12. ADMIN ADD CODE
-        if (endpoint === "/api/admin/add-code" && method === "POST") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          const { customCode } = body || {};
-          const finalCode = (customCode || ("FR2-" + Math.random().toString(36).substring(2, 6) + "-" + Math.random().toString(36).substring(2, 6) + "-" + Math.random().toString(36).substring(2, 6))).toUpperCase();
-          const newCodeObj = {
-            id: codes.length + 1,
-            code: finalCode,
-            type: "ANNUAL_365",
-            status: "UNUSED",
-            createdAt: new Date().toISOString(),
-            activatedAt: null,
-            expiresAt: null,
-            assignedUserId: null
-          };
-          codes.unshift(newCodeObj);
-          this.saveCodes(codes);
-          return { ok: true, status: 201, data: { success: true, code: finalCode, message: `تم إنشاء الكود الجديد بنجاح: ${finalCode}` } };
-        }
-
-        // 13. ADMIN EXPORT CODES
-        if (endpoint === "/api/admin/export-codes" && method === "GET") {
-          if (!authUser || authUser.role !== "admin") {
-            return { ok: false, status: 403, data: { success: false, message: "غير مصرح بالوصول." } };
-          }
-          const csvLines = ["Number,Activation Code,Status,Activated At,Expires At,Assigned Student"];
-          codes.forEach((c, idx) => {
-            csvLines.push(`${idx + 1},${c.code},${c.status},${c.activatedAt || ""},${c.expiresAt || ""},${c.assignedUserId || ""}`);
-          });
-          return {
-            ok: true,
-            status: 200,
-            data: {
-              success: true,
-              totalCount: codes.length,
-              csvContent: csvLines.join("\n"),
-              filename: "Bienvenu2_Codes_Export_500.csv"
-            }
-          };
-        }
-
-        return { ok: false, status: 404, data: { success: false, message: "نقطة النهاية غير متوفرة." } };
-      }
-    };
-
-    // Client API Request with Auto-Fallback to Local Engine
+    // Secure API Request (Server is the only Source of Truth, Fails Closed)
     async function apiRequest(endpoint, method = "GET", body = null) {
-      // If running inside file:/// (Android WebView or local file), use Local Engine immediately
-      if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
-        return LocalAccessEngine.handleRequest(endpoint, method, body, userToken);
-      }
-
       const headers = { "Content-Type": "application/json" };
       if (userToken) {
         headers["Authorization"] = `Bearer ${userToken}`;
@@ -3349,14 +2980,27 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
 
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         const res = await fetch(endpoint, { ...options, signal: controller.signal });
         clearTimeout(timeoutId);
-        const data = await res.json();
+        let data;
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = { success: false, message: "استجابة غير صالحة من الخادم." };
+        }
         return { ok: res.ok, status: res.status, data };
       } catch (err) {
-        console.warn("Backend server request failed or timed out. Falling back to local offline engine:", endpoint);
-        return LocalAccessEngine.handleRequest(endpoint, method, body, userToken);
+        console.warn("Backend server request failed or offline:", endpoint, err);
+        return {
+          ok: false,
+          status: 0,
+          networkError: true,
+          data: {
+            success: false,
+            message: "تعذر الاتصال بالخادم حاليًا. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى."
+          }
+        };
       }
     }
 
@@ -3369,7 +3013,8 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
         'code': document.getElementById('accessViewCode'),
         'trial_expired': document.getElementById('accessViewTrialExpired'),
         'annual_expired': document.getElementById('accessViewAnnualExpired'),
-        'suspended': document.getElementById('accessViewSuspended')
+        'suspended': document.getElementById('accessViewSuspended'),
+        'offline': document.getElementById('accessViewOffline')
       };
 
       if (viewName === 'none') {
@@ -3550,27 +3195,8 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
         return;
       }
 
-      const ADMIN_CODES = ['ADMIN-BIENVENU-2026', 'FR2-ADMIN-2026', 'ADMIN2026', 'ADMIN-OWNER-2026'];
-      
       submitBtn.disabled = true;
       try {
-        // If it is an Admin Code and user is not logged in, authenticate immediately
-        if (ADMIN_CODES.includes(code) && !userToken) {
-          const adminRes = await apiRequest('/api/auth/admin-code-login', 'POST', { adminCode: code });
-          if (adminRes.ok && adminRes.data.success) {
-            userToken = adminRes.data.token;
-            localStorage.setItem('bienvenu2_token', userToken);
-            currentUser = adminRes.data.user;
-            playSuccessSound();
-            if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
-            updateTopBarUserUI();
-            showAccessView('none');
-            input.value = '';
-            alert('مرحباً بك يا صاحب التطبيق! تم تسجيل دخولك كمدير للمنصة 🛡️');
-            return;
-          }
-        }
-
         const res = await apiRequest('/api/access/activate-code', 'POST', { code });
         if (res.ok && res.data.success) {
           playSuccessSound();
@@ -3579,14 +3205,13 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
           currentUser.access_status = res.data.accessStatus;
           currentUser.annual_activated_at = res.data.annualActivatedAt;
           currentUser.annual_expires_at = res.data.annualExpiresAt;
-          if (res.data.role === 'admin') currentUser.role = 'admin';
           updateTopBarUserUI();
           showAccessView('none');
           input.value = '';
           alert('تهانينا! ' + res.data.message);
         } else {
           playErrorSound();
-          errBox.innerText = res.data.message || 'كود غير صحيح.';
+          errBox.innerText = (res.data && res.data.message) || 'كود غير صحيح.';
           errBox.classList.remove('hidden');
         }
       } finally {
@@ -3594,28 +3219,7 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
       }
     }
 
-    // Quick Admin Login Prompt
-    async function promptAdminLogin() {
-      playClickSound();
-      const code = prompt('🔑 أدخل كود الأدمن وصاحب التطبيق للمتابعة كمدير:', 'ADMIN-BIENVENU-2026');
-      if (!code) return;
-      const res = await apiRequest('/api/auth/admin-code-login', 'POST', { adminCode: code.trim().toUpperCase() });
-      if (res.ok && res.data.success) {
-        userToken = res.data.token;
-        localStorage.setItem('bienvenu2_token', userToken);
-        currentUser = res.data.user;
-        playSuccessSound();
-        if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
-        updateTopBarUserUI();
-        showAccessView('none');
-        alert('مرحباً بك يا صاحب التطبيق! تم تسجيل دخولك بنجاح 🛡️');
-      } else {
-        playErrorSound();
-        alert(res.data.message || 'كود الأدمن غير صحيح.');
-      }
-    }
-
-    // Verify Access Status with Server
+    // Verify Access Status with Server (Server is Source of Truth)
     async function verifyAccessStatus() {
       if (!userToken) {
         currentUser = null;
@@ -3625,7 +3229,15 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
       }
 
       const res = await apiRequest('/api/auth/me', 'GET');
-      if (!res.ok || !res.data.success) {
+      if (res.networkError) {
+        // FAIL CLOSED: Server unreachable -> Protected content blocked, show retry UI
+        currentUser = null;
+        updateTopBarUserUI();
+        showAccessView('offline');
+        return;
+      }
+
+      if (!res.ok || !res.data || !res.data.success) {
         // Token invalid or expired
         userToken = '';
         currentUser = null;
@@ -3677,13 +3289,13 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
         if (welcomeStateText) welcomeStateText.innerText = 'غير مسجل الدخول';
         if (welcomeActionBtns) {
           welcomeActionBtns.innerHTML = `
-            <button onclick="promptAdminLogin()" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs flex items-center gap-1 transition">
-              <i class="fa-solid fa-shield-halved text-amber-600"></i>
-              <span>دخول الأدمن</span>
+            <button onclick="showAccessView('auth'); switchAuthTab('login');" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1 transition">
+              <i class="fa-solid fa-arrow-right-to-bracket text-slate-600"></i>
+              <span>تسجيل الدخول</span>
             </button>
-            <button onclick="showAccessView('auth')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1 transition">
+            <button onclick="showAccessView('auth'); switchAuthTab('register');" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1 transition">
               <i class="fa-solid fa-user-circle text-indigo-600"></i>
-              <span>دخول / تسجيل</span>
+              <span>إنشاء حساب</span>
             </button>
           `;
         }

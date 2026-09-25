@@ -322,14 +322,22 @@ fun TranslateIconButton(
     }
 }
 
+private fun cleanArabicTranslation(text: String): String {
+    return text.replace(Regex("➔.*"), "")
+        .replace(Regex("->.*"), "")
+        .replace(Regex("\\[\\s*(صح|خطأ|Vrai|Faux|V|F)[^\\]]*\\]", RegexOption.IGNORE_CASE), "")
+        .trim()
+}
+
 @Composable
 fun ArabicTranslationBanner(
     translation: String,
     visible: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val sanitizedText = remember(translation) { cleanArabicTranslation(translation) }
     AnimatedVisibility(
-        visible = visible && translation.isNotEmpty(),
+        visible = visible && sanitizedText.isNotEmpty(),
         enter = fadeIn() + expandVertically(),
         exit = fadeOut() + shrinkVertically()
     ) {
@@ -360,7 +368,7 @@ fun ArabicTranslationBanner(
                         )
                     }
                     Text(
-                        text = translation,
+                        text = sanitizedText,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF166534),

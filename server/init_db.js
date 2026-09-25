@@ -4,13 +4,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DB_PATH = path.resolve('server/database.sqlite');
-const CSV_PATH = path.resolve('server/admin_exports/codes_export_500.csv');
+const CSV_PATH = path.resolve('server/private_exports/codes_export_500.csv');
+
+export function hashPassword(password, salt) {
+  return crypto.pbkdf2Sync(password, salt, 100000, 32, 'sha256').toString('hex');
+}
+
+export function hashCode(rawCode) {
+  return crypto.createHash('sha256').update(rawCode.trim().toUpperCase()).digest('hex');
+}
 
 export function initDatabase() {
   const db = new DatabaseSync(DB_PATH);
 
-  // 1. Enable WAL mode for better concurrency
+  // 1. Enable WAL mode for concurrency
   db.exec('PRAGMA journal_mode = WAL;');
+  db.exec('PRAGMA foreign_keys = ON;');
 
   // 2. Create tables
   db.exec(`
@@ -59,10 +68,10 @@ export function initDatabase() {
     );
   `);
 
-  // 3. Populate 500 activation codes if empty
+  // 3. Populate 500 new activation codes if empty or reset
   const countRow = db.prepare('SELECT COUNT(*) as count FROM activation_codes').get();
   if (countRow.count === 0) {
-    console.log('Seeding 500 activation codes into database...');
+    console.log('Seeding 500 new activation codes into database...');
     if (!fs.existsSync(CSV_PATH)) {
       throw new Error(`CSV file not found at ${CSV_PATH}`);
     }
@@ -74,41 +83,49 @@ export function initDatabase() {
 
     const nowIso = new Date().toISOString();
     db.exec('BEGIN IMMEDIATE');
-    for (const line of lines) {
-      const parts = line.split(',');
-      if (parts.length >= 2) {
-        const rawCode = parts[1].trim().toUpperCase();
-        const codeHash = crypto.createHash('sha256').update(rawCode).digest('hex');
-        insertCode.run(codeHash, nowIso);
+    try {
+      for (const line of lines) {
+        const parts = line.split(',');
+        if (parts.length >= 2) {
+          const rawCode = parts[1].trim().toUpperCase();
+          if (rawCode) {
+            const codeHash = hashCode(rawCode);
+            insertCode.run(codeHash, nowIso);
+          }
+        }
       }
+      db.exec('COMMIT');
+      console.log('Successfully seeded 500 new activation code hashes into database.');
+    } catch (err) {
+      db.exec('ROLLBACK');
+      throw err;
     }
-    db.exec('COMMIT');
-    console.log(`Successfully seeded 500 codes into database.`);
   }
 
-  // 4. Create default administrator accounts if not present
-  const beboAdmin = db.prepare("SELECT * FROM users WHERE login_identifier = 'bebooooooo80@gmail.com'").get();
-  if (!beboAdmin) {
-    const adminUid = 'admin_owner_' + crypto.randomBytes(6).toString('hex');
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync('Admin@Bienvenu2026!', salt, 10000, 32, 'sha256').toString('hex');
-    db.prepare(`
-      INSERT INTO users (uid, name, login_identifier, password_hash, password_salt, role, created_at, access_type, access_status)
-      VALUES (?, 'صاحب التطبيق (Admin)', 'bebooooooo80@gmail.com', ?, ?, 'admin', ?, 'ANNUAL', 'ACTIVE')
-    `).run(adminUid, hash, salt, new Date().toISOString());
-    console.log('Initialized owner admin account: bebooooooo80@gmail.com');
-  }
+  // 4. Initialize administrator account securely without hardcoded credentials
+  const adminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD || '';
 
-  const defaultAdmin = db.prepare("SELECT * FROM users WHERE login_identifier = 'admin@bienvenu2.fr'").get();
-  if (!defaultAdmin) {
+  const adminCount = db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'admin'").get().count;
+  if (adminCount === 0) {
+    const finalEmail = adminEmail || 'admin@bienvenu2.internal';
+    const finalPassword = adminPassword || crypto.randomBytes(16).toString('hex');
     const adminUid = 'admin_' + crypto.randomBytes(8).toString('hex');
     const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync('Admin@Bienvenu2026!', salt, 10000, 32, 'sha256').toString('hex');
+    const passHash = hashPassword(finalPassword, salt);
+    const nowIso = new Date().toISOString();
+    const tenYearsIso = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString();
+
     db.prepare(`
-      INSERT INTO users (uid, name, login_identifier, password_hash, password_salt, role, created_at, access_type, access_status)
-      VALUES (?, 'مدير المنصة', 'admin@bienvenu2.fr', ?, ?, 'admin', ?, 'ANNUAL', 'ACTIVE')
-    `).run(adminUid, hash, salt, new Date().toISOString());
-    console.log('Initialized default admin account: admin@bienvenu2.fr');
+      INSERT INTO users (uid, name, login_identifier, password_hash, password_salt, role, created_at, access_type, access_status, annual_activated_at, annual_expires_at)
+      VALUES (?, 'مدير المنصة (Admin)', ?, ?, ?, 'admin', ?, 'ANNUAL', 'ACTIVE', ?, ?)
+    `).run(adminUid, finalEmail, passHash, salt, nowIso, nowIso, tenYearsIso);
+
+    console.log(`[SETUP] Administrator account initialized: ${finalEmail}`);
+    if (!adminPassword) {
+      console.log(`[SETUP] Generated random temporary admin password: ${finalPassword}`);
+      console.log(`[SETUP] Set ADMIN_EMAIL and ADMIN_PASSWORD in environment variables for custom administrator configuration.`);
+    }
   }
 
   return db;
