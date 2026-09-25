@@ -34,53 +34,365 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-24 md:pb-16 flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
-  <!-- ACTIVATION MODAL -->
-  <div id="activationOverlay" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden animate-fade-in">
-      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-blue-600 via-white to-red-600"></div>
-      
-      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">
+  <!-- ============================================================== -->
+  <!-- PHASE 3: SECURE STUDENT ACCESS & LICENSING SYSTEM OVERLAYS     -->
+  <!-- ============================================================== -->
+  <div id="accessModalOverlay" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    
+    <!-- 1. FIRST-ENTRY SCREEN (2 PRIMARY OPTIONS) -->
+    <div id="accessViewWelcome" class="bg-white max-w-lg w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-red-500"></div>
+
+      <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">
         <i class="fa-solid fa-graduation-cap"></i>
       </div>
-      
-      <h2 class="text-2xl font-black text-slate-800 mb-1">منصة Bienvenu 2 الشاملة</h2>
-      <p class="text-xs font-semibold text-indigo-600 mb-4 font-french">2ème Préparatoire - المحتوى الأصلي الكامل 100%</p>
-      <p class="text-sm text-slate-600 mb-6 leading-relaxed">أهلاً بك! تم تحويل وتضمين 100% من محتوى تطبيق الأندرويد الدراسي بالكامل بدون أي اختصار أو حذف.</p>
 
-      <div class="space-y-4 mb-6 text-right">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5"><i class="fa-solid fa-user text-indigo-500 ml-1"></i> اسم الطالب / الطالبة</label>
-          <input type="text" id="studentNameInput" placeholder="أدخل اسمك هنا..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition" value="طالب متفوق">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5"><i class="fa-solid fa-key text-indigo-500 ml-1"></i> كود التفعيل الدراسي</label>
-          <input type="text" id="activationCodeInput" placeholder="اكتب كود التفعيل (مثال: BIENVENU2025)..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-french font-bold uppercase transition tracking-wider" value="BIENVENU2025">
-          <p id="activationError" class="text-xs text-rose-500 mt-1.5 hidden font-bold"></p>
-        </div>
+      <h2 class="text-2xl font-black text-slate-800 mb-1">منصة Bienvenu 2 التعليمية</h2>
+      <p class="text-xs font-bold text-indigo-600 mb-2 font-french">2ème Préparatoire • منهج اللغة الفرنسية الكامل 100%</p>
+      <p class="text-xs text-slate-600 mb-6 leading-relaxed">
+        أهلاً بك في المنصة التفاعلية الرسمية. للحصول على المنهج الدراسي والتمارين والامتحانات بالصوت والشرح، يرجى اختيار إحدى البوابتين:
+      </p>
+
+      <!-- TWO PRIMARY OPTIONS REQUIRED BY PHASE 3 -->
+      <div class="space-y-3.5 mb-6 text-right">
+        
+        <!-- OPTION 1: 24-HOUR FREE TRIAL -->
+        <button onclick="handleOptionTrialClick()" class="w-full text-right p-4 rounded-2xl border-2 border-emerald-500/80 bg-gradient-to-br from-emerald-50/80 to-emerald-100/40 hover:from-emerald-100 hover:to-emerald-200/50 hover:border-emerald-600 active:scale-[0.99] transition shadow-md shadow-emerald-500/10 group flex items-start gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex-shrink-0 flex items-center justify-center text-2xl shadow-sm group-hover:scale-105 transition">
+            <i class="fa-solid fa-gift"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-base font-black text-emerald-900 group-hover:text-emerald-950">🎁 جرّب مجانًا لمدة 24 ساعة</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white flex-shrink-0">بدون كود تفعيل</span>
+            </div>
+            <p class="text-xs text-emerald-800 font-medium leading-relaxed">
+              فتح تجريبي مجاني شامل لكل الدروس، القواعد، بنوك الأسئلة، والامتحانات فوراً لمرة واحدة لكل طالب محسوبة بالثواني عبر الخادم.
+            </p>
+          </div>
+        </button>
+
+        <!-- OPTION 2: HAVE ACTIVATION CODE -->
+        <button onclick="handleOptionCodeClick()" class="w-full text-right p-4 rounded-2xl border-2 border-indigo-500/80 bg-gradient-to-br from-indigo-50/80 to-indigo-100/40 hover:from-indigo-100 hover:to-indigo-200/50 hover:border-indigo-600 active:scale-[0.99] transition shadow-md shadow-indigo-500/10 group flex items-start gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex-shrink-0 flex items-center justify-center text-2xl shadow-sm group-hover:scale-105 transition">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-base font-black text-indigo-950 group-hover:text-indigo-900">🔑 عندي كود تفعيل</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-600 text-white flex-shrink-0">365 يوماً</span>
+            </div>
+            <p class="text-xs text-indigo-800 font-medium leading-relaxed">
+              تفعيل الاشتراك السنوي الكامل لمدة عام دراسي كامل (365 يوماً) باستخدام أحد الأكواد المعتمدة مع حفظ السجل الدراسي كاملاً.
+            </p>
+          </div>
+        </button>
+
       </div>
 
-      <!-- Quick Codes -->
-      <div class="mb-5 bg-slate-50 p-3 rounded-2xl border border-slate-200/70 text-right">
-        <span class="text-xs font-bold text-slate-500 block mb-1.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500 ml-1"></i> انقر على أي كود تجريبي للملء التلقائي:</span>
-        <div class="flex flex-wrap gap-1.5">
-          <button onclick="fillCode('BIENVENU2025')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition">BIENVENU2025</button>
-          <button onclick="fillCode('PREPA2')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition">PREPA2</button>
-          <button onclick="fillCode('FRANCAIS2')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200 transition">FRANCAIS2</button>
-          <button onclick="fillCode('EXCELLENCE')" class="px-2.5 py-1 text-xs font-bold font-french rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 transition">EXCELLENCE</button>
-        </div>
+      <!-- Auth prompt footer -->
+      <div id="welcomeUserStatusBox" class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span id="welcomeUserStateText">غير مسجل الدخول</span>
+        <button onclick="showAccessView('auth')" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 transition">
+          <i class="fa-solid fa-user-circle"></i>
+          <span>تسجيل الدخول / إنشاء حساب</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. AUTHENTICATION VIEW (REGISTER & LOGIN) -->
+    <div id="accessViewAuth" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-indigo-500 to-blue-600"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="showAccessView('welcome')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <span class="text-xs font-bold text-slate-400">بوابة الحسابات الآمنة</span>
       </div>
 
-      <button onclick="activateAccount()" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
-        <span>دخول وتفعيل المنهج الكامل</span>
-        <i class="fa-solid fa-arrow-left"></i>
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl shadow-inner border border-indigo-100">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+
+      <h3 id="authTitle" class="text-xl font-black text-slate-800 mb-1">تسجيل حساب طالب جديد</h3>
+      <p id="authSubtitle" class="text-xs text-slate-500 mb-5">يتطلب النظام إنشاء حساب لحفظ تقدمك الدراسي وربط فترتك التجريبية أو اشتراكك السنوي.</p>
+
+      <!-- Auth Toggle Tabs -->
+      <div class="flex rounded-xl bg-slate-100 p-1 mb-5">
+        <button id="tabBtnRegister" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm">
+          حساب طالب جديد
+        </button>
+        <button id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900">
+          تسجيل الدخول
+        </button>
+      </div>
+
+      <!-- Auth Form -->
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-3.5 text-right">
+        <div id="authNameFieldGroup">
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-id-card text-indigo-500 ml-1"></i> اسم الطالب / الطالبة الكامل
+          </label>
+          <input type="text" id="authNameInput" placeholder="أدخل اسمك الثلاثي..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-envelope text-indigo-500 ml-1"></i> رقم الهاتف أو البريد الإلكتروني
+          </label>
+          <input type="text" id="authIdentifierInput" placeholder="مثال: 01012345678 أو email@test.com" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition" dir="ltr" required>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-lock text-indigo-500 ml-1"></i> كلمة المرور
+          </label>
+          <input type="password" id="authPasswordInput" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold transition" dir="ltr" required minlength="6">
+        </div>
+
+        <div id="authErrorMsg" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold text-center"></div>
+
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition flex items-center justify-center gap-2 mt-4">
+          <span id="authSubmitBtnText">إنشاء الحساب والمتابعة</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 3. ACTIVATION CODE ENTRY VIEW -->
+    <div id="accessViewCode" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-500 to-indigo-600"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="showAccessView('welcome')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <span class="text-xs font-bold text-amber-600"><i class="fa-solid fa-star ml-1"></i> تفعيل 365 يوماً</span>
+      </div>
+
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl shadow-inner border border-amber-100">
+        <i class="fa-solid fa-key"></i>
+      </div>
+
+      <h3 class="text-xl font-black text-slate-800 mb-1">إدخال كود التفعيل السنوي</h3>
+      <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+        أدخل كود التفعيل المكون من 16 حرفاً لتفعيل اشتراكك السنوي الكامل لمدة 365 يوماً. يتم ربط الكود بحسابك الحالي نهائياً.
+      </p>
+
+      <form onsubmit="handleCodeActivationSubmit(event)" class="space-y-4 text-right">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">
+            <i class="fa-solid fa-shield-halved text-indigo-500 ml-1"></i> كود التفعيل المعتمد
+          </label>
+          <input type="text" id="paidActivationCodeInput" placeholder="FR2-XXXX-XXXX-XXXX" maxlength="20" class="w-full px-4 py-3 rounded-xl border-2 border-indigo-200 focus:outline-none focus:border-indigo-600 text-center font-mono font-black text-base uppercase tracking-widest text-indigo-900 bg-indigo-50/30 transition" autocomplete="off" required>
+          <p class="text-[11px] text-slate-400 mt-1">تأكد من إدخال الشرطات والأحرف بدقة كما استلمتها من المعلم.</p>
+        </div>
+
+        <div id="codeActivationErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center leading-relaxed"></div>
+
+        <button type="submit" id="codeSubmitBtn" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+          <span>تفعيل الاشتراك السنوي الآن (365 يوماً)</span>
+          <i class="fa-solid fa-check-circle"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 4. TRIAL EXPIRED SCREEN -->
+    <div id="accessViewTrialExpired" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-500 via-rose-500 to-red-500"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-3xl shadow-inner border border-amber-100">
+        <i class="fa-solid fa-hourglass-end"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-2">انتهت الفترة التجريبية المجانية</h2>
+      <p class="text-sm font-semibold text-slate-700 mb-4 leading-relaxed">
+        يمكنك الاستمرار في استخدام المنصة عن طريق إدخال كود التفعيل.
+      </p>
+
+      <div class="bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100 text-xs text-indigo-900 mb-6 text-right space-y-1">
+        <div class="font-bold flex items-center gap-1.5 text-indigo-700">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i>
+          <span>بياناتك وتقدمك الدراسي محفوظان بالكامل:</span>
+        </div>
+        <p class="text-slate-600">لن تفقد درجات امتحاناتك أو سجل إجاباتك عند التفعيل، وسيتم ترقية هذا الحساب نفسه إلى الاشتراك السنوي لمدة 365 يوماً.</p>
+      </div>
+
+      <button onclick="showAccessView('code')" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-key"></i>
+        <span>إدخال كود التفعيل</span>
       </button>
 
-      <button onclick="instantDemoLogin()" class="w-full mt-2.5 py-2.5 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-bolt text-emerald-600"></i>
-        <span>⚡ دخول فوري بنقرة واحدة</span>
+      <button onclick="logout()" class="w-full mt-2.5 py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-bold transition">
+        تسجيل الخروج
       </button>
     </div>
+
+    <!-- 5. ANNUAL EXPIRED SCREEN -->
+    <div id="accessViewAnnualExpired" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-rose-500 to-red-600"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-3xl shadow-inner border border-rose-100">
+        <i class="fa-solid fa-calendar-xmark"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-2">انتهت صلاحية اشتراكك.</h2>
+      <p class="text-sm font-semibold text-slate-600 mb-6 leading-relaxed">
+        انتهت مدة الـ 365 يوماً الخاصة باشتراكك السنوي. جميع نتائجك وسجلاتك محفوظة، ويمكنك تجديد الوصول بإدخال كود تفعيل سنوي جديد.
+      </p>
+
+      <button onclick="showAccessView('code')" class="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-key"></i>
+        <span>إدخال كود تفعيل جديد</span>
+      </button>
+
+      <button onclick="logout()" class="w-full mt-2.5 py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 text-xs font-bold transition">
+        تسجيل الخروج
+      </button>
+    </div>
+
+    <!-- 6. ACCOUNT SUSPENDED SCREEN -->
+    <div id="accessViewSuspended" class="bg-white max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative overflow-hidden hidden animate-fade-in my-auto">
+      <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-red-600 to-rose-700"></div>
+
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-3xl shadow-inner border border-red-100">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-2">تم إيقاف الحساب مؤقتاً</h2>
+      <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+        تم إيقاف صلاحية الوصول لهذا الحساب من قبل إدارة المنصة. يرجى التواصل مع المعلم أو إدارة المنصة للاستفسار وإعادة التفعيل.
+      </p>
+
+      <button onclick="logout()" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
+        تسجيل الخروج
+      </button>
+    </div>
+
   </div>
+
+  <!-- ============================================================== -->
+  <!-- PROTECTED ADMIN DASHBOARD MODAL                                -->
+  <!-- ============================================================== -->
+  <div id="adminDashboardModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white max-w-4xl w-full rounded-3xl shadow-2xl border border-slate-200 text-right overflow-hidden flex flex-col max-h-[92vh] animate-fade-in my-auto">
+      
+      <!-- Admin Header -->
+      <div class="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-sm shadow-md">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-black">لوحة إدارة تراخيص المنصة</h3>
+            <p class="text-[11px] text-slate-400">إدارة الأكواد الـ 500 • حسابات الطلاب • مراقبة الاشتراكات</p>
+          </div>
+        </div>
+        <button onclick="closeAdminDashboard()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Admin Content Body -->
+      <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-6 flex-1">
+        
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100">
+            <div class="flex items-center justify-between text-indigo-700 text-xs font-bold mb-1">
+              <span>إجمالي الأكواد</span>
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div id="adminStatTotalCodes" class="text-2xl font-black text-indigo-950 font-mono">500</div>
+            <span class="text-[10px] text-indigo-600">أكواد سنوية 365 يوماً</span>
+          </div>
+
+          <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-100">
+            <div class="flex items-center justify-between text-emerald-700 text-xs font-bold mb-1">
+              <span>أكواد غير مستخدمة</span>
+              <i class="fa-solid fa-ticket"></i>
+            </div>
+            <div id="adminStatUnusedCodes" class="text-2xl font-black text-emerald-950 font-mono">...</div>
+            <span class="text-[10px] text-emerald-600">متاحة للتوزيع</span>
+          </div>
+
+          <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-100">
+            <div class="flex items-center justify-between text-blue-700 text-xs font-bold mb-1">
+              <span>تجارب مجانية نشطة</span>
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div id="adminStatActiveTrials" class="text-2xl font-black text-blue-950 font-mono">...</div>
+            <span class="text-[10px] text-blue-600">خلال 24 ساعة</span>
+          </div>
+
+          <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-100">
+            <div class="flex items-center justify-between text-amber-700 text-xs font-bold mb-1">
+              <span>اشتراكات سنوية نشطة</span>
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <div id="adminStatActiveAnnual" class="text-2xl font-black text-amber-950 font-mono">...</div>
+            <span class="text-[10px] text-amber-600">طالب مفعّل</span>
+          </div>
+        </div>
+
+        <!-- Export CSV Section -->
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-right">
+            <h4 class="text-sm font-bold text-slate-800">تصدير ملف الأكواد الـ 500 (CSV)</h4>
+            <p class="text-xs text-slate-500">تنزيل جدول الأكواد الرسمية الـ 500 بالكامل بصيغة CSV لتوزيعها على الطلاب.</p>
+          </div>
+          <button onclick="downloadCodesCsv()" class="py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-download"></i>
+            <span>تحميل ملف 500 كود (CSV)</span>
+          </button>
+        </div>
+
+        <!-- Students List Section -->
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-users text-indigo-600"></i>
+              <span>سجل الطلاب والاشتراكات</span>
+            </h4>
+            <div class="w-full sm:w-64">
+              <input type="text" id="adminStudentSearchInput" oninput="handleStudentSearch(this.value)" placeholder="بحث بالاسم أو الهاتف/البريد..." class="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-2xl overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-100/80 text-slate-600 border-b border-slate-200">
+                <tr>
+                  <th class="p-3">اسم الطالب</th>
+                  <th class="p-3">معرف الدخول</th>
+                  <th class="p-3">نوع الاشتراك</th>
+                  <th class="p-3">الحالة</th>
+                  <th class="p-3">تاريخ الانتهاء</th>
+                  <th class="p-3 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="adminStudentsTableBody" class="divide-y divide-slate-100">
+                <tr>
+                  <td colspan="6" class="p-4 text-center text-slate-400">جاري تحميل بيانات الطلاب...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Admin Footer -->
+      <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeAdminDashboard()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition">
+          إغلاق اللوحة
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 
   <!-- TOP APP BAR -->
   <header class="sticky top-0 z-40 bg-indigo-700 text-white shadow-md transition">
@@ -104,9 +416,27 @@
         <button id="soundToggleBtn" onclick="toggleSound()" title="تشغيل / كتم الصوت" class="w-9 h-9 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 active:scale-95 flex items-center justify-center text-sm text-white transition">
           <i class="fa-solid fa-volume-high"></i>
         </button>
-        <div id="userBadge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-800/80 border border-indigo-500/30 text-xs font-bold text-indigo-100">
+
+        <!-- ADMIN DASHBOARD BUTTON (Visible for role=admin) -->
+        <button id="topAdminBtn" onclick="openAdminDashboard()" title="لوحة إدارة التراخيص" class="hidden h-9 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs flex items-center gap-1.5 shadow transition">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span class="hidden md:inline">لوحة الإدارة</span>
+        </button>
+
+        <!-- UPGRADE / CODE BUTTON (Visible during trial or inactive) -->
+        <button id="topUpgradeBtn" onclick="showAccessView('code')" title="تفعيل كود سنوي" class="hidden h-9 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow transition">
+          <i class="fa-solid fa-key"></i>
+          <span class="hidden md:inline">تفعيل كود</span>
+        </button>
+
+        <!-- USER BADGE & SUBSCRIPTION STATUS -->
+        <div id="userBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-800/90 border border-indigo-500/40 text-xs text-white">
           <i class="fa-solid fa-circle-user text-emerald-400"></i>
-          <span id="userNameDisplay">طالب متفوق</span>
+          <span id="userNameDisplay" class="font-bold max-w-[100px] truncate">طالب</span>
+          <span id="userSubscriptionBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-indigo-100 mr-1">جاري التحقق...</span>
+          <button onclick="logout()" title="تسجيل الخروج" class="mr-1 text-indigo-300 hover:text-white transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -2383,49 +2713,518 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
       window.speechSynthesis.speak(utterance);
     }
 
-    // --- Activation ---
-    const VALID_CODES = ['BIENVENU2025', 'PREPA2', 'FRANCAIS2', 'EXCELLENCE'];
+    // ==============================================================
+    // PHASE 3: SECURE STUDENT ACCESS & LICENSING CLIENT SYSTEM
+    // ==============================================================
+    let currentUser = null;
+    let userToken = localStorage.getItem('bienvenu2_token') || '';
+    let currentAuthMode = 'register'; // 'register' | 'login'
+    let pendingAction = null; // 'trial' | 'code' | null
+    let countdownInterval = null;
+    let searchDebounceTimeout = null;
 
-    function checkActivation() {
-      const isActivated = localStorage.getItem('bienvenu2_activated');
-      const studentName = localStorage.getItem('bienvenu2_student') || 'طالب متفوق';
-      if (isActivated === 'true') {
-        document.getElementById('activationOverlay').classList.add('hidden');
-        document.getElementById('userNameDisplay').innerText = studentName;
+    // Server API Helper
+    async function apiRequest(endpoint, method = 'GET', body = null) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (userToken) {
+        headers['Authorization'] = `Bearer ${userToken}`;
+      }
+      const options = { method, headers };
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+      try {
+        const res = await fetch(endpoint, options);
+        const data = await res.json();
+        return { ok: res.ok, status: res.status, data };
+      } catch (err) {
+        console.error('API Error:', endpoint, err);
+        return { ok: false, status: 0, data: { success: false, message: 'تعذر الاتصال بالخادم. يرجى التأكد من تشغيل الخادم والاتصال بالإنترنت.' } };
       }
     }
 
-    function fillCode(code) {
-      document.getElementById('activationCodeInput').value = code;
-      playClickSound();
+    // View Switcher for Modal
+    function showAccessView(viewName) {
+      const overlay = document.getElementById('accessModalOverlay');
+      const views = {
+        'welcome': document.getElementById('accessViewWelcome'),
+        'auth': document.getElementById('accessViewAuth'),
+        'code': document.getElementById('accessViewCode'),
+        'trial_expired': document.getElementById('accessViewTrialExpired'),
+        'annual_expired': document.getElementById('accessViewAnnualExpired'),
+        'suspended': document.getElementById('accessViewSuspended')
+      };
+
+      if (viewName === 'none') {
+        overlay.classList.add('hidden');
+        return;
+      }
+
+      overlay.classList.remove('hidden');
+      Object.keys(views).forEach(key => {
+        if (views[key]) {
+          if (key === viewName) {
+            views[key].classList.remove('hidden');
+          } else {
+            views[key].classList.add('hidden');
+          }
+        }
+      });
+
+      // Clear any errors when switching
+      const authErr = document.getElementById('authErrorMsg');
+      if (authErr) authErr.classList.add('hidden');
+      const codeErr = document.getElementById('codeActivationErrorMsg');
+      if (codeErr) codeErr.classList.add('hidden');
     }
 
-    function activateAccount() {
-      const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
-      const name = document.getElementById('studentNameInput').value.trim() || 'طالب متفوق';
-      const err = document.getElementById('activationError');
-      if (VALID_CODES.includes(code)) {
-        localStorage.setItem('bienvenu2_activated', 'true');
-        localStorage.setItem('bienvenu2_student', name);
-        document.getElementById('userNameDisplay').innerText = name;
-        document.getElementById('activationOverlay').classList.add('hidden');
+    // Toggle Register / Login in Auth Modal
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      playClickSound();
+      const tabReg = document.getElementById('tabBtnRegister');
+      const tabLog = document.getElementById('tabBtnLogin');
+      const nameGroup = document.getElementById('authNameFieldGroup');
+      const nameInput = document.getElementById('authNameInput');
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitText = document.getElementById('authSubmitBtnText');
+      const err = document.getElementById('authErrorMsg');
+      if (err) err.classList.add('hidden');
+
+      if (mode === 'register') {
+        tabReg.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm';
+        tabLog.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900';
+        nameGroup.classList.remove('hidden');
+        nameInput.required = true;
+        title.innerText = 'تسجيل حساب طالب جديد';
+        subtitle.innerText = 'يتطلب النظام إنشاء حساب لحفظ تقدمك الدراسي وربط فترتك التجريبية أو اشتراكك السنوي.';
+        submitText.innerText = 'إنشاء الحساب والمتابعة';
+      } else {
+        tabLog.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm';
+        tabReg.className = 'flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900';
+        nameGroup.classList.add('hidden');
+        nameInput.required = false;
+        title.innerText = 'تسجيل الدخول إلى حسابك';
+        subtitle.innerText = 'أدخل بيانات حسابك للمتابعة والوصول إلى اشتراكك ودرجاتك.';
+        submitText.innerText = 'تسجيل الدخول والمتابعة';
+      }
+    }
+
+    // Handle Option 1: 24-Hour Free Trial
+    function handleOptionTrialClick() {
+      playClickSound();
+      if (!currentUser) {
+        pendingAction = 'trial';
+        switchAuthTab('register');
+        showAccessView('auth');
+      } else {
+        executeStartTrial();
+      }
+    }
+
+    // Handle Option 2: Have Activation Code
+    function handleOptionCodeClick() {
+      playClickSound();
+      if (!currentUser) {
+        pendingAction = 'code';
+        switchAuthTab('register');
+        showAccessView('auth');
+      } else {
+        showAccessView('code');
+      }
+    }
+
+    // Execute Start Trial on Backend
+    async function executeStartTrial() {
+      const btn = document.getElementById('authSubmitBtn');
+      const res = await apiRequest('/api/access/start-trial', 'POST');
+      if (res.ok && res.data.success) {
         playSuccessSound();
-        if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70 });
+        if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80 });
+        currentUser.access_type = res.data.accessType;
+        currentUser.access_status = res.data.accessStatus;
+        currentUser.trial_started_at = res.data.trialStartedAt;
+        currentUser.trial_expires_at = res.data.trialExpiresAt;
+        currentUser.trial_used = 1;
+        updateTopBarUserUI();
+        showAccessView('none');
       } else {
         playErrorSound();
-        err.innerText = '❌ كود غير صحيح! يرجى اختيار أحد الأكواد المتاحة في القائمة أعلاه.';
-        err.classList.remove('hidden');
+        const msg = res.data.message || 'حدث خطأ أثناء تفعيل الفترة التجريبية.';
+        alert(msg);
+        if (res.data.code === 'TRIAL_ALREADY_USED') {
+          showAccessView('code');
+        }
       }
     }
 
-    function instantDemoLogin() {
-      localStorage.setItem('bienvenu2_activated', 'true');
-      localStorage.setItem('bienvenu2_student', 'طالب متفوق');
-      document.getElementById('userNameDisplay').innerText = 'طالب متفوق';
-      document.getElementById('activationOverlay').classList.add('hidden');
-      playSuccessSound();
-      if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 70 });
+    // Handle Auth Submit (Register or Login)
+    async function handleAuthSubmit(event) {
+      if (event) event.preventDefault();
+      const identifier = document.getElementById('authIdentifierInput').value.trim();
+      const password = document.getElementById('authPasswordInput').value;
+      const name = document.getElementById('authNameInput').value.trim();
+      const errBox = document.getElementById('authErrorMsg');
+      const submitBtn = document.getElementById('authSubmitBtn');
+
+      errBox.classList.add('hidden');
+      submitBtn.disabled = true;
+
+      try {
+        let res;
+        if (currentAuthMode === 'register') {
+          if (!name) {
+            errBox.innerText = 'يرجى إدخال اسم الطالب / الطالبة.';
+            errBox.classList.remove('hidden');
+            submitBtn.disabled = false;
+            return;
+          }
+          res = await apiRequest('/api/auth/register', 'POST', {
+            name,
+            loginIdentifier: identifier,
+            password
+          });
+        } else {
+          res = await apiRequest('/api/auth/login', 'POST', {
+            loginIdentifier: identifier,
+            password
+          });
+        }
+
+        if (res.ok && res.data.success) {
+          userToken = res.data.token;
+          localStorage.setItem('bienvenu2_token', userToken);
+          currentUser = res.data.user;
+          updateTopBarUserUI();
+
+          // Handle pending action
+          if (pendingAction === 'trial') {
+            pendingAction = null;
+            await executeStartTrial();
+          } else if (pendingAction === 'code') {
+            pendingAction = null;
+            showAccessView('code');
+          } else {
+            await verifyAccessStatus();
+          }
+        } else {
+          playErrorSound();
+          errBox.innerText = res.data.message || 'فشلت العملية، يرجى مراجعة البيانات المدخلة.';
+          errBox.classList.remove('hidden');
+        }
+      } finally {
+        submitBtn.disabled = false;
+      }
     }
+
+    // Handle Code Activation Submit
+    async function handleCodeActivationSubmit(event) {
+      if (event) event.preventDefault();
+      const input = document.getElementById('paidActivationCodeInput');
+      const code = input.value.trim().toUpperCase();
+      const errBox = document.getElementById('codeActivationErrorMsg');
+      const submitBtn = document.getElementById('codeSubmitBtn');
+
+      errBox.classList.add('hidden');
+      if (!code) {
+        errBox.innerText = 'يرجى كتابة كود التفعيل المعتمد.';
+        errBox.classList.remove('hidden');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      try {
+        const res = await apiRequest('/api/access/activate-code', 'POST', { code });
+        if (res.ok && res.data.success) {
+          playSuccessSound();
+          if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
+          currentUser.access_type = res.data.accessType;
+          currentUser.access_status = res.data.accessStatus;
+          currentUser.annual_activated_at = res.data.annualActivatedAt;
+          currentUser.annual_expires_at = res.data.annualExpiresAt;
+          updateTopBarUserUI();
+          showAccessView('none');
+          input.value = '';
+          alert('تهانينا! ' + res.data.message);
+        } else {
+          playErrorSound();
+          errBox.innerText = res.data.message || 'كود غير صحيح.';
+          errBox.classList.remove('hidden');
+        }
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Verify Access Status with Server
+    async function verifyAccessStatus() {
+      if (!userToken) {
+        currentUser = null;
+        updateTopBarUserUI();
+        showAccessView('welcome');
+        return;
+      }
+
+      const res = await apiRequest('/api/auth/me', 'GET');
+      if (!res.ok || !res.data.success) {
+        // Token invalid or expired
+        userToken = '';
+        currentUser = null;
+        localStorage.removeItem('bienvenu2_token');
+        updateTopBarUserUI();
+        showAccessView('welcome');
+        return;
+      }
+
+      currentUser = res.data.user;
+      updateTopBarUserUI();
+
+      // Check Role
+      if (currentUser.role === 'admin') {
+        showAccessView('none');
+        return;
+      }
+
+      // Check Access Status based on trusted server evaluation
+      if (currentUser.access_status === 'ACTIVE') {
+        showAccessView('none');
+      } else if (currentUser.access_status === 'TRIAL_EXPIRED') {
+        showAccessView('trial_expired');
+      } else if (currentUser.access_status === 'EXPIRED') {
+        showAccessView('annual_expired');
+      } else if (currentUser.access_status === 'SUSPENDED') {
+        showAccessView('suspended');
+      } else {
+        // INACTIVE / NONE
+        showAccessView('welcome');
+      }
+    }
+
+    // Update Top App Bar UI based on User
+    function updateTopBarUserUI() {
+      const nameDisplay = document.getElementById('userNameDisplay');
+      const badge = document.getElementById('userSubscriptionBadge');
+      const adminBtn = document.getElementById('topAdminBtn');
+      const upgradeBtn = document.getElementById('topUpgradeBtn');
+      const welcomeStateText = document.getElementById('welcomeUserStateText');
+
+      if (!currentUser) {
+        nameDisplay.innerText = 'زائر';
+        badge.innerText = 'غير مسجل';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-600 text-slate-200 mr-1';
+        if (adminBtn) adminBtn.classList.add('hidden');
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
+        if (welcomeStateText) welcomeStateText.innerText = 'غير مسجل الدخول';
+        if (countdownInterval) clearInterval(countdownInterval);
+        return;
+      }
+
+      nameDisplay.innerText = currentUser.name || 'طالب متفوق';
+      if (welcomeStateText) {
+        welcomeStateText.innerHTML = `<span class="text-indigo-600 font-bold"><i class="fa-solid fa-user-check ml-1"></i> مسجل باسم: ${currentUser.name}</span>`;
+      }
+
+      if (currentUser.role === 'admin') {
+        badge.innerText = 'مدير المنصة 🛡️';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-900 mr-1';
+        if (adminBtn) adminBtn.classList.remove('hidden');
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
+        if (countdownInterval) clearInterval(countdownInterval);
+        return;
+      }
+
+      if (adminBtn) adminBtn.classList.add('hidden');
+
+      if (currentUser.access_type === 'TRIAL' && currentUser.access_status === 'ACTIVE') {
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
+        startTrialCountdown(currentUser.trial_expires_at || currentUser.trialExpiresAt);
+      } else if (currentUser.access_type === 'ANNUAL' && currentUser.access_status === 'ACTIVE') {
+        if (upgradeBtn) upgradeBtn.classList.add('hidden');
+        if (countdownInterval) clearInterval(countdownInterval);
+        const expStr = currentUser.annual_expires_at || currentUser.annualExpiresAt;
+        const d = expStr ? new Date(expStr) : null;
+        const dateFormatted = d ? `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}` : '365 يوم';
+        badge.innerText = `سنوي كامل 🌟 (${dateFormatted})`;
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white mr-1';
+      } else if (currentUser.access_status === 'TRIAL_EXPIRED') {
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
+        badge.innerText = 'انتهت التجربة ⏳';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-600 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      } else if (currentUser.access_status === 'EXPIRED') {
+        if (upgradeBtn) upgradeBtn.classList.remove('hidden');
+        badge.innerText = 'اشتراك منتهي ❌';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      } else if (currentUser.access_status === 'SUSPENDED') {
+        badge.innerText = 'حساب موقوف ⛔';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-red-800 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      } else {
+        badge.innerText = 'بدون اشتراك';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-600 text-white mr-1';
+        if (countdownInterval) clearInterval(countdownInterval);
+      }
+    }
+
+    // Trial Live Countdown
+    function startTrialCountdown(expiresAtStr) {
+      if (countdownInterval) clearInterval(countdownInterval);
+      if (!expiresAtStr) return;
+      const targetTime = new Date(expiresAtStr).getTime();
+      const badge = document.getElementById('userSubscriptionBadge');
+
+      function update() {
+        const now = Date.now();
+        const diff = targetTime - now;
+        if (diff <= 0) {
+          clearInterval(countdownInterval);
+          badge.innerText = 'انتهت التجربة ⏳';
+          verifyAccessStatus(); // Server check will set TRIAL_EXPIRED
+          return;
+        }
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        badge.innerText = `تجريبي: ${hours}س ${mins}د ${secs}ث 🎁`;
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white mr-1 font-mono';
+      }
+
+      update();
+      countdownInterval = setInterval(update, 1000);
+    }
+
+    // Logout
+    function logout() {
+      playClickSound();
+      userToken = '';
+      currentUser = null;
+      localStorage.removeItem('bienvenu2_token');
+      if (countdownInterval) clearInterval(countdownInterval);
+      updateTopBarUserUI();
+      showAccessView('welcome');
+    }
+
+    // ==============================================================
+    // ADMIN DASHBOARD CLIENT LOGIC
+    // ==============================================================
+    async function openAdminDashboard() {
+      playClickSound();
+      if (!currentUser || currentUser.role !== 'admin') {
+        alert('غير مصرح لك بالوصول إلى لوحة الإدارة.');
+        return;
+      }
+      document.getElementById('adminDashboardModal').classList.remove('hidden');
+      await refreshAdminDashboard();
+    }
+
+    function closeAdminDashboard() {
+      playClickSound();
+      document.getElementById('adminDashboardModal').classList.add('hidden');
+    }
+
+    async function refreshAdminDashboard() {
+      // 1. Load Overview Metrics
+      const overviewRes = await apiRequest('/api/admin/overview', 'GET');
+      if (overviewRes.ok && overviewRes.data.success) {
+        const { codes, students } = overviewRes.data;
+        document.getElementById('adminStatTotalCodes').innerText = codes.total;
+        document.getElementById('adminStatUnusedCodes').innerText = codes.unused;
+        document.getElementById('adminStatActiveTrials').innerText = students.activeTrial;
+        document.getElementById('adminStatActiveAnnual').innerText = students.activeAnnual;
+      }
+
+      // 2. Load Students List
+      await loadAdminStudentsList();
+    }
+
+    async function loadAdminStudentsList(searchQuery = '') {
+      const url = searchQuery ? `/api/admin/students?q=${encodeURIComponent(searchQuery)}` : '/api/admin/students';
+      const res = await apiRequest(url, 'GET');
+      const tbody = document.getElementById('adminStudentsTableBody');
+      if (!res.ok || !res.data.success || !res.data.students || res.data.students.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا يوجد طلاب مسجلين حالياً.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = res.data.students.map(s => {
+        let typeBadge = '<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold">بدون</span>';
+        if (s.access_type === 'TRIAL') typeBadge = '<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">تجربة 24س</span>';
+        if (s.access_type === 'ANNUAL') typeBadge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-bold">سنوي 365ي</span>';
+
+        let statusBadge = '<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500">غير نشط</span>';
+        if (s.access_status === 'ACTIVE') statusBadge = '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">نشط ✅</span>';
+        if (s.access_status === 'TRIAL_EXPIRED') statusBadge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">انتهت التجربة</span>';
+        if (s.access_status === 'EXPIRED') statusBadge = '<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">منتهي ❌</span>';
+        if (s.access_status === 'SUSPENDED') statusBadge = '<span class="px-2 py-0.5 rounded bg-red-100 text-red-700 font-bold">موقوف ⛔</span>';
+
+        const expDate = s.access_type === 'ANNUAL' ? s.annual_expires_at : s.trial_expires_at;
+        const expStr = expDate ? new Date(expDate).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+
+        const isSuspended = s.access_status === 'SUSPENDED';
+        const actionBtn = isSuspended
+          ? `<button onclick="toggleSuspendStudent('${s.uid}', false)" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition">تفعيل</button>`
+          : `<button onclick="toggleSuspendStudent('${s.uid}', true)" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] transition">إيقاف</button>`;
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="p-3 font-bold text-slate-800">${s.name}</td>
+            <td class="p-3 font-mono text-slate-500 text-[11px]" dir="ltr">${s.login_identifier}</td>
+            <td class="p-3">${typeBadge}</td>
+            <td class="p-3">${statusBadge}</td>
+            <td class="p-3 text-slate-600 font-mono text-[11px]">${expStr}</td>
+            <td class="p-3 text-center">${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleStudentSearch(val) {
+      if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = setTimeout(() => {
+        loadAdminStudentsList(val.trim());
+      }, 300);
+    }
+
+    async function toggleSuspendStudent(uid, shouldSuspend) {
+      const endpoint = shouldSuspend ? '/api/admin/student/suspend' : '/api/admin/student/reactivate';
+      const actionName = shouldSuspend ? 'إيقاف' : 'إعادة تفعيل';
+      if (!confirm(`هل أنت متأكد من ${actionName} حساب هذا الطالب؟`)) return;
+
+      const res = await apiRequest(endpoint, 'POST', { studentUid: uid });
+      if (res.ok && res.data.success) {
+        await refreshAdminDashboard();
+      } else {
+        alert(res.data.message || 'حدث خطأ أثناء تنفيذ الإجراء.');
+      }
+    }
+
+    async function downloadCodesCsv() {
+      playClickSound();
+      try {
+        const res = await fetch('/api/admin/export-codes', {
+          headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        if (!res.ok) {
+          alert('تعذر تنزيل الملف، تأكد من صلاحيات الإدارة.');
+          return;
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Bienvenu2_Codes_Export_500.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('Download error:', err);
+        alert('حدث خطأ أثناء تنزيل الملف.');
+      }
+    }
+
 
     // --- Navigation ---
     const SCREENS = ['portal', 'unit1', 'unit2', 'unit3', 'revision', 'grammar', 'exam'];
@@ -2757,7 +3556,14 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
 
     // --- INIT APP ---
     window.addEventListener('DOMContentLoaded', () => {
-      checkActivation();
+      verifyAccessStatus();
+      // Periodic server-side check every 60 seconds to enforce live expiration
+      setInterval(() => {
+        if (currentUser && currentUser.role !== 'admin') {
+          verifyAccessStatus();
+        }
+      }, 60000);
+
       renderPortalScreen();
       renderUnit1Screen();
       renderUnit2Screen();
