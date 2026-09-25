@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Français 2ème Prépa",
+  "description": "Application éducative interactive de français pour la 2ème préparatoire (1er Semestre) - 3 Unités, Grammaire et Examens avec audio et quiz.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

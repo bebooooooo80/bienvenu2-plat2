@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenu 2 - منهج اللغة الفرنسية 2 إعدادي</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          },
+          fontFamily: {
+            arabic: ['Cairo', 'sans-serif'],
+            french: ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .font-fr { font-family: 'Plus Jakarta Sans', sans-serif; direction: ltr; text-align: left; }
+    .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    .french-flag-gradient { background: linear-gradient(135deg, #002395 0%, #ffffff 50%, #ed2939 100%); }
+    .tab-active { border-bottom: 3px solid #4f46e5; color: #4338ca; font-weight: 700; }
+    @keyframes pulse-subtle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    .animate-pulse-subtle { animation: pulse-subtle 2s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white pb-20 md:pb-6">
+
+  <!-- ==================== ACTIVATION MODAL / OVERLAY ==================== -->
+  <div id="activationOverlay" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-3xl shadow-2xl border border-indigo-100 p-6 md:p-8 text-center relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl"></div>
+
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-300 mb-4 animate-pulse-subtle">
+        <i class="fa-solid fa-graduation-cap text-3xl"></i>
+      </div>
+
+      <div class="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold mb-2">
+        <i class="fa-solid fa-lock text-amber-600 ml-1"></i> تفعيل المنصة التعليمية
+      </div>
+
+      <h2 class="text-2xl font-black text-slate-800 mb-1">منهج Bienvenu 2 التفاعلي</h2>
+      <p class="text-xs text-slate-500 mb-6 font-fr font-medium">Français 2ème Préparatoire • Premier Semestre</p>
+
+      <form id="activationForm" onsubmit="handleActivation(event)" class="space-y-4 text-right">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">اسم الطالب أو الطالبة :</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
+              <i class="fa-regular fa-user"></i>
+            </span>
+            <input type="text" id="studentNameInput" required placeholder="مثال: أحمد محمد" class="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">كود التفعيل (Activation Code) :</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
+              <i class="fa-solid fa-key"></i>
+            </span>
+            <input type="text" id="activationCodeInput" required placeholder="أدخل كود التفعيل هنا" class="w-full pr-10 pl-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-mono uppercase tracking-wider">
+          </div>
+          <div id="activationError" class="text-xs text-rose-500 mt-1 hidden font-semibold">
+            <i class="fa-solid fa-circle-exclamation ml-1"></i> الكود غير صحيح، يرجى تجربة أحد الأكواد السريعة أدناه.
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl font-bold shadow-md shadow-indigo-300 transition-all flex items-center justify-center gap-2">
+          <span>دخول وتفعيل المنهج</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </form>
+
+      <!-- Quick sample codes for easy access -->
+      <div class="mt-6 pt-5 border-t border-slate-100 text-right">
+        <p class="text-xs font-bold text-slate-600 mb-2">أكواد تجريبية سريعة متاحة للاستخدام المباشر:</p>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="fillCode('BIENVENU2025')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg font-mono font-bold transition">BIENVENU2025</button>
+          <button type="button" onclick="fillCode('PREPA2')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg font-mono font-bold transition">PREPA2</button>
+          <button type="button" onclick="fillCode('FRANCAIS2')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg font-mono font-bold transition">FRANCAIS2</button>
+          <button type="button" onclick="fillCode('EXCELLENCE')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs rounded-lg font-mono font-bold transition">EXCELLENCE</button>
+        </div>
+        <button type="button" onclick="quickGuestAccess()" class="mt-3 w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-xl font-bold transition">
+          <i class="fa-solid fa-bolt ml-1 text-amber-500"></i> دخول تجريبي فوري بنقرة واحدة
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Brand & Badge -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('portal')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-700 via-indigo-600 to-indigo-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+          <span>B2</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-black text-slate-800">Bienvenu 2</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">2ème Prépa</span>
+          </div>
+          <p class="text-[11px] text-slate-500 hidden sm:block">اللغة الفرنسية • الصف الثاني الإعدادي • الترم الأول</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links (Desktop) -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-bold text-slate-600">
+        <button onclick="switchView('portal')" id="nav-portal" class="px-3 py-2 rounded-lg hover:bg-slate-100 text-indigo-600">الرئيسية</button>
+        <button onclick="switchView('unit1')" id="nav-unit1" class="px-3 py-2 rounded-lg hover:bg-slate-100">الوحدة 1</button>
+        <button onclick="switchView('unit2')" id="nav-unit2" class="px-3 py-2 rounded-lg hover:bg-slate-100">الوحدة 2</button>
+        <button onclick="switchView('unit3')" id="nav-unit3" class="px-3 py-2 rounded-lg hover:bg-slate-100">الوحدة 3</button>
+        <button onclick="switchView('revision')" id="nav-revision" class="px-3 py-2 rounded-lg hover:bg-slate-100">المراجعة</button>
+        <button onclick="switchView('exam')" id="nav-exam" class="px-3 py-2 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-extrabold">امتحان نصف العام 🏆</button>
+      </nav>
+
+      <!-- Student Badge & Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="toggleAudioSound()" id="soundToggleBtn" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition" title="تشغيل / كتم المؤثرات">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+
+        <!-- Student Info Pill -->
+        <div class="flex items-center gap-2 bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span id="headerStudentName" class="text-xs font-bold text-indigo-900 max-w-[100px] truncate">طالب متميز</span>
+          <span class="text-xs font-black text-amber-600 flex items-center gap-1 font-fr">
+            <i class="fa-solid fa-star text-amber-400"></i>
+            <span id="userScoreDisplay">0</span>
+          </span>
+        </div>
+
+        <button onclick="logoutPrompt()" class="text-slate-400 hover:text-rose-600 text-xs px-2 py-1 rounded" title="إعادة تعيين الكود">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- VIEW 1: PORTAL HOME (البوابة الرئيسية ذات البابين الكبيرين) -->
+    <section id="view-portal" class="space-y-6">
+      <!-- Hero Banner -->
+      <div class="rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-950 text-white p-6 sm:p-8 shadow-xl relative overflow-hidden border border-indigo-700/50">
+        <div class="absolute top-0 left-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -ml-20 -mt-20"></div>
+        <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-400 text-indigo-950 font-black text-xs rounded-full shadow">
+              <span>🇫🇷</span>
+              <span>منهج Bienvenu 2</span>
+              <span class="bg-indigo-950/20 px-1.5 rounded text-[10px]">الصف الثاني الإعدادي</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black">Bienvenue dans votre plateforme interactive !</h2>
+            <p class="text-slate-200 text-xs sm:text-sm max-w-2xl leading-relaxed">
+              الموقع التفاعلي الشامل لدراسة ومراجعة منهج اللغة الفرنسية للفصل الدراسي الأول مع الاستماع الصوتي والتدريبات الفورية وامتحانات نصف العام الرسمية.
+            </p>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-4 w-full md:w-auto">
+            <div class="text-center px-2">
+              <span class="block text-2xl font-black text-amber-300 font-fr">3</span>
+              <span class="text-[11px] text-slate-200">وحدات دراسية</span>
+            </div>
+            <div class="w-px h-8 bg-white/20"></div>
+            <div class="text-center px-2">
+              <span class="block text-2xl font-black text-emerald-300 font-fr" id="totalExercisesCount">80+</span>
+              <span class="text-[11px] text-slate-200">تمرين تفاعلي</span>
+            </div>
+            <div class="w-px h-8 bg-white/20"></div>
+            <div class="text-center px-2">
+              <span class="block text-2xl font-black text-sky-300 font-fr">20/20</span>
+              <span class="text-[11px] text-slate-200">امتحان رسمي</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE TWO MAIN GATES (البوابتان الرئيسيتان كما بالتطبيق الأصلي) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- DOOR 1: قسم المراجعة والامتحانات -->
+        <div onclick="switchView('revision')" class="group relative rounded-3xl bg-white border-2 border-indigo-100 hover:border-indigo-500 shadow-md hover:shadow-xl transition-all duration-300 p-6 sm:p-7 cursor-pointer overflow-hidden flex flex-col justify-between">
+          <div class="absolute top-0 left-0 w-32 h-32 bg-indigo-100 rounded-br-full -z-0 opacity-40 group-hover:scale-110 transition-transform"></div>
+          <div class="relative z-10 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white shadow-md shadow-indigo-300 group-hover:rotate-6 transition-transform">
+                <i class="fa-solid fa-book-bookmark text-2xl"></i>
+              </span>
+              <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full">الباب الأول • ص 3 إلى 10</span>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-black text-slate-800 group-hover:text-indigo-600 transition-colors">قسم المراجعة والامتحانات</h3>
+              <p class="text-xs text-slate-500 font-fr font-semibold mt-0.5">Révision Générale & Examens</p>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+              يشمل الأسئلة التمهيدية (المعاني والعكس والمذكر والمؤنث)، مراجعة القواعد النحوية كاملة، بنك الأسئلة الشامل، وامتحان نصف العام الرسمي المعتمد.
+            </p>
+
+            <div class="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 pt-2">
+              <span class="p-2 bg-slate-50 rounded-xl flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i> الأسئلة التمهيدية</span>
+              <span class="p-2 bg-slate-50 rounded-xl flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i> مراجعة القواعد</span>
+              <span class="p-2 bg-slate-50 rounded-xl flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i> بنك الأسئلة</span>
+              <span class="p-2 bg-slate-50 rounded-xl flex items-center gap-1.5 text-amber-700"><i class="fa-solid fa-trophy text-amber-500 text-[10px]"></i> امتحان نصف العام</span>
+            </div>
+          </div>
+
+          <div class="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-indigo-600 font-bold text-xs">
+            <span>دخول قسم المراجعة والامتحانات</span>
+            <i class="fa-solid fa-arrow-left group-hover:-translate-x-2 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- DOOR 2: قسم الوحدات الدراسية الثلاث -->
+        <div class="group relative rounded-3xl bg-white border-2 border-slate-100 shadow-md p-6 sm:p-7 flex flex-col justify-between">
+          <div class="relative z-10 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-200">
+                <i class="fa-solid fa-layer-group text-2xl"></i>
+              </span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full">الباب الثاني • ص 11 إلى 67</span>
+            </div>
+
+            <div>
+              <h3 class="text-xl font-black text-slate-800">قسم الوحدات الدراسية (Les 3 Unités)</h3>
+              <p class="text-xs text-slate-500 font-fr font-semibold mt-0.5">Le Programme Officiel</p>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+              الوحدات الثلاث المقررة مع النصوص الصوتية الكاملة، وبنك الكلمات، والمواقف اليومية، وشرح القواعد، وتمارين الإنتاج الكتابي:
+            </p>
+
+            <!-- 3 Unit Quick Buttons -->
+            <div class="space-y-2 pt-1">
+              <button onclick="switchView('unit1')" class="w-full text-right p-3 rounded-2xl bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 transition flex items-center justify-between group/u1">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-indigo-600 text-white text-[10px] font-bold rounded-md">Unité 1</span>
+                    <span class="text-xs font-bold text-slate-800">الدعوة (Invitation)</span>
+                  </div>
+                  <span class="text-[11px] text-slate-500 font-fr">Gamal, Jean Morelle, Suzanne et Moustafa • p. 11-34</span>
+                </div>
+                <i class="fa-solid fa-arrow-left text-slate-400 group-hover/u1:text-indigo-600 text-xs"></i>
+              </button>
+
+              <button onclick="switchView('unit2')" class="w-full text-right p-3 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group/u2">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-bold rounded-md">Unité 2</span>
+                    <span class="text-xs font-bold text-slate-800">الوجبات والمطعم (Repas & Restaurant)</span>
+                  </div>
+                  <span class="text-[11px] text-slate-500 font-fr">Au restaurant, Partitifs, Interrogatifs • p. 35-58</span>
+                </div>
+                <i class="fa-solid fa-arrow-left text-slate-400 group-hover/u2:text-emerald-600 text-xs"></i>
+              </button>
+
+              <button onclick="switchView('unit3')" class="w-full text-right p-3 rounded-2xl bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-teal-300 transition flex items-center justify-between group/u3">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-teal-600 text-white text-[10px] font-bold rounded-md">Unité 3</span>
+                    <span class="text-xs font-bold text-slate-800">الصحة والمستشفى (Santé / Hôpital)</span>
+                  </div>
+                  <span class="text-[11px] text-slate-500 font-fr">L'accident, Chez le médecin, Impératif • p. 59-67</span>
+                </div>
+                <i class="fa-solid fa-arrow-left text-slate-400 group-hover/u3:text-teal-600 text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: UNITÉ 1 (INVITATION) -->
+    <section id="view-unit1" class="hidden space-y-6">
+      <!-- Unit Banner -->
+      <div class="rounded-3xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-indigo-800 text-white p-6 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold mb-2">Unité 1 • Pages 11-34</div>
+          <h2 class="text-2xl font-black">الوحدة الأولى : الدعوة (Invitation)</h2>
+          <p class="text-xs text-indigo-100 font-fr mt-1">« Les vacances sont vite passées. Jean Morelle et sa femme sont rentrés au Caire. »</p>
+        </div>
+        <button onclick="speakFrench('Unité 1 : Invitation. Les vacances sont vite passées. Jean Morelle et sa femme Suzanne sont rentrés au Caire. Gamal les a invités chez lui.')" class="px-4 py-2.5 bg-white text-indigo-700 hover:bg-indigo-50 rounded-xl font-bold text-xs flex items-center gap-2 shadow transition">
+          <i class="fa-solid fa-volume-high"></i>
+          <span>استمع لملخص الوحدة</span>
+        </button>
+      </div>
+
+      <!-- Unit Tabs -->
+      <div class="flex overflow-x-auto gap-2 border-b border-slate-200 pb-2 text-xs font-bold text-slate-600">
+        <button onclick="switchUnitTab('u1', 'text')" id="tab-u1-text" class="px-4 py-2 rounded-xl bg-indigo-600 text-white whitespace-nowrap">📖 نص الوحدة والحوار</button>
+        <button onclick="switchUnitTab('u1', 'comprehension')" id="tab-u1-comprehension" class="px-4 py-2 rounded-xl bg-slate-100 whitespace-nowrap">📝 تمارين الفهم</button>
+        <button onclick="switchUnitTab('u1', 'vocab')" id="tab-u1-vocab" class="px-4 py-2 rounded-xl bg-slate-100 whitespace-nowrap">📚 بنك الكلمات</button>
+        <button onclick="switchUnitTab('u1', 'grammar')" id="tab-u1-grammar" class="px-4 py-2 rounded-xl bg-slate-100 whitespace-nowrap">📐 القواعد (Pronoms)</button>
+        <button onclick="switchUnitTab('u1', 'situations')" id="tab-u1-situations" class="px-4 py-2 rounded-xl bg-slate-100 whitespace-nowrap">🎭 المواقف اليومية</button>
+      </div>
+
+      <!-- Unit 1 Sub-tabs content -->
+      <div id="u1-tab-text" class="space-y-4">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-lg font-bold text-slate-800">حوار النص الأساسي (Page 11-12)</h3>
+            <span class="text-xs text-slate-500 font-fr">Écoute et prononciation</span>
+          </div>
+
+          <div class="space-y-3" id="u1-dialogue-list">
+            <!-- Line 1 -->
+            <div class="p-4 rounded-2xl bg-indigo-50/60 border-r-4 border-indigo-600 flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-indigo-700 block">Récit du texte (راوي النص)</span>
+                <p class="font-fr text-sm font-semibold text-slate-800">« Les vacances sont vite passées. Jean Morelle et sa femme Suzanne sont rentrés au Caire. Gamal les a invités chez lui avec Moustafa (pilote à EgyptAir). »</p>
+                <p class="text-xs text-slate-500">مرت الإجازة بسرعة. عاد جان وزوجته سوزان إلى القاهرة. دعاهما جمال إلى منزله مع مصطفى (طيار بمصر للطيران).</p>
+              </div>
+              <button onclick="speakFrench('Les vacances sont vite passées. Jean Morelle et sa femme Suzanne sont rentrés au Caire. Gamal les a invités chez lui avec Moustafa.')" class="w-9 h-9 rounded-xl bg-white text-indigo-600 hover:bg-indigo-100 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="fa-solid fa-volume-high text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Line 2 -->
+            <div class="p-4 rounded-2xl bg-emerald-50/60 border-r-4 border-emerald-600 flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-emerald-700 block">Jean Morelle</span>
+                <p class="font-fr text-sm font-semibold text-slate-800">« Tiens Gamal. Ce livre, nous l'avons acheté pour toi. »</p>
+                <p class="text-xs text-slate-500">تفضل يا جمال. هذا الكتاب اشتريناه لك (كتاب تاريخ هدية).</p>
+              </div>
+              <button onclick="speakFrench('Tiens Gamal. Ce livre, nous l\'avons acheté pour toi.')" class="w-9 h-9 rounded-xl bg-white text-emerald-600 hover:bg-emerald-100 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="fa-solid fa-volume-high text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Line 3 -->
+            <div class="p-4 rounded-2xl bg-amber-50/60 border-r-4 border-amber-600 flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-amber-700 block">Gamal</span>
+                <p class="font-fr text-sm font-semibold text-slate-800">« Oh ! Merci beaucoup. Les livres d'histoire, moi, je les adore ! J'ai passé mes vacances à la Mer Rouge avec mes élèves. »</p>
+                <p class="text-xs text-slate-500">أوه! شكراً جزيلاً. كتب التاريخ أنا أعشقها! قضيت إجازتي في البحر الأحمر مع تلاميذي.</p>
+              </div>
+              <button onclick="speakFrench('Oh ! Merci beaucoup. Les livres d\'histoire, moi, je les adore ! J\'ai passé mes vacances à la Mer Rouge avec mes élèves.')" class="w-9 h-9 rounded-xl bg-white text-amber-600 hover:bg-amber-100 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="fa-solid fa-volume-high text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Line 4 -->
+            <div class="p-4 rounded-2xl bg-rose-50/60 border-r-4 border-rose-600 flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="text-[11px] font-bold text-rose-700 block">Moustafa</span>
+                <p class="font-fr text-sm font-semibold text-slate-800">« Moi, je n'ai pas eu de vacances cette année. Je suis pilote à EgyptAir. »</p>
+                <p class="text-xs text-slate-500">أما أنا، فلم أحصل على إجازة هذا العام. أنا طيار في مصر للطيران.</p>
+              </div>
+              <button onclick="speakFrench('Moi, je n\'ai pas eu de vacances cette année. Je suis pilote à EgyptAir.')" class="w-9 h-9 rounded-xl bg-white text-rose-600 hover:bg-rose-100 flex items-center justify-center shrink-0 shadow-sm">
+                <i class="fa-solid fa-volume-high text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit 1: Comprehension Exercises -->
+      <div id="u1-tab-comprehension" class="hidden space-y-4">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-base font-bold text-slate-800">تمارين الفهم على النص (ص 13)</h3>
+            <span class="text-xs text-indigo-600 font-bold">تصحيح فوري ومعرفة النتيجة</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u1_c1">
+            <p class="font-fr font-bold text-slate-800">1. Où Gamal a-t-il invité ses amis français ?</p>
+            <p class="text-xs text-slate-500">أين دعا جمال أصدقاءه الفرنسيين؟</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-right">Chez lui (à la maison)</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-right">Au restaurant</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-right">Au club</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+
+          <!-- Q2 Vrai/Faux -->
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u1_c2">
+            <p class="font-fr font-bold text-slate-800">2. Moustafa est l'ami de Jean.</p>
+            <p class="text-xs text-slate-500">مصطفى هو صديق جان.</p>
+            <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center text-rose-600">Faux (خطأ)</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center text-emerald-600">Vrai (صح)</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u1_c3">
+            <p class="font-fr font-bold text-slate-800">3. Gamal aime beaucoup les livres d'histoire.</p>
+            <p class="text-xs text-slate-500">جمال يحب كتب التاريخ كثيراً.</p>
+            <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center text-emerald-600">Vrai (صح)</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center text-rose-600">Faux (خطأ)</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit 1: Vocab -->
+      <div id="u1-tab-vocab" class="hidden space-y-4">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-800">بنك الكلمات والمفردات المهمة (ص 14)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="font-fr font-bold text-indigo-900 text-sm">Une fête</p>
+                <p class="text-xs text-slate-500">حفلة</p>
+              </div>
+              <button onclick="speakFrench('Une fête')" class="text-indigo-600 hover:text-indigo-800 p-2"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="font-fr font-bold text-indigo-900 text-sm">Une invitation</p>
+                <p class="text-xs text-slate-500">دعوة</p>
+              </div>
+              <button onclick="speakFrench('Une invitation')" class="text-indigo-600 hover:text-indigo-800 p-2"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="font-fr font-bold text-indigo-900 text-sm">Un cadeau</p>
+                <p class="text-xs text-slate-500">هدية</p>
+              </div>
+              <button onclick="speakFrench('Un cadeau')" class="text-indigo-600 hover:text-indigo-800 p-2"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="font-fr font-bold text-indigo-900 text-sm">Souhaiter</p>
+                <p class="text-xs text-slate-500">يتمنى</p>
+              </div>
+              <button onclick="speakFrench('Souhaiter')" class="text-indigo-600 hover:text-indigo-800 p-2"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="font-fr font-bold text-indigo-900 text-sm">Féliciter</p>
+                <p class="text-xs text-slate-500">يُهنئ</p>
+              </div>
+              <button onclick="speakFrench('Féliciter')" class="text-indigo-600 hover:text-indigo-800 p-2"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="font-fr font-bold text-indigo-900 text-sm">Un pilote</p>
+                <p class="text-xs text-slate-500">طيار</p>
+              </div>
+              <button onclick="speakFrench('Un pilote')" class="text-indigo-600 hover:text-indigo-800 p-2"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit 1: Grammar -->
+      <div id="u1-tab-grammar" class="hidden space-y-4">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+          <div class="border-b border-slate-100 pb-3">
+            <h3 class="text-lg font-bold text-slate-800">قواعد الوحدة الأولى (ص 16-24)</h3>
+            <p class="text-xs text-slate-500">الضمائر الشخصية للمفعول به المباشر وغير المباشر (COD & COI) والضمير En</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-2">
+            <h4 class="font-bold text-indigo-900 text-sm">1. الضمائر الشخصية المباشرة (COD : le, la, l', les)</h4>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              تحل محل مفعول مباشر غير مسبوق بحرف جر. مثال:
+              <br><span class="font-fr font-bold">Tu regardes le match ? ➔ Oui, je le regarde.</span>
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <h4 class="font-bold text-emerald-900 text-sm">2. الضمائر الشخصية غير المباشرة للعاقل (COI : lui, leur)</h4>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              تحل محل مفعول عاقل مسبوق بحرف الجر (à / au / aux). مثال:
+              <br><span class="font-fr font-bold">Je téléphone à mon ami ➔ Je lui téléphone.</span>
+            </p>
+          </div>
+
+          <!-- Grammar Exercise -->
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u1_g1">
+            <p class="font-fr font-bold text-slate-800">1. Tu écris à tes parents ? — Oui, je ______ écris.</p>
+            <p class="text-xs text-slate-500">هل تكتب لوالديك؟ — نعم أنا أكتب لهم. (مفعول به جمع عاقل مسبوق بـ à)</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center">leur</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center">les</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-center">lui</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit 1: Situations -->
+      <div id="u1-tab-situations" class="hidden space-y-4">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-800">المواقف اليومية للوحدة الأولى (ص 15)</h3>
+          
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u1_s1">
+            <p class="text-xs font-bold text-slate-700">1. Tu invites ton ami à ton anniversaire, qu'est-ce que tu dis ? (تدعو صديقك لعيد ميلادك، ماذا تقول؟)</p>
+            <div class="space-y-2 text-xs font-bold font-fr">
+              <button onclick="answerQuiz(this, 0)" class="option-btn w-full p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-left">a) Je t'invite à mon anniversaire chez moi.</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn w-full p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-left">b) Joyeux anniversaire, mon ami !</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn w-full p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 text-left">c) Je refuse ton invitation.</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: UNITÉ 2 (REPAS & RESTAURANT) -->
+    <section id="view-unit2" class="hidden space-y-6">
+      <div class="rounded-3xl bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-800 text-white p-6 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold mb-2">Unité 2 • Pages 35-58</div>
+          <h2 class="text-2xl font-black">الوحدة الثانية : الوجبات والمطعم (Repas & Restaurant)</h2>
+          <p class="text-xs text-emerald-100 font-fr mt-1">« Au restaurant, nous commandons de la viande, du riz et une salade. »</p>
+        </div>
+        <button onclick="speakFrench('Unité 2 : Les repas et au restaurant. Nous avons réservé une table pour le dîner.')" class="px-4 py-2.5 bg-white text-emerald-700 hover:bg-emerald-50 rounded-xl font-bold text-xs flex items-center gap-2 shadow transition">
+          <i class="fa-solid fa-volume-high"></i>
+          <span>استمع لملخص الوحدة</span>
+        </button>
+      </div>
+
+      <!-- Unit 2 Content -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+        <h3 class="text-base font-bold text-slate-800">أدوات التجزئة (Les articles partitifs : du, de la, de l', des)</h3>
+        <p class="text-xs text-slate-600">تستخدم للتعبير عن كمية غير محددة من المأكولات والمشروبات، وفي النفي تتحول دائماً إلى (de / d').</p>
+
+        <!-- Partitives Quiz -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u2_q1">
+            <p class="font-fr font-bold text-slate-800 text-sm">1. Au petit déjeuner, je prends ______ fromage.</p>
+            <p class="text-xs text-slate-500">في الإفطار أتناول جبناً (مفرد مذكر).</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-center">du</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-center">de la</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-center">des</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u2_q2">
+            <p class="font-fr font-bold text-slate-800 text-sm">2. Je ne bois pas ______ thé.</p>
+            <p class="text-xs text-slate-500">أنا لا أشرب شاي (حالة النفي تتحول أداة التجزئة إلى de).</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-center">de</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-center">du</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-center">des</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: UNITÉ 3 (SANTÉ / HÔPITAL) -->
+    <section id="view-unit3" class="hidden space-y-6">
+      <div class="rounded-3xl bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-800 text-white p-6 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold mb-2">Unité 3 • Pages 59-67</div>
+          <h2 class="text-2xl font-black">الوحدة الثالثة : الصحة والمستشفى (Santé / Hôpital)</h2>
+          <p class="text-xs text-teal-100 font-fr mt-1">« Chez le médecin : Où avez-vous mal ? J'ai mal à la tête. »</p>
+        </div>
+        <button onclick="speakFrench('Unité 3 : La santé et à l\'hôpital. Prenez les médicaments à l\'heure.')" class="px-4 py-2.5 bg-white text-teal-700 hover:bg-teal-50 rounded-xl font-bold text-xs flex items-center gap-2 shadow transition">
+          <i class="fa-solid fa-volume-high"></i>
+          <span>استمع لملخص الوحدة</span>
+        </button>
+      </div>
+
+      <!-- Unit 3 Content: Expression de la douleur -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+        <h3 class="text-base font-bold text-slate-800">التعبير عن الألم (Avoir mal à...)</h3>
+        <p class="text-xs text-slate-600">نستخدم التعبير: <span class="font-fr font-bold">Avoir mal + (au / à la / à l' / aux)</span> بحسب عضو الجسم.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u3_q1">
+            <p class="font-fr font-bold text-slate-800 text-sm">1. Ali a mal ______ yeux.</p>
+            <p class="text-xs text-slate-500">علي يشعر بألم في [العينين] (جمع).</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-teal-400 text-center">aux</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-teal-400 text-center">au</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-teal-400 text-center">à la</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+
+          <div class="quiz-item p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-correct="0" data-id="u3_q2">
+            <p class="font-fr font-bold text-slate-800 text-sm">2. Mona a mal ______ tête.</p>
+            <p class="text-xs text-slate-500">منى تشعر بألم في [الرأس] (مفرد مؤنث).</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="answerQuiz(this, 0)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-teal-400 text-center">à la</button>
+              <button onclick="answerQuiz(this, 1)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-teal-400 text-center">au</button>
+              <button onclick="answerQuiz(this, 2)" class="option-btn p-2.5 rounded-xl bg-white border border-slate-200 hover:border-teal-400 text-center">aux</button>
+            </div>
+            <div class="feedback hidden text-xs font-bold p-3 rounded-xl mt-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: REVISION & GRAMMAR HUB -->
+    <section id="view-revision" class="hidden space-y-6">
+      <div class="rounded-3xl bg-gradient-to-r from-indigo-900 to-indigo-800 text-white p-6 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-block px-3 py-1 bg-amber-400 text-indigo-950 rounded-full text-xs font-bold mb-2">Révision Générale • Pages 3-10</div>
+          <h2 class="text-2xl font-black">قسم المراجعة الشاملة والقواعد</h2>
+          <p class="text-xs text-slate-200 mt-1">الأسئلة التمهيدية وبنك القواعد النحوية الشاملة للفصل الدراسي الأول</p>
+        </div>
+        <button onclick="switchView('exam')" class="px-4 py-2.5 bg-amber-400 text-indigo-950 hover:bg-amber-300 rounded-xl font-black text-xs flex items-center gap-2 shadow transition">
+          <i class="fa-solid fa-trophy"></i>
+          <span>الانتقال لامتحان نصف العام (20 درجة)</span>
+        </button>
+      </div>
+
+      <!-- Revision Modules -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Introductory Questions -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-star text-amber-500"></i>
+            <span>الكلمة وعكسها (Les Opposés)</span>
+          </h3>
+          <div class="space-y-2 text-xs font-semibold">
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl">
+              <span class="font-fr text-indigo-700 font-bold">Grand ≠ Petit</span>
+              <span class="text-slate-500">كبير ≠ صغير</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl">
+              <span class="font-fr text-indigo-700 font-bold">Bon ≠ Mauvais</span>
+              <span class="text-slate-500">جيد / لذيذ ≠ سيئ</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl">
+              <span class="font-fr text-indigo-700 font-bold">Content ≠ Triste</span>
+              <span class="text-slate-500">سعيد ≠ حزين</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl">
+              <span class="font-fr text-indigo-700 font-bold">Arriver ≠ Partir</span>
+              <span class="text-slate-500">يصل ≠ يرحل</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Essential Verbs -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-indigo-600"></i>
+            <span>تصريف أهم الأفعال (Les Verbes Clés)</span>
+          </h3>
+          <div class="space-y-2 text-xs font-semibold">
+            <div class="p-2.5 bg-indigo-50/70 rounded-xl">
+              <span class="font-fr font-bold text-indigo-900">Être :</span>
+              <span class="font-fr text-slate-700">suis, es, est, sommes, êtes, sont</span>
+            </div>
+            <div class="p-2.5 bg-emerald-50/70 rounded-xl">
+              <span class="font-fr font-bold text-emerald-900">Avoir :</span>
+              <span class="font-fr text-slate-700">ai, as, a, avons, avez, ont</span>
+            </div>
+            <div class="p-2.5 bg-amber-50/70 rounded-xl">
+              <span class="font-fr font-bold text-amber-900">Aller :</span>
+              <span class="font-fr text-slate-700">vais, vas, va, allons, allez, vont</span>
+            </div>
+            <div class="p-2.5 bg-rose-50/70 rounded-xl">
+              <span class="font-fr font-bold text-rose-900">Faire :</span>
+              <span class="font-fr text-slate-700">fais, fais, fait, faisons, faites, font</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: OFFICIAL MID-YEAR EXAM (امتحان نصف العام الرسمي - 20 درجة) -->
+    <section id="view-exam" class="hidden space-y-6">
+      <div class="rounded-3xl bg-gradient-to-r from-amber-600 via-amber-500 to-indigo-900 text-white p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-black mb-2">Examen Officiel • Pages 78-79</div>
+          <h2 class="text-2xl font-black">امتحان نصف العام الرسمي المعتمد (20 درجة)</h2>
+          <p class="text-xs text-amber-100 font-fr mt-1">Note Totale : 20 Points • Conforme aux spécifications du ministère</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="bg-indigo-950/80 rounded-2xl px-4 py-2 text-center border border-white/20">
+            <span class="text-[10px] text-amber-300 block font-bold">الوقت المتبقي</span>
+            <span id="examTimer" class="font-mono text-lg font-black text-white">45:00</span>
+          </div>
+          <button onclick="submitExam()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-xs shadow-lg transition flex items-center gap-1.5">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>تسليم الإجابات</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Exam Document -->
+      <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">I</span>
+            <h3 class="font-bold text-slate-800 text-base">Compréhension du texte (8 Points)</h3>
+          </div>
+          <button onclick="speakFrench('Au restaurant. Le garçon : Bonjour monsieur. Qu\'est-ce que vous désirez ? Ahmed : Je voudrais du poulet, du riz et une salade.')" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold flex items-center gap-1">
+            <i class="fa-solid fa-volume-high"></i>
+            <span>استمع للوثيقة</span>
+          </button>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 font-fr text-sm space-y-2 text-slate-800">
+          <p class="font-bold text-indigo-900">« Au restaurant »</p>
+          <p>Vendredi soir, Sami et son ami Ahmed sont allés au restaurant du Nil pour dîner.</p>
+          <p>Le garçon s'approche de la table et demande : « Qu'est-ce que vous désirez ? »</p>
+          <p>Ahmed commande du poulet, du riz et une salade verte. Sami préfère du poisson avec des frites. Comme dessert, ils prennent deux glaces au chocolat et boivent de l'eau minérale.</p>
+        </div>
+
+        <!-- Exam Questions -->
+        <div class="space-y-4 pt-2">
+          <!-- Q1 -->
+          <div class="exam-q p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-points="2" data-correct="0">
+            <p class="font-fr font-bold text-slate-800 text-sm">1. Sami et Ahmed sont allés au restaurant :</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="selectExamOption(this, 0)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 text-left">Vendredi soir</button>
+              <button onclick="selectExamOption(this, 1)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 text-left">Vendredi matin</button>
+              <button onclick="selectExamOption(this, 2)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 text-left">Samedi soir</button>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="exam-q p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-points="2" data-correct="0">
+            <p class="font-fr font-bold text-slate-800 text-sm">2. Comme dessert, ils ont pris :</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold font-fr">
+              <button onclick="selectExamOption(this, 0)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 text-left">Deux glaces au chocolat</button>
+              <button onclick="selectExamOption(this, 1)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 text-left">Des fruits de saison</button>
+              <button onclick="selectExamOption(this, 2)" class="option-btn p-3 rounded-xl bg-white border border-slate-200 text-left">Un gâteau aux fraises</button>
+            </div>
+          </div>
+
+          <!-- Q3 Situations -->
+          <div class="exam-q p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3" data-points="2" data-correct="0">
+            <p class="text-xs font-bold text-slate-800">3. Tu demandes au garçon l'addition, tu dis : (تطلب الحساب من الجارسون، ماذا تقول؟)</p>
+            <div class="space-y-2 text-xs font-bold font-fr">
+              <button onclick="selectExamOption(this, 0)" class="option-btn w-full p-3 rounded-xl bg-white border border-slate-200 text-left">a) L'addition, s'il vous plaît.</button>
+              <button onclick="selectExamOption(this, 1)" class="option-btn w-full p-3 rounded-xl bg-white border border-slate-200 text-left">b) Le menu, s'il vous plaît.</button>
+              <button onclick="selectExamOption(this, 2)" class="option-btn w-full p-3 rounded-xl bg-white border border-slate-200 text-left">c) Donnez-moi du sel.</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 text-center">
+          <button onclick="submitExam()" class="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-2xl font-black text-sm shadow-xl transition inline-flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>تصحيح وحساب نتيجة الامتحان النهائي</span>
+          </button>
+        </div>
+
+        <div id="examResultCard" class="hidden p-6 rounded-3xl bg-indigo-50 border-2 border-indigo-200 text-center space-y-3 animate-pulse-subtle">
+          <h4 class="text-xl font-black text-indigo-900">نتيجة الامتحان الرسمي</h4>
+          <div class="text-4xl font-black text-emerald-600 font-fr"><span id="finalExamScore">0</span> / 20</div>
+          <p id="examEvaluation" class="text-sm font-bold text-slate-700"></p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE BOTTOM NAV ==================== -->
+  <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 flex items-center justify-around py-2 px-1 text-[11px] font-bold text-slate-600 shadow-lg">
+    <button onclick="switchView('portal')" id="m-nav-portal" class="flex flex-col items-center gap-1 py-1 text-indigo-600">
+      <i class="fa-solid fa-house text-base"></i>
+      <span>الرئيسية</span>
+    </button>
+    <button onclick="switchView('unit1')" id="m-nav-unit1" class="flex flex-col items-center gap-1 py-1">
+      <i class="fa-solid fa-envelope text-base"></i>
+      <span>الوحدة 1</span>
+    </button>
+    <button onclick="switchView('unit2')" id="m-nav-unit2" class="flex flex-col items-center gap-1 py-1">
+      <i class="fa-solid fa-utensils text-base"></i>
+      <span>الوحدة 2</span>
+    </button>
+    <button onclick="switchView('unit3')" id="m-nav-unit3" class="flex flex-col items-center gap-1 py-1">
+      <i class="fa-solid fa-heart-pulse text-base"></i>
+      <span>الوحدة 3</span>
+    </button>
+    <button onclick="switchView('exam')" id="m-nav-exam" class="flex flex-col items-center gap-1 py-1 text-amber-600">
+      <i class="fa-solid fa-trophy text-base"></i>
+      <span>الامتحان</span>
+    </button>
+  </div>
+
+  <!-- ==================== LOGIC / JS SCRIPT ==================== -->
+  <script>
+    // --- STATE & STORAGE ---
+    const VALID_CODES = ['BIENVENU2025', 'PREPA2', 'FRANCAIS2', 'EXCELLENCE', 'STUDENT100', 'FREE2025'];
+    let soundEnabled = true;
+    let userScore = parseInt(localStorage.getItem('b2_score') || '0', 10);
+    let currentView = 'portal';
+
+    // --- AUDIO SYNTHESIS & TTS ENGINE ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playTone(freq, duration, type = 'sine') {
+      if (!soundEnabled) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    function playSuccessChime() {
+      if (!soundEnabled) return;
+      playTone(523.25, 0.12); // C5
+      setTimeout(() => playTone(659.25, 0.12), 120); // E5
+      setTimeout(() => playTone(783.99, 0.2), 240); // G5
+    }
+
+    function playErrorBuzzer() {
+      if (!soundEnabled) return;
+      playTone(180, 0.25, 'sawtooth');
+    }
+
+    function playClickSound() {
+      if (!soundEnabled) return;
+      playTone(400, 0.05);
+    }
+
+    function toggleAudioSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('soundToggleBtn');
+      if (soundEnabled) {
+        btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        btn.classList.remove('text-rose-500');
+        playTone(500, 0.08);
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+        btn.classList.add('text-rose-500');
+      }
+    }
+
+    function speakFrench(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('ميزة القراءة الصوتية غير مدعومة في هذا المتصفح.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // --- ACTIVATION / LOGIN FLOW ---
+    function checkActivationStatus() {
+      const isActivated = localStorage.getItem('b2_activated') === 'true';
+      const studentName = localStorage.getItem('b2_student_name') || 'طالب متميز';
+      const overlay = document.getElementById('activationOverlay');
+
+      if (isActivated) {
+        overlay.classList.add('hidden');
+        document.getElementById('headerStudentName').innerText = studentName;
+        document.getElementById('userScoreDisplay').innerText = userScore;
+      } else {
+        overlay.classList.remove('hidden');
+      }
+    }
+
+    function fillCode(code) {
+      document.getElementById('activationCodeInput').value = code;
+      if (!document.getElementById('studentNameInput').value) {
+        document.getElementById('studentNameInput').value = 'طالب تجريبي';
+      }
+    }
+
+    function quickGuestAccess() {
+      fillCode('BIENVENU2025');
+      handleActivation({ preventDefault: () => {} });
+    }
+
+    function handleActivation(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const name = document.getElementById('studentNameInput').value.trim();
+      const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
+      const errorDiv = document.getElementById('activationError');
+
+      if (VALID_CODES.includes(code)) {
+        errorDiv.classList.add('hidden');
+        localStorage.setItem('b2_activated', 'true');
+        localStorage.setItem('b2_student_name', name || 'طالب متميز');
+        localStorage.setItem('b2_code', code);
+        
+        playSuccessChime();
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+        
+        setTimeout(() => {
+          checkActivationStatus();
+        }, 500);
+      } else {
+        playErrorBuzzer();
+        errorDiv.classList.remove('hidden');
+      }
+    }
+
+    function logoutPrompt() {
+      if (confirm('هل تريد تسجيل الخروج وإعادة تعيين كود التفعيل؟')) {
+        localStorage.removeItem('b2_activated');
+        checkActivationStatus();
+      }
+    }
+
+    // --- VIEW SWITCHING ---
+    function switchView(viewName) {
+      playClickSound();
+      currentView = viewName;
+      const views = ['portal', 'unit1', 'unit2', 'unit3', 'revision', 'exam'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.toggle('hidden', v !== viewName);
+
+        // Desktop nav active styling
+        const navBtn = document.getElementById('nav-' + v);
+        if (navBtn) {
+          if (v === viewName) {
+            navBtn.classList.add('text-indigo-600', 'font-extrabold', 'bg-indigo-50');
+          } else {
+            navBtn.classList.remove('text-indigo-600', 'font-extrabold', 'bg-indigo-50');
+          }
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchUnitTab(unit, tabName) {
+      playClickSound();
+      const tabs = ['text', 'comprehension', 'vocab', 'grammar', 'situations'];
+      tabs.forEach(t => {
+        const content = document.getElementById(unit + '-tab-' + t);
+        const btn = document.getElementById('tab-' + unit + '-' + t);
+        if (content) content.classList.toggle('hidden', t !== tabName);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = 'px-4 py-2 rounded-xl bg-indigo-600 text-white whitespace-nowrap';
+          } else {
+            btn.className = 'px-4 py-2 rounded-xl bg-slate-100 whitespace-nowrap';
+          }
+        }
+      });
+    }
+
+    // --- INTERACTIVE QUIZ LOGIC ---
+    function answerQuiz(btn, chosenIndex) {
+      const container = btn.closest('.quiz-item');
+      if (container.dataset.answered === 'true') return;
+
+      const correctIndex = parseInt(container.dataset.correct, 10);
+      const isCorrect = chosenIndex === correctIndex;
+      const buttons = container.querySelectorAll('.option-btn');
+      const feedback = container.querySelector('.feedback');
+
+      container.dataset.answered = 'true';
+
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === correctIndex) {
+          b.classList.remove('bg-white', 'border-slate-200');
+          b.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+        } else if (i === chosenIndex) {
+          b.classList.remove('bg-white', 'border-slate-200');
+          b.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+        }
+      });
+
+      if (isCorrect) {
+        playSuccessChime();
+        feedback.innerText = '✔️ إجابة صحيحة وممتازة! أحسنت.';
+        feedback.className = 'feedback text-xs font-bold p-3 rounded-xl mt-2 bg-emerald-50 text-emerald-800 block';
+        userScore += 5;
+      } else {
+        playErrorBuzzer();
+        feedback.innerText = '❌ إجابة خاطئة. تم تحديد الإجابة الصحيحة باللون الأخضر.';
+        feedback.className = 'feedback text-xs font-bold p-3 rounded-xl mt-2 bg-rose-50 text-rose-800 block';
+      }
+
+      localStorage.setItem('b2_score', userScore);
+      document.getElementById('userScoreDisplay').innerText = userScore;
+    }
+
+    // --- EXAM LOGIC ---
+    function selectExamOption(btn, idx) {
+      playClickSound();
+      const container = btn.closest('.exam-q');
+      container.querySelectorAll('.option-btn').forEach(b => {
+        b.classList.remove('bg-indigo-100', 'border-indigo-600', 'text-indigo-900');
+      });
+      btn.classList.add('bg-indigo-100', 'border-indigo-600', 'text-indigo-900');
+      container.dataset.selected = idx;
+    }
+
+    function submitExam() {
+      const questions = document.querySelectorAll('.exam-q');
+      let score = 0;
+      let total = 0;
+
+      questions.forEach(q => {
+        const pts = parseInt(q.dataset.points || '2', 10);
+        const correct = parseInt(q.dataset.correct, 10);
+        const selected = parseInt(q.dataset.selected, 10);
+        total += pts;
+
+        const buttons = q.querySelectorAll('.option-btn');
+        buttons.forEach((b, i) => {
+          b.disabled = true;
+          if (i === correct) {
+            b.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+          } else if (i === selected) {
+            b.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900');
+          }
+        });
+
+        if (selected === correct) {
+          score += pts;
+        }
+      });
+
+      // Scale to 20
+      const finalScore = Math.round((score / total) * 20);
+      document.getElementById('finalExamScore').innerText = finalScore;
+      const evalText = document.getElementById('examEvaluation');
+      if (finalScore >= 18) {
+        evalText.innerText = '🌟 ممتاز جداً (Très Bien) - تهانينا، مستواك باهر في اللغة الفرنسية!';
+        playSuccessChime();
+        if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 80 });
+      } else if (finalScore >= 14) {
+        evalText.innerText = '👍 جيد جداً (Bien) - أداء رائع، راجع النقاط الخاطئة للتفوق التام.';
+        playSuccessChime();
+      } else {
+        evalText.innerText = '📚 مقبول - ننصحك بإعادة مراجعة نصوص الوحدة وقواعد الضمائر.';
+      }
+
+      document.getElementById('examResultCard').classList.remove('hidden');
+      document.getElementById('examResultCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // --- INIT ---
+    window.addEventListener('DOMContentLoaded', () => {
+      checkActivationStatus();
+    });
+  </script>
+</body>
+</html>
