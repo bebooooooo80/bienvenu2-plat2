@@ -1,0 +1,54 @@
+{
+  "documentTitleFr": "Au restaurant",
+  "documentTitleAr": "في المطعم",
+  "documentFullTextFr": "Le garçon : Bonjour monsieur, vous voulez prendre le déjeuner au menu ou à la carte ? Ahmed : À la carte. Le garçon : Que voulez-vous comme entrée ? Ahmed : Des tomates et des concombres en salade. Le garçon : et le plat principal ? Ahmed : De la viande, du riz et des frites. Le garçon : Voulez-vous du dessert ? Ahmed : Oui, j'aime le gâteau.",
+  "documentFullTextAr": "Le garçon : صباح الخير سيدي، هل ترغب في تناول الغداء من قائمة الوجبات المحددة (au menu) أم حسب الطلب (à la carte)؟\nAhmed : حسب الطلب (أختار أطباقي بنفسي).\nLe garçon : ماذا تريد كطبق مقبلات / فاتح للشهية؟\nAhmed : طماطم وخيار في طبق سلطة.\nLe garçon : وماذا عن الطبق الرئيسي؟\nAhmed : لحم، وأرز، وبطاطس مقلية.\nLe garçon : هل تريد حلوى؟\nAhmed : نعم، أنا أحب الجاتوه / الكعك.",
+  "documentLines": [
+    {"speaker": "Le garçon", "textFr": "Bonjour monsieur, vous voulez prendre le déjeuner au menu ou à la carte ?", "textAr": "صباح الخير سيدي، هل ترغب في تناول الغداء من قائمة الوجبات المحددة (au menu) أم حسب الطلب (à la carte)؟"},
+    {"speaker": "Ahmed", "textFr": "À la carte.", "textAr": "حسب الطلب (أختار أطباقي بنفسي)."},
+    {"speaker": "Le garçon", "textFr": "Que voulez-vous comme entrée ?", "textAr": "ماذا تريد كطبق مقبلات / فاتح للشهية؟"},
+    {"speaker": "Ahmed", "textFr": "Des tomates et des concombres en salade.", "textAr": "طماطم وخيار في طبق سلطة."},
+    {"speaker": "Le garçon", "textFr": "et le plat principal ?", "textAr": "وماذا عن الطبق الرئيسي؟"},
+    {"speaker": "Ahmed", "textFr": "De la viande, du riz et des frites.", "textAr": "لحم، وأرز، وبطاطس مقلية."},
+    {"speaker": "Le garçon", "textFr": "Voulez-vous du dessert ?", "textAr": "هل تريد حلوى؟"},
+    {"speaker": "Ahmed", "textFr": "Oui, j'aime le gâteau.", "textAr": "نعم، أنا أحب الجاتوه / الكعك."}
+  ],
+  "docPartAQuestions": [
+    {"id": "doc_q1", "questionFr": "1- Ahmed prend son repas ....................", "questionAr": "١- يتناول أحمد وجبته ....................", "options": ["à la carte","au menu","au dîner"], "correctIndex": 0, "points": 1.0, "explanationFr": "Ahmed a répondu au garçon : « À la carte. »", "explanationAr": "أحمد أجاب النادل صراحة: « À la carte » أي حسب اختياره."},
+    {"id": "doc_q2", "questionFr": "2- Ahmed demande .................... comme plat principal.", "questionAr": "٢- يطلب أحمد .................... كطبق رئيسي.", "options": ["du poisson","de la glace","de la viande et du riz"], "correctIndex": 2, "points": 1.0, "explanationFr": "Pour le plat principal, Ahmed demande : « De la viande, du riz et des frites. »", "explanationAr": "طلب أحمد للطبق الرئيسي لحماً وأرزاً وبطاطس مقلية (viande et riz)."},
+    {"id": "doc_q3", "questionFr": "3- Ahmed va prendre ....................", "questionAr": "٣- سيتناول أحمد وجبة ....................", "options": ["le petit-déjeuner","le déjeuner","le dîner"], "correctIndex": 1, "points": 1.0, "explanationFr": "Le garçon a demandé : « vous voulez prendre le déjeuner au menu ou à la carte ? »", "explanationAr": "سؤال النادل في البداية كان عن وجبة الغداء « le déjeuner »."}
+  ],
+  "docPartBQuestions": [
+    {"id": "doc_tf1", "statementFr": "1. Ce dialogue est au restaurant.", "statementAr": "١. هذا الحوار يدور في المطعم.", "isTrue": true, "points": 1.0, "explanationFr": "Vrai : Le dialogue se passe entre un garçon et un client dans un restaurant.", "explanationAr": "صح (Vrai): عنوان الوثيقة وشخصياتها (نادل وزبون) في المطعم."},
+    {"id": "doc_tf2", "statementFr": "2. Ahmed aime le gâteau.", "statementAr": "٢. أحمد يحب الجاتوه / الكعك.", "isTrue": true, "points": 1.0, "explanationFr": "Vrai : Ahmed dit : « Oui, j'aime le gâteau. »", "explanationAr": "صح (Vrai): أحمد قال صراحة: « Oui, j'aime le gâteau »."},
+    {"id": "doc_tf3", "statementFr": "3. Comme entrée, Ahmed demande de la crème.", "statementAr": "٣. كطبق مقبلات، طلب أحمد كريمة.", "isTrue": false, "points": 1.0, "explanationFr": "Faux : Comme entrée, Ahmed demande des tomates et des concombres en salade.", "explanationAr": "خطأ (Faux): طلب أحمد طماطم وخيار في سلطة وليس كريمة."}
+  ],
+  "docPartCQuestions": [
+    {"id": "doc_c1", "sentenceTemplateFr": "1- Comme plat principal Ahmed demande de la ______ , du ______ et des frites.", "blanksWords": ["viande","riz"], "wordBank": ["viande","riz","poisson","crème","salade"], "sentenceAr": "١- كطبق رئيسي يطلب أحمد من الـ (لحم)، والـ (أرز) والبطاطس المقلية.", "points": 1.0, "fullSentenceFr": "Comme plat principal Ahmed demande de la viande, du riz et des frites."},
+    {"id": "doc_c2", "sentenceTemplateFr": "2- Comme entrée, Ahmed demande des ______ et des ______ en salade.", "blanksWords": ["tomates","concombres"], "wordBank": ["tomates","concombres","pommes","fruits","gâteaux"], "sentenceAr": "٢- كطبق مقبلات، يطلب أحمد (طماطم) و(خيار) في سلطة.", "points": 1.0, "fullSentenceFr": "Comme entrée, Ahmed demande des tomates et des concombres en salade."}
+  ],
+  "gramPartAQuestions": [
+    {"id": "gram_a1", "promptFr": "1- Nous .................... aux élèves. (parler)", "verb": "parler", "subject": "Nous", "correctAnswer": "parlons", "points": 0.5, "ruleExplanationAr": "فعل parler مجموعة أولى، مع الضمير Nous نحذف er ونضع ons ➔ parlons."},
+    {"id": "gram_a2", "promptFr": "2- Vous .................... une robe. (choisir)", "verb": "choisir", "subject": "Vous", "correctAnswer": "choisissez", "points": 0.5, "ruleExplanationAr": "فعل choisir مجموعة ثانية، مع الضمير Vous نحذف ir ونضع issez ➔ choisissez."}
+  ],
+  "gramPartBQuestions": [
+    {"type": "mcq", "id": "gram_b1", "questionFr": "1. On peut prendre .................... boissons fraîches.", "questionAr": "١. يمكننا تناول .................... مشروبات باردة.", "options": ["du","de l'","des"], "correctIndex": 2, "points": 1.2, "explanationFr": "« Boissons fraîches » est un nom au pluriel (-s), on utilise donc l'article indéfini ou partitif pluriel « des ».", "explanationAr": "كلمة boissons اسم جمع مؤنث ينتهي بـ s ➔ نختار أداة الجمع des."},
+    {"type": "mcq", "id": "gram_b2", "questionFr": "2- Tu aimes .................... parents.", "questionAr": "٢- أنت تحب .................... والديك.", "options": ["ton","ta","tes"], "correctIndex": 2, "points": 1.2, "explanationFr": "Le sujet est « Tu » et le mot « parents » est au pluriel (-s) ➔ adjectif possessif pluriel « tes ».", "explanationAr": "الفاعل Tu والاسم المملوك parents جمع ➔ صفة الملكية للجمع هي tes."},
+    {"type": "mcq", "id": "gram_b3", "questionFr": "3- .................... vas-tu ? - Je vais au cinéma.", "questionAr": "٣- .................... تذهب؟ - أنا أذهب إلى السينما.", "options": ["Comment","Qui","Où"], "correctIndex": 2, "points": 1.2, "explanationFr": "La réponse indique un lieu « au cinéma », le mot interrogatif approprié est « Où » (أين).", "explanationAr": "الإجابة تحدد مكاناً (au cinéma) ➔ أداة الاستفهام عن المكان هي Où (أين)."},
+    {"type": "transform", "id": "gram_b4", "originalFr": "Elle mange des légumes.", "instructionFr": "Mets à la forme négative", "instructionAr": "ضع في صيغة النفي", "targetWord": "", "expectedAnswerFr": "Elle ne mange pas de légumes.", "points": 1.2, "explanationAr": "عند النفي نضع الفعل بين ne ... pas، وتتحول أداة التجزئة des إلى de (لأن الفعل ليس être) ➔ Elle ne mange pas de légumes.", "options": ["Elle ne mange pas de légumes.","Elle ne mange pas des légumes.","Elle ne mange plus de légumes."]},
+    {"type": "transform", "id": "gram_b5", "originalFr": "Jouer - au ballon", "instructionFr": "Fais une phrase", "instructionAr": "كوّن جملة مفيدة وصحيحة", "targetWord": "", "expectedAnswerFr": "Les garçons jouent au ballon. (ou : Je joue au ballon.)", "points": 1.2, "explanationAr": "نصرّف فعل jouer مع فاعل مناسب ونكمل بـ au ballon، مثل: « Je joue au ballon » أو « Les garçons jouent au ballon ».", "options": ["Je joue au ballon.","Les garçons jouent au ballon.","Nous jouons au ballon."]}
+  ],
+  "gramPartCQuestions": [
+    {"id": "gram_c1", "originalFr": "Elle aime les fruits.", "instructionFr": "Remplace les mots soulignés par un pronom personnel", "instructionAr": "استبدل ما تحته خط (les fruits) بضمير مفعول مناسب", "targetWord": "les fruits", "expectedAnswerFr": "Elle les aime.", "points": 1.0, "explanationAr": "« les fruits » مفعول به مباشر جمع (C.O.D) ➔ نستبدله بالضمير les ونضعه قبل الفعل ➔ Elle les aime.", "options": ["Elle les aime.","Elle lui aime.","Elle l'aime."]},
+    {"id": "gram_c2", "originalFr": "Je parle à mon ami.", "instructionFr": "Remplace les mots soulignés par un pronom personnel", "instructionAr": "استبدل ما تحته خط (à mon ami) بضمير مفعول مناسب", "targetWord": "à mon ami", "expectedAnswerFr": "Je lui parle.", "points": 1.0, "explanationAr": "« à mon ami » مفعول به غير مباشر عاقل مفرد مسبوق بـ à (C.O.I) ➔ نستبدله بالضمير lui ونضعه قبل الفعل ➔ Je lui parle.", "options": ["Je lui parle.","Je le parle.","Je leur parle."]}
+  ],
+  "prodOptions": ["au club","à l'hôpital","au musée"],
+  "productionQuestions": [
+    {"id": "prod_1", "purposeFr": "1- Regarder les monuments.", "purposeAr": "١- لمشاهدة الآثار والمعالم التاريخية.", "options": ["au club","à l'hôpital","au musée"], "correctIndex": 2, "modelSentenceFr": "Je vais au musée pour regarder les monuments.", "points": 0.5},
+    {"id": "prod_2", "purposeFr": "2- Faire du sport.", "purposeAr": "٢- لممارسة الرياضة.", "options": ["au club","à l'hôpital","au musée"], "correctIndex": 0, "modelSentenceFr": "Je vais au club pour faire du sport.", "points": 0.5}
+  ],
+  "situationsQuestions": [
+    {"id": "sit_1", "situationFr": "1- Tu demandes au garçon l'addition, tu dis :", "situationAr": "١- تطلب من النادل الحساب (الفاتورة)، ماذا تقول؟", "options": ["a) l'addition S.V.P!","b) Que voulez-vous?","c) Vous voulez autre chose?"], "correctIndex": 0, "points": 1.0, "explanationAr": "لطلب الفاتورة والحساب من النادل في المطعم تقول بأدب: « l'addition S.V.P! » (الحساب لو سمحت)."},
+    {"id": "sit_2", "situationFr": "2. Au restaurant, tu demandes le menu au garçon, tu dis :", "situationAr": "٢- في المطعم، تطلب قائمة الطعام من النادل، ماذا تقول؟", "options": ["a) Je prends de la glace.","b) Apportez moi le menu S.V.P!","c) Bon appétit."], "correctIndex": 1, "points": 1.0, "explanationAr": "لطلب قائمة الطعام من النادل تقول: « Apportez-moi le menu S.V.P! » (أحضر لي قائمة الطعام لو سمحت)."}
+  ]
+}

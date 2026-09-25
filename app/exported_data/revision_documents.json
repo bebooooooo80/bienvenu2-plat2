@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "pageNumber": "p. 67",
+    "titleFr": "Document (1) : Lettre d'invitation",
+    "titleAr": "الوثيقة 1 : خطاب دعوة لحفل عيد ميلاد",
+    "documentType": "Une lettre (رسالة)",
+    "textFr": "Alexandrie, le 15 Novembre\nChère Noha,\n    Je t'invite à une petite fête à l'occasion de mon anniversaire, le jeudi 30 Novembre, à 20 heures à la maison. Je vais inviter nos amies Racha et Rana. Ma cousine Salma va apporter ses CD. On va chanter, danser et manger des gâteaux. Nous allons être contentes de te voir.\nÀ bientôt\nTon amie\nHoda",
+    "textAr": "الإسكندرية، 15 نوفمبر\nعزيزتي نهى،\nأدعوكِ إلى حفلة صغيرة بمناسبة عيد ميلادي، يوم الخميس 30 نوفمبر في تمام الساعة الثامنة مساءً في المنزل. سوف أدعو صديقتينا رشا ورنا. وابنة عمي سلمى ستحضر أسطواناتها الموسيقية (CDs). سوف نغني ونرقص ونأكل الكعك والجاتوه. سنكون سعيدات جداً برؤيتكِ.\nإلى اللقاء قريباً\nصديقتكِ\nهدى",
+    "vocabulary": [
+      {"first": "une fête", "second": "حفلة"},
+      {"first": "à l'occasion de", "second": "بمناسبة"},
+      {"first": "apporter des CD", "second": "يُحضر أسطوانات"},
+      {"first": "chanter et danser", "second": "يغني ويرقص"},
+      {"first": "contentes de te voir", "second": "مسرورات برؤيتك"}
+    ],
+    "mcqQuestions": [
+      {
+        "id": "d1_q1",
+        "questionFr": "1. Ce document est ............... .",
+        "questionAr": "هذه الوثيقة عبارة عن :",
+        "options": ["une lettre","un dialogue","un texte"],
+        "correctIndex": 0,
+        "explanationAr": "الوثيقة تبدأ بالمدينة والتاريخ (Alexandrie, le 15 Novembre) وتنتهي بتوقيع (Ton amie Hoda) لذا فهي خطاب (une lettre)."
+      },
+      {
+        "id": "d1_q2",
+        "questionFr": "2. C'est l'anniversaire ............... .",
+        "questionAr": "هذا عيد ميلاد :",
+        "options": ["de Noha","de Hoda","de Salma"],
+        "correctIndex": 1,
+        "explanationAr": "هدى هي كاتبة الرسالة وتقول: «à l'occasion de mon anniversaire» أي بمناسبة عيد ميلادي أنا."
+      },
+      {
+        "id": "d1_q3",
+        "questionFr": "3. L'anniversaire va être ............... Novembre.",
+        "questionAr": "حفل عيد الميلاد سيكون يوم :",
+        "options": ["le quinze","le vingt","le trente"],
+        "correctIndex": 2,
+        "explanationAr": "تاريخ الحفل المذكور في النص هو: «le jeudi 30 Novembre» (30 نوفمبر = le trente)."
+      },
+      {
+        "id": "d1_q4",
+        "questionFr": "4. La fête va être ............... .",
+        "questionAr": "الحفلة ستقام :",
+        "options": ["le soir","l'après-midi","le matin"],
+        "correctIndex": 0,
+        "explanationAr": "الساعة 20:00 (à 20 heures) في التوقيت الفرنسي تعني الثامنة مساءً (le soir)."
+      }
+    ],
+    "trueFalseQuestions": [
+      {
+        "id": "d1_tf1",
+        "statementFr": "1. Hoda écrit à sa cousine.",
+        "statementAr": "هدى تكتب لابنة عمها.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): هدى تكتب لصديقتها نهى (Chère Noha / Ton amie Hoda)، بينما ابنة عمها هي سلمى (Ma cousine Salma)."
+      },
+      {
+        "id": "d1_tf2",
+        "statementFr": "2. Racha est l'amie de Noha.",
+        "statementAr": "رشا هي صديقة لنهى.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): هدى تقول في النص «nos amies Racha et Rana» أي صديقاتنا المشتركات."
+      },
+      {
+        "id": "d1_tf3",
+        "statementFr": "3. Hoda habite à Alexandrie.",
+        "statementAr": "هدى تسكن في الإسكندرية.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): كُتب الخطاب من الإسكندرية «Alexandrie, le 15 Novembre»."
+      }
+    ],
+    "completionQuestions": [
+      {
+        "id": "d1_op1",
+        "promptFr": "1. Qui va apporter les CD?",
+        "promptAr": "من الذي سيحضر أسطوانات الأغاني (CD)?",
+        "modelAnswerFr": "Salma (la cousine de Hoda) va apporter ses CD.",
+        "modelAnswerAr": "سلمى (ابنة عم هدى) هي التي ستحضر الأسطوانات.",
+        "hint": "Salma va apporter ses CD."
+      },
+      {
+        "id": "d1_op2",
+        "promptFr": "2. Où est-ce que la fête va être?",
+        "promptAr": "أين ستقام الحفلة؟",
+        "modelAnswerFr": "La fête va être à la maison (de Hoda).",
+        "modelAnswerAr": "ستقام الحفلة في المنزل (منزل هدى).",
+        "hint": "à la maison"
+      },
+      {
+        "id": "d1_op3",
+        "promptFr": "3. Qu'est-ce qu' on va faire à la fête?",
+        "promptAr": "ماذا سيفعلون في الحفل؟",
+        "modelAnswerFr": "On va chanter, danser et manger des gâteaux.",
+        "modelAnswerAr": "سوف يغنون، يرقصون، ويتناولون الجاتوه والكعك.",
+        "hint": "chanter, danser et manger des gâteaux"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "pageNumber": "p. 68",
+    "titleFr": "Document (2) : À l'hôpital",
+    "titleAr": "الوثيقة 2 : في المستشفى",
+    "documentType": "Un texte descriptif (نص وصفي)",
+    "textFr": "À l'hôpital\nLe médecin examine les malades, il écrit l'ordonnance. L'infirmière donne les médicaments aux malades à des heures fixes. Sur les lits, il y a des couvertures blanches. Le bureau de l'infirmière est près des malades. Des parents et des amis visitent les malades et leur apportent des fleurs.",
+    "textAr": "في المستشفى\nيفحص الطبيب المرضى، ويكتب الروشتة الطبية. وتعطي الممرضة الأدوية للمرضى في مواعيد محددة. وعلى الأسِرة، توجد أغطية وبطاطين بيضاء. مكتب الممرضة قريب من المرضى. ويزور الأقارب والأصدقاء المرضى ويحضرون لهم الزهور.",
+    "vocabulary": [
+      {"first": "examine les malades", "second": "يفحص المرضى"},
+      {"first": "l'ordonnance", "second": "الروشتة الطبية"},
+      {"first": "des heures fixes", "second": "مواعيد ثابتة / محددة"},
+      {"first": "des couvertures", "second": "أغطية / بطاطين"},
+      {"first": "apportent des fleurs", "second": "يحضرون زهوراً"}
+    ],
+    "mcqQuestions": [
+      {
+        "id": "d2_q1",
+        "questionFr": "1. L'infirmière donne les médicaments ...............",
+        "questionAr": "تعطي الممرضة الأدوية لـ :",
+        "options": ["aux médecins","aux malades","aux parents"],
+        "correctIndex": 1,
+        "explanationAr": "في النص: «L'infirmière donne les médicaments aux malades» للمرضى."
+      },
+      {
+        "id": "d2_q2",
+        "questionFr": "2. Sur le lit, il y a ...............",
+        "questionAr": "يوجد على السرير :",
+        "options": ["des fleurs","des médicaments","des couvertures"],
+        "correctIndex": 2,
+        "explanationAr": "في النص: «Sur les lits, il y a des couvertures blanches» أغطية بيضاء."
+      },
+      {
+        "id": "d2_q3",
+        "questionFr": "3. ............... écrit les ordonnances.",
+        "questionAr": "الذي يكتب الروشتات هو :",
+        "options": ["Le médecin","L'infirmière","Le malade"],
+        "correctIndex": 0,
+        "explanationAr": "في النص: «Le médecin examine les malades, il écrit l'ordonnance»."
+      }
+    ],
+    "trueFalseQuestions": [
+      {
+        "id": "d2_tf1",
+        "statementFr": "1. L'infirmière travaille dans un hôpital.",
+        "statementAr": "الممرضة تعمل في مستشفى.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): العنوان والنص يتحدثان عن المستشفى (À l'hôpital)."
+      },
+      {
+        "id": "d2_tf2",
+        "statementFr": "2. Le médecin examine les malades.",
+        "statementAr": "الطبيب يفحص المرضى.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): جملة صريحة في بداية النص."
+      },
+      {
+        "id": "d2_tf3",
+        "statementFr": "3. Le médecin donne les médicaments à des heures fixes.",
+        "statementAr": "الطبيب يعطي الأدوية في مواعيد محددة.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): الممرضة هي من تعطي الدواء (L'infirmière donne les médicaments)."
+      },
+      {
+        "id": "d2_tf4",
+        "statementFr": "4. L'infirmière a un bureau près des malades.",
+        "statementAr": "للممرضة مكتب بجوار المرضى.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): «Le bureau de l'infirmière est près des malades»."
+      }
+    ],
+    "completionQuestions": [
+      {
+        "id": "d2_op1",
+        "promptFr": "1. Le médecin ............... les malades, il écrit une ............... .",
+        "promptAr": "أكمل: الطبيب ..... المرضى، ويكتب ..... .",
+        "modelAnswerFr": "examine / ordonnance",
+        "modelAnswerAr": "يفحص (examine) / روشتة (ordonnance).",
+        "hint": "examine - ordonnance"
+      },
+      {
+        "id": "d2_op2",
+        "promptFr": "2. Les visiteurs apportent des ............... pour les malades.",
+        "promptAr": "أكمل: يُحضر الزائرون ..... للمرضى.",
+        "modelAnswerFr": "fleurs",
+        "modelAnswerAr": "زهوراً (fleurs).",
+        "hint": "fleurs"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "pageNumber": "p. 69",
+    "titleFr": "Document (3) : Au restaurant",
+    "titleAr": "الوثيقة 3 : في المطعم",
+    "documentType": "Un dialogue (حوار)",
+    "textFr": "Au restaurant\nLe garçon : Bonjour monsieur, vous déjeunez au menu ou à la carte?\nLe client : À la carte.\nLe garçon : Que voulez-vous comme entrée?\nLe client : Des tomates et des concombres en salade.\nLe garçon : Et le plat principal?\nLe client : De la viande, du riz et des frites.\nLe garçon : Voulez-vous du dessert?\nLe client : Oui, du gâteau.",
+    "textAr": "في المطعم\nالنادل : مرحباً سيدي، هل تتناول الغداء وفقاً لقائمة الوجبات الثابتة (au menu) أم تختار أصنافاً محددة (à la carte)؟\nالزبون : أصناف محددة من القائمة (À la carte).\nالنادل : ماذا تود كمقبلات؟\nالزبون : طماطم وخيار في طبق سلطة.\nالنادل : والطبق الرئيسي؟\nالزبون : لحم، وأرز، وبطاطس محمرة.\nالنادل : هل ترغب في تحلية؟\nالزبون : نعم، قطعة جاتوه.",
+    "vocabulary": [
+      {"first": "au menu", "second": "وجبة محددة مسبقاً"},
+      {"first": "à la carte", "second": "طلب أصناف مفردة"},
+      {"first": "comme entrée", "second": "كمقبلات"},
+      {"first": "le plat principal", "second": "الطبق الرئيسي"},
+      {"first": "le dessert", "second": "الحلوى / التحلية"}
+    ],
+    "mcqQuestions": [
+      {
+        "id": "d3_q1",
+        "questionFr": "1. Le client prend son repas ............... .",
+        "questionAr": "يتناول الزبون وجبته :",
+        "options": ["à la carte","au menu","au dîner"],
+        "correctIndex": 0,
+        "explanationAr": "سأله النادل فأجاب: «Le client : À la carte»."
+      },
+      {
+        "id": "d3_q2",
+        "questionFr": "2. Le client demande ............... comme plat principal.",
+        "questionAr": "يطلب الزبون ..... كطبق رئيسي :",
+        "options": ["du gâteau","de la salade","de la viande et du riz"],
+        "correctIndex": 2,
+        "explanationAr": "قال الزبون عن الطبق الرئيسي: «De la viande, du riz et des frites»."
+      },
+      {
+        "id": "d3_q3",
+        "questionFr": "3. Le client prend ............... .",
+        "questionAr": "يتناول الزبون وجبة :",
+        "options": ["le petit-déjeuner","le déjeuner","le dîner"],
+        "correctIndex": 1,
+        "explanationAr": "سأله النادل: «vous déjeunez...» ومشتقة من فعل déjeuner أي يتناول الغداء."
+      }
+    ],
+    "trueFalseQuestions": [
+      {
+        "id": "d3_tf1",
+        "statementFr": "1. Ce dialogue est dans un restaurant.",
+        "statementAr": "يدور هذا الحوار في مطعم.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): العنوان والحوار بين النادل والزبون في المطعم (Au restaurant)."
+      },
+      {
+        "id": "d3_tf2",
+        "statementFr": "2. Le client n'aime pas le gâteau.",
+        "statementAr": "الزبون لا يحب الجاتوه.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): عندما سأله النادل عن التحلية قال الزبون بحماس: «Oui, du gâteau»."
+      },
+      {
+        "id": "d3_tf3",
+        "statementFr": "3. Le client ne préfère pas les frites avec le repas.",
+        "statementAr": "الزبون لا يفضل البطاطس المحمرة مع الوجبة.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): الزبون طلب البطاطس المحمرة صراحة: «De la viande, du riz et des frites»."
+      },
+      {
+        "id": "d3_tf4",
+        "statementFr": "4. Comme entrée, le client demande une salade.",
+        "statementAr": "كمقبلات، طلب الزبون سلطة.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): «Des tomates et des concombres en salade»."
+      }
+    ],
+    "completionQuestions": [
+      {
+        "id": "d3_op1",
+        "promptFr": "Complète ce texte d'après le document:\nUn ....... va au ....... pour déjeuner. Il demande du ......., de la ....... et des ....... comme plat ....... .",
+        "promptAr": "أكمل الملخص وفقاً للوثيقة:\nUn ....... va au ....... pour déjeuner...",
+        "modelAnswerFr": "Un client va au restaurant pour déjeuner. Il demande du riz, de la viande et des frites comme plat principal.",
+        "modelAnswerAr": "ذهب زبون (client) إلى المطعم (restaurant) ليتناول الغداء، وطلب أرزاً (riz)، ولحماً (viande)، وبطاطس (frites) كطبق رئيسي (principal).",
+        "hint": "client, restaurant, riz, viande, frites, principal"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "pageNumber": "p. 70-71",
+    "titleFr": "Document (4) : Dans la rue",
+    "titleAr": "الوثيقة 4 : في الشارع (حادث وانزلاق)",
+    "documentType": "Un dialogue (حوار)",
+    "textFr": "Dans la rue\nLa femme : Ça va, monsieur? Qu'est-ce qui vous est arrivé?\nL'homme : J'ai glissé et je suis tombé par terre.\nLa femme : Vous avez mal?\nL'homme : Oui, j'ai mal à la jambe.\nLa femme : Vous pouvez marcher?\nL'homme : Oui, ça va, mais ça fait un peu mal.\nLa femme : Vous voulez que j'appelle l'ambulance? J'ai mon téléphone portable.\nL'homme : Non, merci madame. J'habite près d'ici, et il y a un médecin dans mon immeuble.",
+    "textAr": "في الشارع\nالسيدة : هل أنت بخير يا سيدي؟ ماذا حدث لك؟\nالرجل : تزلقت وسقطت على الأرض.\nالسيدة : هل تشعر بألم؟\nالرجل : نعم، أشعر بألم في الساق.\nالسيدة : هل تستطيع المشي؟\nالرجل : نعم، لا بأس، لكنها تؤلمني قليلاً.\nالسيدة : هل تريد أن أتصل بالإسعاف؟ معي هاتفي المحمول.\nالرجل : لا، شكراً يا سيدتي. أنا أسكن بالقرب من هنا، وهناك طبيب في عماراتي.",
+    "vocabulary": [
+      {"first": "glissé", "second": "تزحلقت"},
+      {"first": "tombé par terre", "second": "سقطت أرضاً"},
+      {"first": "l'ambulance", "second": "عربة الإسعاف"},
+      {"first": "téléphone portable", "second": "هاتف محمول"},
+      {"first": "immeuble", "second": "عمارة سكنية"}
+    ],
+    "mcqQuestions": [
+      {
+        "id": "d4_q1",
+        "questionFr": "1. Cette scène se passe ............... .",
+        "questionAr": "يدور هذا المشهد في :",
+        "options": ["dans une rue","dans une maison","dans un hôpital"],
+        "correctIndex": 0,
+        "explanationAr": "عنوان الوثيقة هو: «Dans la rue» (في الشارع)."
+      },
+      {
+        "id": "d4_q2",
+        "questionFr": "2. Cette scène se passe entre ............... .",
+        "questionAr": "يدور المشهد بين :",
+        "options": ["un homme et une femme","deux hommes","deux femmes"],
+        "correctIndex": 0,
+        "explanationAr": "أطراف الحوار هما: «La femme» و «L'homme»."
+      }
+    ],
+    "trueFalseQuestions": [
+      {
+        "id": "d4_tf1",
+        "statementFr": "1. La femme est tombée dans la rue.",
+        "statementAr": "سقطت السيدة في الشارع.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): الرجل هو الذي انزلق وسقط (L'homme : J'ai glissé et je suis tombé par terre)."
+      },
+      {
+        "id": "d4_tf2",
+        "statementFr": "2. L'homme a mal à la jambe.",
+        "statementAr": "الرجل يشعر بألم في ساقه.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): «L'homme : Oui, j'ai mal à la jambe»."
+      },
+      {
+        "id": "d4_tf3",
+        "statementFr": "3. La femme a appelé l'ambulance.",
+        "statementAr": "اتصلت السيدة بالإسعاف.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): هي عرضت الاتصال لكن الرجل رفض شاكراً: «Non, merci madame»."
+      },
+      {
+        "id": "d4_tf4",
+        "statementFr": "4. Le voisin de cet homme est médecin.",
+        "statementAr": "جار هذا الرجل طبيب.",
+        "isTrue": true,
+        "explanationAr": "صحيح (Vrai): «il y a un médecin dans mon immeuble» (في عمارته أي جاره)."
+      },
+      {
+        "id": "d4_tf5",
+        "statementFr": "5. L'homme ne peut pas marcher.",
+        "statementAr": "الرجل لا يستطيع المشي إطلاقاً.",
+        "isTrue": false,
+        "explanationAr": "خطأ (Faux): عندما سألته هل تستطيع المشي قال: «Oui, ça va, mais ça fait un peu mal»."
+      }
+    ],
+    "completionQuestions": [
+      {
+        "id": "d4_op1",
+        "promptFr": "1. Qui peut dire: « Ça vous fait mal? »",
+        "promptAr": "من القائل: « Ça vous fait mal? » (هل يؤلمك؟)؟",
+        "modelAnswerFr": "La femme",
+        "modelAnswerAr": "السيدة (La femme)",
+        "hint": "La femme"
+      },
+      {
+        "id": "d4_op2",
+        "promptFr": "2. Qui peut dire: « J'habite près d'ici. »",
+        "promptAr": "من القائل: « J'habite près d'ici. » (أنا أسكن بالقرب من هنا)؟",
+        "modelAnswerFr": "L'homme",
+        "modelAnswerAr": "الرجل (L'homme)",
+        "hint": "L'homme"
+      }
+    ]
+  }
+]
