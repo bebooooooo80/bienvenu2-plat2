@@ -86,9 +86,21 @@ export function initDatabase() {
     console.log(`Successfully seeded 500 codes into database.`);
   }
 
-  // 4. Create default administrator account if not present
-  const adminRow = db.prepare("SELECT * FROM users WHERE role = 'admin'").get();
-  if (!adminRow) {
+  // 4. Create default administrator accounts if not present
+  const beboAdmin = db.prepare("SELECT * FROM users WHERE login_identifier = 'bebooooooo80@gmail.com'").get();
+  if (!beboAdmin) {
+    const adminUid = 'admin_owner_' + crypto.randomBytes(6).toString('hex');
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync('Admin@Bienvenu2026!', salt, 10000, 32, 'sha256').toString('hex');
+    db.prepare(`
+      INSERT INTO users (uid, name, login_identifier, password_hash, password_salt, role, created_at, access_type, access_status)
+      VALUES (?, 'صاحب التطبيق (Admin)', 'bebooooooo80@gmail.com', ?, ?, 'admin', ?, 'ANNUAL', 'ACTIVE')
+    `).run(adminUid, hash, salt, new Date().toISOString());
+    console.log('Initialized owner admin account: bebooooooo80@gmail.com');
+  }
+
+  const defaultAdmin = db.prepare("SELECT * FROM users WHERE login_identifier = 'admin@bienvenu2.fr'").get();
+  if (!defaultAdmin) {
     const adminUid = 'admin_' + crypto.randomBytes(8).toString('hex');
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.pbkdf2Sync('Admin@Bienvenu2026!', salt, 10000, 32, 'sha256').toString('hex');

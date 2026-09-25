@@ -224,6 +224,45 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // 2.5 ADMIN DIRECT CODE LOGIN
+  if (pathname === '/api/auth/admin-code-login' && req.method === 'POST') {
+    try {
+      const { adminCode } = await parseJsonBody(req);
+      if (!adminCode) {
+        return sendJson(res, 400, { success: false, message: 'يرجى كتابة كود الأدمن.' });
+      }
+      const clean = adminCode.trim().toUpperCase();
+      const ADMIN_MASTER_CODES = ['ADMIN-BIENVENU-2026', 'FR2-ADMIN-2026', 'ADMIN2026', 'ADMIN-OWNER-2026'];
+      if (!ADMIN_MASTER_CODES.includes(clean)) {
+        return sendJson(res, 401, { success: false, message: 'كود الأدمن غير صحيح.' });
+      }
+
+      let adminUser = db.prepare("SELECT * FROM users WHERE login_identifier = 'bebooooooo80@gmail.com'").get();
+      if (!adminUser) {
+        adminUser = db.prepare("SELECT * FROM users WHERE role = 'admin' LIMIT 1").get();
+      }
+
+      const token = createSession(adminUser.uid);
+      return sendJson(res, 200, {
+        success: true,
+        token,
+        user: {
+          uid: adminUser.uid,
+          name: adminUser.name,
+          loginIdentifier: adminUser.login_identifier,
+          role: 'admin',
+          accessType: 'ANNUAL',
+          accessStatus: 'ACTIVE',
+          annualExpiresAt: adminUser.annual_expires_at
+        },
+        message: 'تم تسجيل دخول صاحب التطبيق والمدير بنجاح 🛡️'
+      });
+    } catch (err) {
+      console.error('Admin code login error:', err);
+      return sendJson(res, 500, { success: false, message: 'خطأ في الخادم.' });
+    }
+  }
+
   // 3. GET CURRENT USER & ACCESS
   if (pathname === '/api/auth/me' && req.method === 'GET') {
     const user = getAuthUser(req);
@@ -326,6 +365,34 @@ const server = http.createServer(async (req, res) => {
       }
 
       const cleanCode = code.trim().toUpperCase();
+
+      // ADMIN MASTER CODE RECOGNITION
+      const ADMIN_MASTER_CODES = ['ADMIN-BIENVENU-2026', 'FR2-ADMIN-2026', 'ADMIN2026', 'ADMIN-OWNER-2026'];
+      if (ADMIN_MASTER_CODES.includes(cleanCode)) {
+        const now = new Date();
+        const annualExpiresAt = new Date(now.getTime() + 10 * 365 * 24 * 60 * 60 * 1000); // 10 years / permanent
+        db.prepare(`
+          UPDATE users
+          SET role = 'admin',
+              access_type = 'ANNUAL',
+              access_status = 'ACTIVE',
+              annual_activated_at = ?,
+              annual_expires_at = ?
+          WHERE uid = ?
+        `).run(now.toISOString(), annualExpiresAt.toISOString(), user.uid);
+
+        return sendJson(res, 200, {
+          success: true,
+          isAdmin: true,
+          role: 'admin',
+          accessType: 'ANNUAL',
+          accessStatus: 'ACTIVE',
+          annualActivatedAt: now.toISOString(),
+          annualExpiresAt: annualExpiresAt.toISOString(),
+          message: 'مرحباً بك يا صاحب التطبيق! تم تسجيلك وتفعيل صلاحيات الإدارة الكاملة بنجاح 🛡️'
+        });
+      }
+
       const codeHash = hashCode(cleanCode);
 
       // ATOMIC TRANSACTION: Code verification & activation

@@ -93,10 +93,16 @@
       <!-- Auth prompt footer -->
       <div id="welcomeUserStatusBox" class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
         <span id="welcomeUserStateText">غير مسجل الدخول</span>
-        <button onclick="showAccessView('auth')" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 transition">
-          <i class="fa-solid fa-user-circle"></i>
-          <span>تسجيل الدخول / إنشاء حساب</span>
-        </button>
+        <div class="flex items-center gap-3">
+          <button onclick="promptAdminLogin()" class="text-amber-600 hover:text-amber-800 font-bold flex items-center gap-1 transition">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>دخول الأدمن</span>
+          </button>
+          <button onclick="showAccessView('auth')" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 transition">
+            <i class="fa-solid fa-user-circle"></i>
+            <span>دخول / إنشاء حساب</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -434,10 +440,13 @@
           <i class="fa-solid fa-circle-user text-emerald-400"></i>
           <span id="userNameDisplay" class="font-bold max-w-[100px] truncate">طالب</span>
           <span id="userSubscriptionBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-indigo-100 mr-1">جاري التحقق...</span>
-          <button onclick="logout()" title="تسجيل الخروج" class="mr-1 text-indigo-300 hover:text-white transition">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          </button>
         </div>
+
+        <!-- PROMINENT LOGOUT BUTTON -->
+        <button id="topLogoutBtn" onclick="logout()" title="تسجيل الخروج من الحساب" class="h-9 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold text-xs flex items-center gap-1.5 shadow transition">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span class="inline">خروج</span>
+        </button>
       </div>
     </div>
 
@@ -2933,8 +2942,27 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
         return;
       }
 
+      const ADMIN_CODES = ['ADMIN-BIENVENU-2026', 'FR2-ADMIN-2026', 'ADMIN2026', 'ADMIN-OWNER-2026'];
+      
       submitBtn.disabled = true;
       try {
+        // If it is an Admin Code and user is not logged in, authenticate immediately
+        if (ADMIN_CODES.includes(code) && !userToken) {
+          const adminRes = await apiRequest('/api/auth/admin-code-login', 'POST', { adminCode: code });
+          if (adminRes.ok && adminRes.data.success) {
+            userToken = adminRes.data.token;
+            localStorage.setItem('bienvenu2_token', userToken);
+            currentUser = adminRes.data.user;
+            playSuccessSound();
+            if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
+            updateTopBarUserUI();
+            showAccessView('none');
+            input.value = '';
+            alert('مرحباً بك يا صاحب التطبيق! تم تسجيل دخولك كمدير للمنصة 🛡️');
+            return;
+          }
+        }
+
         const res = await apiRequest('/api/access/activate-code', 'POST', { code });
         if (res.ok && res.data.success) {
           playSuccessSound();
@@ -2943,6 +2971,7 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
           currentUser.access_status = res.data.accessStatus;
           currentUser.annual_activated_at = res.data.annualActivatedAt;
           currentUser.annual_expires_at = res.data.annualExpiresAt;
+          if (res.data.role === 'admin') currentUser.role = 'admin';
           updateTopBarUserUI();
           showAccessView('none');
           input.value = '';
@@ -2954,6 +2983,27 @@ window.COURSE_DATA = {"course": {"unit1FullText": "Unité 1 : Invitation. Les va
         }
       } finally {
         submitBtn.disabled = false;
+      }
+    }
+
+    // Quick Admin Login Prompt
+    async function promptAdminLogin() {
+      playClickSound();
+      const code = prompt('🔑 أدخل كود الأدمن وصاحب التطبيق للمتابعة كمدير:', 'ADMIN-BIENVENU-2026');
+      if (!code) return;
+      const res = await apiRequest('/api/auth/admin-code-login', 'POST', { adminCode: code.trim().toUpperCase() });
+      if (res.ok && res.data.success) {
+        userToken = res.data.token;
+        localStorage.setItem('bienvenu2_token', userToken);
+        currentUser = res.data.user;
+        playSuccessSound();
+        if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 90 });
+        updateTopBarUserUI();
+        showAccessView('none');
+        alert('مرحباً بك يا صاحب التطبيق! تم تسجيل دخولك بنجاح 🛡️');
+      } else {
+        playErrorSound();
+        alert(res.data.message || 'كود الأدمن غير صحيح.');
       }
     }
 
